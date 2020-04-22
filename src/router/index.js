@@ -15,6 +15,17 @@ const routes = [
         path: '/login',
         name: 'login',
         component: Login,
+    },
+    {
+        path: '/',
+        component: Layout,
+        children: [
+            {
+                path: '/users',
+                component: () => import('../view/user/index'),
+                name: 'userList',
+            },
+        ]
     }
 ];
 

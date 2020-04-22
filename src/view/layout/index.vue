@@ -3,32 +3,17 @@
         <!-- 菜单导航-->
         <navigation :enable-mini="enableMini"/>
         <!--应用顶部导航条-->
-        <v-app-bar app class="indigo">
-            <v-app-bar-nav-icon @click.stop="enableMini=!enableMini"/>
-            <v-toolbar-title>Citrus</v-toolbar-title>
+        <v-app-bar app color="pink" flat>
+            <v-app-bar-nav-icon @click.stop="enableMini=!enableMini">
+                <v-icon>{{toggleNavIcon}}</v-icon>
+            </v-app-bar-nav-icon>
+            <!--            <v-toolbar-title >Citrus</v-toolbar-title>-->
         </v-app-bar>
 
-        <!--        整体容器-->
+        <!--整体容器-->
         <v-content>
-            <!--            <v-card>-->
-            <!--                <v-tabs-->
-            <!--                        height="33"-->
-            <!--                        grow-->
-            <!--                        v-model="tab"-->
-            <!--                        light-->
-            <!--                        slider-color="red"-->
-            <!--                        background-color="white"-->
-            <!--                        optional-->
-            <!--                >-->
-            <!--                    <v-tab v-for="n in length" :key="n" class="tab-remove">-->
-            <!--                            Item {{ n }}-->
-            <!--                            <v-icon size="10" right="0" >mdi-close-circle</v-icon>-->
-            <!--                    </v-tab>-->
-            <!--                </v-tabs>-->
-            <!--            </v-card>-->
             <visited-bar/>
             <v-container fluid>
-
                 <router-view/>
             </v-container>
         </v-content>
@@ -36,8 +21,8 @@
 </template>
 
 <script>
-    import Navigation from "./Navigation";
-    import VisitedBar from "./VisitedBar";
+    import Navigation from "./components/Navigation";
+    import VisitedBar from "./components/VisitedBar";
 
     export default {
         name: "Layout",
@@ -45,31 +30,14 @@
             Navigation,
             VisitedBar
         },
-        props: {
-            source: String
-        },
         data: () => ({
             enableMini: false,
-            tab: null,
-            length: 20,
-
         }),
-        watch: {
-            length(val) {
-                this.tab = val - 1
-            },
-        },
+        computed: {
+            toggleNavIcon() {
+                return this.enableMini ? 'mdi-format-indent-decrease' : 'mdi-format-indent-increase';
+            }
+        }
     }
 </script>
 
-<style scoped="">
-
-    .tab-remove {
-        color: grey;
-        z-index: 99
-    }
-
-    .tab-remove:hover {
-        color: black;
-    }
-</style>
