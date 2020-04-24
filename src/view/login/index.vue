@@ -83,13 +83,11 @@
                 this.$root.$emit('resized');
             },
             login() {
-                console.warn(this.model)
                 this.$store.dispatch("user/login", this.model).then(() => {
                     this.$router.push("/")
                 }).catch(err => {
                     console.warn(err);
                     this.captchaSrc = this.captchaSrc + "?timestamp=" + Date.now();
-
                 })
             }
         },

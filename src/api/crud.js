@@ -13,7 +13,7 @@ export class CrudService {
      * @param query 查询参数
      */
     list(query = {}) {
-        return request.get(this.namespace, query);
+        return request.get(this.namespace, {params:query});
     }
 
     /**

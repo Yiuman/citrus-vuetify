@@ -1,70 +1,40 @@
 <template>
-    <v-data-table
-            :headers="headers"
-            :items="records"
-            fixed-header
-            :loading="loading"
-            class="elevation-1"
-    >
-        <template v-slot:top>
-            <v-toolbar flat color="white">
-                <v-toolbar-title>My CRUD</v-toolbar-title>
-                <v-divider
-                        class="mx-4"
-                        inset
-                        vertical
-                />
-                <v-spacer/>
-                <v-dialog v-model="dialog" max-width="500px">
-                    <template v-slot:activator="{ on }">
-                        <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
-                    </template>
-                    <v-card>
-                        <v-card-title>
-                            <span class="headline">{{ formTitle }}</span>
-                        </v-card-title>
+    <div>
+        <v-data-table
+                v-model="selected"
+                :item-key="itemKey"
+                :headers="headers"
+                :items="records"
+                fixed-header
+                :items-per-page="page.size"
+                :loading="loading"
+                hide-default-footer
+                show-select
+                class="elevation-1"
+        >
 
-                        <v-card-text>
-                            <v-container>
-                                <v-row>
-<!--                                    todo-->
-                                    <!--                                    <v-col cols="12" sm="6" md="4" :key="index">-->
-                                    <!--                                        <v-text-field v-model="editedItem.name" label="Dessert name"/>-->
-                                    <!--                                    </v-col>-->
-                                    <!--                                    <v-col cols="12" sm="6" md="4">-->
-                                    <!--                                        <v-text-field v-model="editedItem.calories" label="Calories"/>-->
-                                    <!--                                    </v-col>-->
-                                    <!--                                    <v-col cols="12" sm="6" md="4">-->
-                                    <!--                                        <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>-->
-                                    <!--                                    </v-col>-->
-                                    <!--                                    <v-col cols="12" sm="6" md="4">-->
-                                    <!--                                        <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>-->
-                                    <!--                                    </v-col>-->
-                                    <!--                                    <v-col cols="12" sm="6" md="4">-->
-                                    <!--                                        <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>-->
-                                    <!--                                    </v-col>-->
-                                </v-row>
-                            </v-container>
-                        </v-card-text>
+            <!--        <template v-slot:item.actions="{ item }">-->
+            <!--            <v-icon small class="mr-2" @click="update(item)">mdi-pencil-->
+            <!--            </v-icon>-->
+            <!--            <v-icon small @click="remove(item)">mdi-delete</v-icon>-->
+            <!--        </template>-->
+            <!--        <template v-slot:no-data>-->
+            <!--            <v-btn color="primary" @click="initialize">Reset</v-btn>-->
+            <!--        </template>-->
+        </v-data-table>
+        <div class="float-left pt-2">
+            {{total}}
+        </div>
+        <div class="float-right pt-2">
+            <v-pagination
+                    prev-icon="mdi-menu-left"
+                    next-icon="mdi-menu-right"
+                    v-model="page.current"
+                    :length="pageCount"
+                    total-visible="5"/>
+        </div>
+    </div>
 
-                        <v-card-actions>
-                            <v-spacer/>
-                            <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                            <v-btn color="blue darken-1" text @click="save(editedItem)">Save</v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-            </v-toolbar>
-        </template>
-        <template v-slot:item.actions="{ item }">
-            <v-icon small class="mr-2" @click="update(item)">mdi-pencil
-            </v-icon>
-            <v-icon small @click="remove(item)">mdi-delete</v-icon>
-        </template>
-        <template v-slot:no-data>
-            <v-btn color="primary" @click="initialize">Reset</v-btn>
-        </template>
-    </v-data-table>
 </template>
 
 <script>
@@ -93,44 +63,46 @@
             }
         },
         data: () => ({
+            page: {
+                size: 10,
+                current: 1,
+            },
+            pageCount: 5,
             crudService: null,
             loading: true,
             dialog: false,
+            total: 0,
             records: [],
+            selected: [],
+            itemKey: 'userId',
             editedIndex: -1,
         }),
-        computed: {
-            formTitle() {
-                return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-            },
-        },
         watch: {
-            dialog(val) {
-                val || this.close()
-            },
+            'page.current': 'queryPage'
         },
         created() {
-            this.initialize()
+            this.crudService = new CrudService(this.namespace);
+            this.queryPage()
         },
         methods: {
-            initialize() {
-                this.crudService = new CrudService(this.namespace);
-                this.crudService.list().then(data => {
+            queryPage() {
+                this.loading = true;
+                this.crudService.list(this.page).then(data => {
+                    this.total = data.total;
                     this.records = data.records;
-                    //若表头没定义则用数据列的
-                    if (!this.headers) {
-                        let tempHeaders = [];
-                        if (data.headers) {
-                            tempHeaders = data.headers;
-                        } else {
-                            const record = data.records[0];
-                            record.keys().forEach(key => {
-                                tempHeaders.push({text: key, value: key})
-                            })
-                        }
-                        this.$set('headers', tempHeaders);
+                    if (data.pages && data.pages <= 5) {
+                        this.pageCount = data.pages
                     }
-                    this.loading = true
+
+                    //若表头没定义则用数据列的
+                    if (!this.headers || this.headers.length === 0) {
+
+                        const record = data.records[0];
+                        Object.keys(record).forEach(key => {
+                            this.headers.push({text: key, value: key})
+                        })
+                    }
+                    this.loading = false
                 })
             },
             save(item) {

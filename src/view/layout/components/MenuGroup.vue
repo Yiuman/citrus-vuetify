@@ -1,37 +1,37 @@
 <template>
     <v-list dense>
-        <div v-for="item in menus" :key="item.title">
+        <div v-for="(menu,index) in menus" :key="index">
             <v-list-item
-                    v-if="!item.children"
-                    :to="resolvePath(item)"
+                    v-if="!menu.children"
+                    :to="resolvePath(menu)"
                     ripple="ripple"
             >
                 <v-list-item-icon>
-                    <v-icon>{{ item.icon }}</v-icon>
+                    <v-icon>{{ menu.icon }}</v-icon>
                 </v-list-item-icon>
 
                 <v-list-item-content>
                     <v-list-item-title>
-                        {{ item.text }}
+                        {{ menu.text  || menu}}
                     </v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
 
             <v-list-group
                     v-else
-                    :prepend-icon="item.icon"
+                    :prepend-icon="menu.icon"
             >
                 <template v-slot:activator>
                     <v-list-item-content>
                         <v-list-item-title>
-                            {{ item.text }}
+                            {{ menu.text }}
                         </v-list-item-title>
                     </v-list-item-content>
                 </template>
 
                 <menu-group
-                        :menus="item.children"
-                        :base-path="resolvePath(item)"
+                        :menus="menu.children"
+                        :base-path="resolvePath(menu)"
                 />
             </v-list-group>
         </div>
@@ -44,15 +44,12 @@
         props: {
             menus: {
                 type: Array,
-                default: () => {
-                }
             },
             prefix: {
                 type: String,
                 default: () => ''
             }
         },
-        data: () => ({}),
         methods: {
             resolvePath(item) {
                 if (!item.path) {

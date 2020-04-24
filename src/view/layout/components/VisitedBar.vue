@@ -1,6 +1,6 @@
 <template>
     <v-row justify="space-around">
-        <v-col class="pt-0">
+        <v-col>
             <v-sheet elevation="10" tile>
                 <v-chip-group mandatory>
                     <v-chip v-for="(item,index) in visitedItems" :key="index"
@@ -10,7 +10,8 @@
                             label
                             outlined
                             :input-value="activeIndex ===index"
-                            @click:close="close"
+                            @click="active(item,index)"
+                            @click:close="close(item)"
                     >
                         {{item.name}}
                     </v-chip>
@@ -26,25 +27,58 @@
         name: "VisitedBar",
         data: () => ({
             activeIndex: '',
-            visitedItems: [
-                {
-                    name: 123123,
-                    deletable: false
-                },
-                {
-                    name: 123123,
-                    deletable: true
-                },
-                {
-                    name: 123123,
-                    deletable: true
-                }
-            ]
+            defaultItems: []
         }),
-        methods: {
-            close() {
-
+        computed: {
+            visitedItems() {
+                return this.$store.state.visited.visitedItems
             }
+        },
+        watch: {
+            $route() {
+                this.addItem();
+            }
+        },
+        methods: {
+            active(item, index) {
+                if (index === this.activeIndex) {
+                    return
+                }
+                this.activeIndex = index;
+
+                if (item.path === this.$route.path) {
+                    return;
+                }
+                this.$router.push({path: item.path})
+            },
+            addItem() {
+                const route = this.$route;
+                if (this.visitedItems.some(i => i.path === route.path)) {
+                    return;
+                }
+
+                const visitedItem = {
+                    name: route.meta.text || route.name,
+                    path: route.path,
+                    deletable: route.path !== '/'
+                };
+                this.$store.dispatch('visited/addItem', visitedItem)
+                this.refresh(visitedItem);
+
+            },
+            close(item) {
+                const preIndex = this.visitedItems.indexOf(item) - 1;
+                this.$store.dispatch('visited/removeItem', item);
+                this.active(this.visitedItems[preIndex], preIndex)
+            },
+            refresh(item) {
+                this.$nextTick(() => {
+                    this.active(item, this.visitedItems.indexOf(item))
+                })
+            }
+        },
+        mounted() {
+            this.addItem();
         }
     }
 </script>

@@ -1,15 +1,16 @@
 import {login} from '../../api/user'
-
+import storage from "../../utils/storage";
 
 const state = {
-    token: '',
-    name:'',
-    roles:[],
+    token: storage.get('token'),
+    name: '',
+    roles: [],
 };
 
 const mutations = {
     SET_TOKEN: (state, token) => {
-        state.token = token
+        state.token = token;
+        storage.save("token", token);
     },
     SET_INTRODUCTION: (state, introduction) => {
         state.introduction = introduction
@@ -30,8 +31,7 @@ const actions = {
     login({commit}, loginModel) {
         return new Promise((resolve, reject) => {
             login(loginModel).then(response => {
-                const {data} = response;
-                commit('SET_TOKEN', data);
+                commit('SET_TOKEN', response.token);
                 resolve()
             }).catch(error => {
                 reject(error)
