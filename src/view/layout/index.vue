@@ -3,20 +3,20 @@
         <!-- 菜单导航-->
         <navigation :enable-mini="enableMini"/>
         <!--应用顶部导航条-->
-        <v-app-bar app color="teal lighten-3" flat class="app-bar">
+        <v-app-bar app color="#344763" flat class="app-bar">
             <v-app-bar-nav-icon @click.stop="enableMini=!enableMini">
-                <v-icon>{{toggleNavIcon}}</v-icon>
+                <v-icon color="white">{{toggleNavIcon}}</v-icon>
             </v-app-bar-nav-icon>
-            <v-toolbar-title>{{systemTitle}}</v-toolbar-title>
+            <v-toolbar-title class="white--text">{{systemTitle}}</v-toolbar-title>
 
-            <template v-slot:extension>
-                <visited-bar/>
+            <template v-slot:extension >
+                <visited-bar class="mb-n1"/>
             </template>
         </v-app-bar>
 
         <!--整体容器-->
-        <v-content>
-            <v-container fluid>
+        <v-content >
+            <v-container >
                 <router-view/>
             </v-container>
         </v-content>

@@ -1,8 +1,13 @@
 import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+import Vuetify, {VSelect, VTextField} from 'vuetify/lib'
 import '@mdi/font/css/materialdesignicons.css';
 
-Vue.use(Vuetify);
+Vue.use(Vuetify, {
+    components: {
+        VSelect,
+        VTextField
+    }
+});
 const opts = {
     icons: {
         iconfont: 'mdi',

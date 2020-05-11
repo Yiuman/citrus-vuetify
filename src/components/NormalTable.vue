@@ -1,47 +1,117 @@
 <template>
     <div>
+        <!--按钮及控件-->
+        <v-row justify="end" no-gutters class="mt-2">
+            <v-col v-for="(widget,index) in widgets" :key="index" class="widget-col pr-10" md="auto">
+                <component :is="widget.widgetName " v-bind="transform(widget)" v-model="queryParam[widget.key]"
+                           @change="queryPage"/>
+            </v-col>
+
+            <v-col class="button-col pl-10 flex-column" md="auto">
+                <v-btn v-for="(button,index) in buttons" :key="index" class="my-1 ml-2" @click="doAction(button.action)"
+                       :color="button.color"
+                       small
+                       depressed
+                       outlined>
+                    <v-icon left v-if="button.icon">mdi-{{button.icon}}</v-icon>
+                    {{button.text}}
+                </v-btn>
+            </v-col>
+        </v-row>
+        <!--表格-->
         <v-data-table
                 v-model="selected"
                 :item-key="itemKey"
-                :headers="headers"
+                :headers="headerArray"
                 :items="records"
+                :options.sync="pageOptions"
                 fixed-header
                 :items-per-page="page.size"
                 :loading="loading"
+                :server-items-length="total"
                 hide-default-footer
-                show-select
+                :show-select="Boolean(itemKey)"
                 class="elevation-1"
         >
+            <!--行内操作按钮事件-->
+            <template v-slot:item.actions="{ item }">
+                <v-btn icon v-for="(operation,index) in actions" :key="index" @click="doAction(operation.action,item)"
+                       class="mr-2"
+                       :color="operation.color">
+                    <v-icon small>mdi-{{operation.icon}}</v-icon>
+                    {{operation.text}}
+                </v-btn>
+            </template>
 
-            <!--        <template v-slot:item.actions="{ item }">-->
-            <!--            <v-icon small class="mr-2" @click="update(item)">mdi-pencil-->
-            <!--            </v-icon>-->
-            <!--            <v-icon small @click="remove(item)">mdi-delete</v-icon>-->
-            <!--        </template>-->
-            <!--        <template v-slot:no-data>-->
-            <!--            <v-btn color="primary" @click="initialize">Reset</v-btn>-->
-            <!--        </template>-->
         </v-data-table>
-        <div class="float-left pt-2">
-            {{total}}
-        </div>
-        <div class="float-right pt-2">
-            <v-pagination
-                    prev-icon="mdi-menu-left"
-                    next-icon="mdi-menu-right"
-                    v-model="page.current"
-                    :length="pageCount"
-                    total-visible="5"/>
-        </div>
+        <!--分页相关组件-->
+        <v-row justify="end" no-gutters class="mt-2">
+            <v-col md="1">
+                <div class="pa-2 mt-3 mr-3 text-right">
+                    共{{total}}条
+                </div>
+            </v-col>
+            <v-col md="auto">
+                <v-select
+                        label="条/页"
+                        :items="perPageOptions"
+                        v-model="page.size"
+                        style="width: 50px"
+                />
+            </v-col>
+            <v-col md="auto">
+                <v-pagination
+                        class="pa-2 text-right"
+                        prev-icon="mdi-menu-left"
+                        next-icon="mdi-menu-right"
+                        v-model="page.current"
+                        :length="pageCount"
+                        total-visible="5"/>
+            </v-col>
+            <v-col md="auto">
+                <v-text-field label="跳转到" type="number" v-model="jumpToPage" @keydown="queryPage"
+                              style="width: 60px"/>
+            </v-col>
+        </v-row>
+
+        <slot name="add-dialog">
+            <form-dialog v-model="actionSwitch.add" :dialog-view="dialogView"
+                         :current-item="currentItem" @confirm="edit_"/>
+        </slot>
+        <slot name="edit-dialog">
+            <form-dialog v-model="actionSwitch.edit" :dialog-view="dialogView" :current-item="currentItem"
+                         @confirm="edit_"/>
+        </slot>
+        <slot name="delete-dialog">
+            <tips-dialog v-model="actionSwitch.delete" title="确认要删除当前数据项吗?" @confirm="delete_(currentItem)"/>
+        </slot>
+
+        <slot name="delete-batch-dialog">
+            <tips-dialog v-model="actionSwitch.batchDelete" title="确认要删除当期所选数据项吗?"
+                         @confirm="batchDelete_(selected)"/>
+        </slot>
+
+        <!--消息提示-->
+        <v-snackbar v-model="snackbar.switch" top multi-line>
+            {{ snackbar.text }}
+            <v-btn outlined @click="snackbar.switch = false">确认</v-btn>
+        </v-snackbar>
     </div>
 
 </template>
 
 <script>
-    import {CrudService} from "../api/crud";
+    import {mixins as crudMixins} from "../api/crud";
+    import transform from "../utils/widget";
+    import FormDialog from "./FormDialog";
+    import TipsDialog from "./TipsDialog";
+
+    crudMixins.methods.transform = transform;
 
     export default {
         name: "NormalTable",
+        mixins: [crudMixins],
+        components: {TipsDialog, FormDialog},
         props: {
             //命名空间，与后台RESTFULTCRUD对应，如用户则是/rest/users
             namespace: String,
@@ -50,90 +120,186 @@
                 type: Array,
                 default: () => []
             },
-            //编辑项
-            editedItem: {
+            /**
+             * 控件
+             */
+            widgetModels: {
                 type: Array,
                 default: () => []
             },
-            //编辑项的定义，如是否校验等
-            editedDefine: {
-                type: Object,
-                default: () => {
-                }
-            }
+            /**
+             * 顶部按钮
+             */
+            buttonModels: {
+                type: Array,
+                default: () => []
+            },
         },
         data: () => ({
+            //表头数组
+            headerArray: [],
+            //每页的条数定义
+            perPageOptions: [
+                5, 10, 20, 30
+            ],
+            //页面的定义信息，外部排序，外部分页等
+            pageOptions: {},
+            // 页面信息，查询条数，及当前页
             page: {
                 size: 10,
                 current: 1,
             },
+            //查询参数
+            queryParam: {},
+            //顶部控件，如名称输入查询，列表选择等
+            widgets: [],
+            //跳转到的页数
+            jumpToPage: 1,
+            //最多
             pageCount: 5,
-            crudService: null,
+            //总页数
+            pageTotal: 1,
+            //加载中...
             loading: true,
-            dialog: false,
+            //总记录数
             total: 0,
+            //记录数组
             records: [],
+            //选择了的记录
             selected: [],
-            itemKey: 'userId',
-            editedIndex: -1,
+            //用于定义选择的对象的键
+            itemKey: '',
+            //顶部按钮
+            buttons: [],
+            //行内操作事件按钮
+            actions: [],
+            //消息提示
+            snackbar: {
+                switch: false,
+                text: ''
+            },
+            dialogView: {
+                width: 800,
+                fullscreen: false,
+                editFields: []
+            }
         }),
         watch: {
-            'page.current': 'queryPage'
+            'page.current': function (value, old) {
+                if (value === old) {
+                    return;
+                }
+                this.jumpToPage = value;
+                this.queryPage();
+            },
+            'page.size': function () {
+                this.page.current = 1;
+                this.queryPage();
+            },
+            'jumpToPage': function (value, old) {
+                if (value === old || value < 1 || value === '' || value > this.pageTotal) {
+                    return;
+                }
+                this.page.current = Number(value);
+            },
+            'pageOptions': {
+                handler() {
+                    this.queryPage();
+                },
+                deep: true
+            }
         },
         created() {
-            this.crudService = new CrudService(this.namespace);
-            this.queryPage()
+            this.headerArray = this.headers;
+            this.widgets = this.widgetModels;
+            this.buttons = this.buttonModels;
+            this.queryPage();
         },
         methods: {
             queryPage() {
                 this.loading = true;
-                this.crudService.list(this.page).then(data => {
+                const queryParams = {...this.page, ...this.queryParam};
+                const sortBy = this.pageOptions.sortBy;
+                if (sortBy && sortBy.length) {
+                    queryParams.sortBy = sortBy[0];
+                }
+
+                const sortDesc = this.pageOptions.sortDesc;
+                if (sortDesc && sortDesc.length) {
+                    queryParams.sortDesc = sortDesc[0];
+                }
+
+                /**
+                 * 处理返回的数据
+                 * @param data 返回结果
+                 */
+                const handlerRecord = function (data) {
+                    const records = data.records;
+                    const recordExtend = data.recordExtend;
+                    if (recordExtend) {
+                        records.forEach(record => {
+                            const extendData = recordExtend[record[data.itemKey]];
+                            Object.keys(extendData).forEach(key => {
+                                record[key] = extendData[key];
+                            })
+                        })
+                    }
+                    console.warn("records", records);
+                    return records;
+                };
+
+                this.crudService.list(queryParams).then(data => {
                     this.total = data.total;
-                    this.records = data.records;
+                    this.itemKey = data.itemKey;
+                    this.records = handlerRecord(data);
+                    this.pageTotal = data.pages;
+                    this.dialogView = data.dialogView;
                     if (data.pages && data.pages <= 5) {
                         this.pageCount = data.pages
                     }
 
-                    //若表头没定义则用数据列的
-                    if (!this.headers || this.headers.length === 0) {
 
-                        const record = data.records[0];
-                        Object.keys(record).forEach(key => {
-                            this.headers.push({text: key, value: key})
+                    //若表头没定义则用数据列的
+                    if (!this.headerArray || this.headerArray.length === 0) {
+                        if (data.headers) {
+                            this.headerArray = data.headers
+                        } else {
+                            const record = data.records[0];
+                            Object.keys(record).forEach(key => {
+                                this.headerArray.push({text: key, value: key})
+                            })
+                        }
+
+                    }
+
+                    //初始化控件
+                    if ((!this.widgets || this.widgets.length === 0) && data.widgets) {
+                        this.widgets = data.widgets;
+                    }
+
+                    //初始化按钮
+                    if ((!this.buttons || this.buttons.length === 0) && data.buttons) {
+                        this.buttons = data.buttons;
+                    }
+
+                    //初始化列事件
+                    if ((!this.actions || this.actions.length === 0) && data.actions) {
+                        this.actions = data.actions;
+                        this.headerArray.push({
+                            text: '操作',
+                            value: 'actions',
+                            align: 'center',
+                            sortable: false,
+                            width: 'auto'
                         })
                     }
+
                     this.loading = false
                 })
-            },
-            save(item) {
-                this.crudService.save(item).then(() => {
-                }).catch((err) => {
-                    console.warn(err)
-                });
-            },
-            update(item) {
-                this.crudService.update(item).then(() => {
-                }).catch((err) => {
-                    console.warn(err)
-                })
-            },
-            remove(id) {
-                this.crudService.delete(id).then(() => {
-                }).catch((err) => {
-                    console.warn(err)
-                })
-            },
-            close() {
-                this.dialog = false;
-                setTimeout(() => {
-                    this.editedItem = Object.assign({}, this.defaultItem)
-                    this.editedIndex = -1
-                }, 300)
-            },
+            }
         }
     }
 </script>
 
 <style scoped>
-
 </style>

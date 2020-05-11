@@ -1,13 +1,14 @@
 <template>
     <v-row justify="space-around">
         <v-col>
-            <v-sheet elevation="10" tile>
-                <v-chip-group mandatory>
+            <v-sheet elevation="2" tile>
+                <v-chip-group mandatory >
                     <v-chip v-for="(item,index) in visitedItems" :key="index"
                             :close="item.deletable"
                             active-class="chip-active"
-                            class="ma-1 mb-0 pb-0"
+                            class="ml-1"
                             label
+                            small
                             outlined
                             :input-value="activeIndex ===index"
                             @click="active(item,index)"
@@ -26,7 +27,7 @@
     export default {
         name: "VisitedBar",
         data: () => ({
-            activeIndex: '',
+            activeIndex: 0,
             defaultItems: []
         }),
         computed: {

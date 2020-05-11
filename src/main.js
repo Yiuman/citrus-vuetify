@@ -5,7 +5,6 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 import './styles/index.styl'
 
-
 Vue.config.productionTip = false;
 
 new Vue({

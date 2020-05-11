@@ -1,9 +1,11 @@
-import request from "../utils/request";
+import request, {download} from "../utils/request";
+import {API_BASE_PATH} from "../config";
 
 /**
  * 普通的CRUD逻辑
  */
 export class CrudService {
+
     constructor(namespace) {
         this.namespace = namespace
     }
@@ -13,7 +15,7 @@ export class CrudService {
      * @param query 查询参数
      */
     list(query = {}) {
-        return request.get(this.namespace, {params:query});
+        return request.get(this.namespace, {params: query});
     }
 
     /**
@@ -34,10 +36,10 @@ export class CrudService {
 
     /**
      * 批量删除
-     * @param ids 需要删除的Id数据
+     * @param keys 需要删除的Id数据
      */
-    deleteBatch(ids = []) {
-        return request.post(`${this.namespace}/batch_delete`, ids)
+    batch_delete(keys = []) {
+        return request.post(`${this.namespace}/batch_delete`, keys)
     }
 
     /**
@@ -88,6 +90,94 @@ export class TreeService extends CrudService {
      * 重新初始化树，重新预排序
      */
     init() {
-        return request.post(`${this.namespace}/tree/init`)
+        return request.post(`${API_BASE_PATH}/${this.namespace}/tree/init`)
     }
 }
+
+export default (namespace) => {
+    return new CrudService(namespace)
+};
+
+/**
+ * CRUD混入
+ */
+export const mixins = {
+    data() {
+        return {
+            currentItem: {},
+            crudService: {},
+            actionSwitch: {
+                add: false,
+                edit: false,
+                delete: false,
+                batchDelete: false,
+            },
+        }
+    },
+    created() {
+        this.crudService = new CrudService(this.namespace);
+    },
+    methods: {
+        doAction(action, item) {
+            const actionMethod = this[action] || this['defaultAction'];
+            console.warn(actionMethod);
+            actionMethod(action, item);
+        },
+        defaultAction(action) {
+            this.actionSwitch[action] = true
+        },
+        add(action) {
+            this.currentItem = {}
+            this.defaultAction(action);
+        },
+        edit_(item) {
+            this.crudService.save(item).then(() => {
+                this.queryPage();
+            }).catch((err) => {
+                console.warn(err)
+            });
+        },
+        edit(action, item) {
+            this.currentItem = JSON.parse(JSON.stringify(item));
+            this.defaultAction(action);
+        },
+        delete(action, item) {
+            this.currentItem = JSON.parse(JSON.stringify(item));
+            this.defaultAction(action);
+        },
+        delete_(item) {
+            this.crudService.delete(item[this.itemKey]).then(() => {
+                this.queryPage();
+            }).catch((err) => {
+                console.warn(err)
+            })
+        },
+        batchDelete(action) {
+            if (!this.selected || this.selected.length === 0) {
+                this.showTips('请勾选需要删除的数据项');
+            } else {
+                this.defaultAction(action);
+            }
+        },
+        batchDelete_(items) {
+            const ids = items.map(item => item[this.itemKey]);
+            this.crudService.batch_delete(ids).then(() => {
+                this.queryPage();
+            }).catch((err) => {
+                console.warn(err)
+            })
+        },
+        import() {
+
+        },
+        export() {
+            download(`${this.namespace}/export`);
+        },
+        showTips(text) {
+            this.snackbar.text = text;
+            this.snackbar.switch = true;
+        }
+    }
+
+};
+
