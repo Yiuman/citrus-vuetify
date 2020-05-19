@@ -5,13 +5,15 @@
  * @returns {*} 菜单列表
  */
 export const createMenus = (routes, filter) => {
-    let menus = [];
+    const menus = [];
     if (filter) {
         routes = routes.filter(i => filter(i));
     }
     routes.forEach(route => {
         if (route.path === '/' && route.children) {
-            menus = createMenus(route.children);
+            createMenus(route.children).forEach(item => {
+                menus.push(item);
+            })
         } else {
             let children;
             if (route.children) {

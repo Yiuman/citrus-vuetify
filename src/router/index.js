@@ -46,6 +46,21 @@ export const constantRoutes = [
                 }
             },
         ]
+    },
+    {
+        path: '/',
+        component: Layout,
+        children: [
+            {
+                path: '/organs',
+                component: () => import('../view/organ/index'),
+                name: 'organs',
+                meta: {
+                    text: '组织机构管理',
+                    icon: 'mdi-file-tree-outline'
+                }
+            },
+        ]
     }
 ];
 

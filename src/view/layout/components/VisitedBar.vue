@@ -2,15 +2,13 @@
     <v-row justify="space-around">
         <v-col>
             <v-sheet elevation="2" tile>
-                <v-chip-group mandatory >
+                <v-chip-group mandatory active-class="chip-active" v-model="activeIndex">
                     <v-chip v-for="(item,index) in visitedItems" :key="index"
                             :close="item.deletable"
-                            active-class="chip-active"
                             class="ml-1"
                             label
                             small
                             outlined
-                            :input-value="activeIndex ===index"
                             @click="active(item,index)"
                             @click:close="close(item)"
                     >
@@ -27,6 +25,7 @@
     export default {
         name: "VisitedBar",
         data: () => ({
+            //当前在用的ITEM下标
             activeIndex: 0,
             defaultItems: []
         }),
@@ -42,11 +41,7 @@
         },
         methods: {
             active(item, index) {
-                if (index === this.activeIndex) {
-                    return
-                }
                 this.activeIndex = index;
-
                 if (item.path === this.$route.path) {
                     return;
                 }
@@ -54,17 +49,20 @@
             },
             addItem() {
                 const route = this.$route;
-                if (this.visitedItems.some(i => i.path === route.path)) {
+                const currentRouteIndex = this.visitedItems.findIndex(i => i.path === route.path);
+                if (currentRouteIndex !== -1) {
+                    this.refresh(this.visitedItems[currentRouteIndex], currentRouteIndex);
                     return;
                 }
 
+                const originalLength = this.visitedItems.length;
                 const visitedItem = {
                     name: route.meta.text || route.name,
                     path: route.path,
                     deletable: route.path !== '/'
                 };
-                this.$store.dispatch('visited/addItem', visitedItem)
-                this.refresh(visitedItem);
+                this.$store.dispatch('visited/addItem', visitedItem);
+                this.refresh(visitedItem, originalLength);
 
             },
             close(item) {
@@ -72,9 +70,9 @@
                 this.$store.dispatch('visited/removeItem', item);
                 this.active(this.visitedItems[preIndex], preIndex)
             },
-            refresh(item) {
+            refresh(item, index) {
                 this.$nextTick(() => {
-                    this.active(item, this.visitedItems.indexOf(item))
+                    this.active(item, index)
                 })
             }
         },

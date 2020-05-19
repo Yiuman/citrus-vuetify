@@ -66,7 +66,7 @@ export class TreeService extends CrudService {
      * @param query 查询条件
      */
     load(query) {
-        return request.get(`${this.namespace}/tree`, query)
+        return request.get(`${this.namespace}/tree`, {params: query})
     }
 
     /**
@@ -99,40 +99,77 @@ export default (namespace) => {
 };
 
 /**
+ * 默认的CRUD通用数据
+ */
+const DEFAULT_COMMON_DATA = {
+    //用于定义选择的对象的键
+    itemKey: '',
+    //当前选择或编辑的对象
+    currentItem: {},
+    //Crud服务类
+    crudService: {},
+    //事项执行开关，用于处理Dialog
+    actionSwitch: {
+        add: false,
+        edit: false,
+        delete: false,
+        batchDelete: false,
+    },
+    activeAction: '',
+    //所选对象的ID
+    selected: [],
+    //查询参数
+    queryParam: {},
+    //顶部控件，如名称输入查询，列表选择等
+    widgets: [],
+    //顶部按钮
+    buttons: [],
+    loadMethod: 'load',
+    dialogView: {
+        width: 800,
+        fullscreen: false,
+        editFields: []
+    },
+    //消息提示
+    snackbar: {
+        switch: false,
+        text: ''
+    },
+};
+
+/**
  * CRUD混入
  */
 export const mixins = {
-    data() {
-        return {
-            currentItem: {},
-            crudService: {},
-            actionSwitch: {
-                add: false,
-                edit: false,
-                delete: false,
-                batchDelete: false,
-            },
-        }
+    props: {
+        //命名空间，与后台RESTFULTCRUD对应，如用户则是/rest/users
+        namespace: String,
     },
-    created() {
-        this.crudService = new CrudService(this.namespace);
+    data() {
+        return JSON.parse(JSON.stringify(DEFAULT_COMMON_DATA));
     },
     methods: {
         doAction(action, item) {
             const actionMethod = this[action] || this['defaultAction'];
-            console.warn(actionMethod);
             actionMethod(action, item);
         },
         defaultAction(action) {
-            this.actionSwitch[action] = true
+            this.actionSwitch[action] = true;
+        },
+        resetActionSwitch() {
+            Object.keys(this.actionSwitch).forEach(key => this.actionSwitch[key] = false)
         },
         add(action) {
-            this.currentItem = {}
+            this.currentItem = {};
             this.defaultAction(action);
+        },
+        reload() {
+            this[this.loadMethod]();
+            this.resetActionSwitch();
         },
         edit_(item) {
             this.crudService.save(item).then(() => {
-                this.queryPage();
+                this.reload()
             }).catch((err) => {
                 console.warn(err)
             });
@@ -147,7 +184,7 @@ export const mixins = {
         },
         delete_(item) {
             this.crudService.delete(item[this.itemKey]).then(() => {
-                this.queryPage();
+                this.reload()
             }).catch((err) => {
                 console.warn(err)
             })
@@ -160,9 +197,13 @@ export const mixins = {
             }
         },
         batchDelete_(items) {
-            const ids = items.map(item => item[this.itemKey]);
+            let ids = items;
+            if (typeof items[0] === 'object') {
+                ids = items.map(item => item[this.itemKey]);
+            }
+
             this.crudService.batch_delete(ids).then(() => {
-                this.queryPage();
+                this.reload()
             }).catch((err) => {
                 console.warn(err)
             })

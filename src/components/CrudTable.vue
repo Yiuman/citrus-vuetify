@@ -1,23 +1,24 @@
 <template>
     <div>
         <!--按钮及控件-->
-        <v-row justify="end" no-gutters class="mt-2">
-            <v-col v-for="(widget,index) in widgets" :key="index" class="widget-col pr-10" md="auto">
-                <component :is="widget.widgetName " v-bind="transform(widget)" v-model="queryParam[widget.key]"
-                           @change="queryPage"/>
-            </v-col>
+<!--        <v-row justify="end" no-gutters class="mt-2">-->
+<!--            <v-col v-for="(widget,index) in widgets" :key="index" class="widget-col pr-10" md="auto">-->
+<!--                <component :is="widget.widgetName " v-bind="transform(widget)" v-model="queryParam[widget.key]"-->
+<!--                           @change="queryPage"/>-->
+<!--            </v-col>-->
 
-            <v-col class="button-col pl-10 flex-column" md="auto">
-                <v-btn v-for="(button,index) in buttons" :key="index" class="my-1 ml-2" @click="doAction(button.action)"
-                       :color="button.color"
-                       small
-                       depressed
-                       outlined>
-                    <v-icon left v-if="button.icon">mdi-{{button.icon}}</v-icon>
-                    {{button.text}}
-                </v-btn>
-            </v-col>
-        </v-row>
+<!--            <v-col class="button-col pl-10 flex-column" md="auto">-->
+<!--                <v-btn v-for="(button,index) in buttons" :key="index" class="my-1 ml-2" @click="doAction(button.action)"-->
+<!--                       :color="button.color"-->
+<!--                       small-->
+<!--                       depressed-->
+<!--                       outlined>-->
+<!--                    <v-icon left v-if="button.icon">mdi-{{button.icon}}</v-icon>-->
+<!--                    {{button.text}}-->
+<!--                </v-btn>-->
+<!--            </v-col>-->
+<!--        </v-row>-->
+        <widget-button :widgets="widgets" :buttons="buttons" :model-object="queryParam" @widgetChange="queryPage" @buttonClick="doAction"/>
         <!--表格-->
         <v-data-table
                 v-model="selected"
@@ -101,20 +102,19 @@
 </template>
 
 <script>
-    import {mixins as crudMixins} from "../api/crud";
+    import {CrudService, mixins as crudMixins} from "../api/crud";
     import transform from "../utils/widget";
     import FormDialog from "./FormDialog";
     import TipsDialog from "./TipsDialog";
+    import WidgetButton from "./WidgetButton";
 
     crudMixins.methods.transform = transform;
 
     export default {
-        name: "NormalTable",
+        name: "CrudTable",
         mixins: [crudMixins],
-        components: {TipsDialog, FormDialog},
+        components: {WidgetButton, TipsDialog, FormDialog},
         props: {
-            //命名空间，与后台RESTFULTCRUD对应，如用户则是/rest/users
-            namespace: String,
             //表头
             headers: {
                 type: Array,
@@ -149,10 +149,6 @@
                 size: 10,
                 current: 1,
             },
-            //查询参数
-            queryParam: {},
-            //顶部控件，如名称输入查询，列表选择等
-            widgets: [],
             //跳转到的页数
             jumpToPage: 1,
             //最多
@@ -165,24 +161,9 @@
             total: 0,
             //记录数组
             records: [],
-            //选择了的记录
-            selected: [],
-            //用于定义选择的对象的键
-            itemKey: '',
-            //顶部按钮
-            buttons: [],
             //行内操作事件按钮
             actions: [],
-            //消息提示
-            snackbar: {
-                switch: false,
-                text: ''
-            },
-            dialogView: {
-                width: 800,
-                fullscreen: false,
-                editFields: []
-            }
+            loadMethod: 'queryPage'
         }),
         watch: {
             'page.current': function (value, old) {
@@ -210,6 +191,7 @@
             }
         },
         created() {
+            this.crudService = new CrudService(this.namespace);
             this.headerArray = this.headers;
             this.widgets = this.widgetModels;
             this.buttons = this.buttonModels;
@@ -244,7 +226,6 @@
                             })
                         })
                     }
-                    console.warn("records", records);
                     return records;
                 };
 
@@ -253,11 +234,13 @@
                     this.itemKey = data.itemKey;
                     this.records = handlerRecord(data);
                     this.pageTotal = data.pages;
-                    this.dialogView = data.dialogView;
+                    if(data.dialogView){
+                        this.dialogView = data.dialogView ;
+                    }
+
                     if (data.pages && data.pages <= 5) {
                         this.pageCount = data.pages
                     }
-
 
                     //若表头没定义则用数据列的
                     if (!this.headerArray || this.headerArray.length === 0) {

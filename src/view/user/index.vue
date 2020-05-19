@@ -1,13 +1,13 @@
 <template>
-    <normal-table :namespace="'/rest/users'"/>
+    <crud-table :namespace="'/rest/users'"/>
 </template>
 
 <script>
-    import NormalTable from "../../components/NormalTable";
+    import CrudTable from "../../components/CrudTable";
 
     export default {
         name: "index",
-        components: {NormalTable}
+        components: {CrudTable}
     }
 </script>
 
