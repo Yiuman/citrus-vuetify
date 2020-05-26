@@ -45,3 +45,23 @@ html {
   background-color: #9f9f9f;
   -webkit-border-radius: 4px;
 }
+
+input
+  background none !important
+  outline none !important
+  border none !important
+
+input[type=text]:focus
+  background none !important
+
+
+input:-webkit-autofill , textarea:-webkit-autofill, select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px transparent  inset !important;
+  background-color:transparent;
+  transition: background-color 50000s ease-in-out 0s; //背景色透明  生效时长  过渡效果  启用时延迟的时间
+}
+input {
+  background-color:transparent;
+}
+
+

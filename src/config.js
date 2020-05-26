@@ -9,5 +9,8 @@ export const SYSTEM_CONFIG = {
 
     systemTile: 'Citrus',
 
+    /**
+     * 允许不需要权限访问的路由
+     */
     permitUrls:['/login']
 };

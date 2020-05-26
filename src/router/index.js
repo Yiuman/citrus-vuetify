@@ -38,8 +38,9 @@ export const constantRoutes = [
         children: [
             {
                 path: '/users',
-                component: () => import('../view/user/index'),
-                name: 'userList',
+                name: 'users',
+                component: () => import('../components/CrudTable.vue'),
+                props: {namespace: '/rest/users'},
                 meta: {
                     text: '用户管理',
                     icon: 'mdi-account'
@@ -52,16 +53,65 @@ export const constantRoutes = [
         component: Layout,
         children: [
             {
+                path: '/roles',
+                name: 'roles',
+                component: () => import('../components/CrudTable.vue'),
+                props: {namespace: '/rest/roles'},
+                meta: {
+                    text: '角色管理',
+                    icon: 'mdi-account-cowboy-hat'
+                }
+            },
+        ]
+    },
+    {
+        path: '/',
+        component: Layout,
+        children: [
+            {
                 path: '/organs',
-                component: () => import('../view/organ/index'),
                 name: 'organs',
+                component: () => import('../components/CrudTree.vue'),
+                props: {namespace: '/rest/organs'},
                 meta: {
                     text: '组织机构管理',
                     icon: 'mdi-file-tree-outline'
                 }
             },
         ]
-    }
+    },
+    {
+        path: '/',
+        component: Layout,
+        children: [
+            {
+                path: '/menus',
+                name: 'menus',
+                component: () => import('../components/CrudTree.vue'),
+                props: {namespace: '/rest/menus'},
+                meta: {
+                    text: '菜单管理',
+                    icon: 'mdi-microsoft-xbox-controller-menu'
+                }
+            },
+        ]
+    },
+    {
+        path: '/',
+        component: Layout,
+        children: [
+            {
+                path: '/resources',
+                name: 'resources',
+                component: () => import('../components/CrudTable.vue'),
+                props: {namespace: '/rest/resources'},
+                meta: {
+                    text: '资源管理',
+                    icon: 'mdi-semantic-web'
+                }
+            },
+        ]
+    },
 ];
 
 const router = new VueRouter({

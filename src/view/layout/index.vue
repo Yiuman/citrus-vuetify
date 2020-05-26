@@ -2,12 +2,15 @@
     <div class="v-application--wrap">
         <!-- 菜单导航-->
         <navigation :enable-mini="enableMini"/>
-        <!--应用顶部导航条-->
-        <v-app-bar app color="#344763" flat class="app-bar">
+        <!--应用顶部导航条#344763-->
+        <v-app-bar app color="#fff" flat class="app-bar" height="110px">
             <v-app-bar-nav-icon @click.stop="enableMini=!enableMini">
-                <v-icon color="white">{{toggleNavIcon}}</v-icon>
+                <v-icon color="green">{{toggleNavIcon}}</v-icon>
             </v-app-bar-nav-icon>
-            <v-toolbar-title class="white--text">{{systemTitle}}</v-toolbar-title>
+            <v-toolbar-title class="white--text">
+                <v-img height="56" width="185" :src="systemSrc"/>
+<!--                {{systemTitle}}-->
+            </v-toolbar-title>
 
             <template v-slot:extension >
                 <visited-bar class="mb-n1"/>
@@ -15,8 +18,8 @@
         </v-app-bar>
 
         <!--整体容器-->
-        <v-content >
-            <v-container >
+        <v-content class="main-content">
+            <v-container fluid>
                 <router-view/>
             </v-container>
         </v-content>
@@ -35,8 +38,9 @@
             VisitedBar
         },
         data: () => ({
+            systemSrc:require('../../assets/logo-text-right.png'),
             systemTitle: SYSTEM_CONFIG.systemTile,
-            enableMini: false,
+            enableMini: true,
         }),
         computed: {
             toggleNavIcon() {
@@ -53,6 +57,10 @@
     .app-bar >>> .v-toolbar__extension {
         padding: 0 !important;
         height: 44px !important;
+    }
+
+    .main-content{
+        background-color: #f8f8f8;
     }
 </style>
 

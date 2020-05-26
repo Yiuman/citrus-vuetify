@@ -1,7 +1,8 @@
 <template>
-    <div>
+    <div style="width: 300px !important;">
         <v-dialog v-model="dialogSwitch"
-                  :max-width="`${dialogView.width?dialogView.width:800}px`"
+                  :width="600"
+                  :max-width="`${dialogView.width?dialogView.width:600}px`"
                   :fullscreen="dialogView && dialogView.fullscreen">
             <v-toolbar dense :color="dialogView.color" v-if="Boolean(dialogView.title)">
                 <v-toolbar-title>{{dialogView.title}}</v-toolbar-title>
@@ -9,11 +10,11 @@
             <v-card>
                 <v-form>
                     <v-card-text>
-
                         <v-container>
                             <v-row>
-                                <v-col v-for="(editField,index) in editFields" :key="index" cols="12" sm="6"
-                                       md="4">
+                                <v-col :md="12/(editFields.length>3?3:editFields.length)" v-for="(editField,index) in editFields"
+                                       :key="index"
+                                >
                                     <component :is="editField.widget.widgetName"
                                                v-bind="transform(editField.widget)"
                                                v-model="currentItem[editField.widget.key]"
@@ -36,13 +37,14 @@
 
 <script>
     import transform from "../utils/widget";
+
     const mixins = {
         methods: {
             transform
         }
     };
     export default {
-        mixins:[mixins],
+        mixins: [mixins],
         name: "FormDialog",
         props: {
             value: Boolean,
@@ -71,8 +73,8 @@
                     this.$emit("input", val);
                 }
             },
-            editFields:{
-                get(){
+            editFields: {
+                get() {
                     return this.dialogView.editFields;
                 },
             }

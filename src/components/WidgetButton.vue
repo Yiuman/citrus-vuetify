@@ -1,7 +1,7 @@
 <template>
     <!--按钮及控件-->
     <v-row justify="end" no-gutters class="mt-2">
-        <v-col v-for="(widget,index) in widgets" :key="index" class="widget-col pr-10" md="auto">
+        <v-col  v-for="(widget,index) in widgets" :key="index" class="pr-10" md="auto">
             <component :is="widget.widgetName " v-bind="convert(widget)" v-model="modelObject[widget.key]"
                        @change="widgetChange"/>
         </v-col>

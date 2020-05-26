@@ -175,6 +175,9 @@ export const mixins = {
             });
         },
         edit(action, item) {
+            if (!item[this.itemKey]) {
+                return;
+            }
             this.currentItem = JSON.parse(JSON.stringify(item));
             this.defaultAction(action);
         },

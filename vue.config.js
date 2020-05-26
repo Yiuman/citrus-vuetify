@@ -13,6 +13,7 @@ module.exports = {
     publicPath: './',
     devServer: {
         port,
+        disableHostCheck: true,
         contentBase: [join(__dirname, 'public')],
         proxy: {
             '/devProxy': {

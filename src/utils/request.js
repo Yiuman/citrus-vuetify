@@ -3,9 +3,10 @@ import store from "../store";
 import {API_BASE_PATH} from "../config";
 import qs from 'qs';
 
+axios.defaults.withCredentials = true;
 const request = axios.create({
     baseURL: API_BASE_PATH, // url = base url + request url
-    // withCredentials: true, // send cookies when cross-domain requests
+    // send cookies when cross-domain requests
     // timeout: 5000 // request timeout
 });
 

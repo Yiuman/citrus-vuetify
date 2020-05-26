@@ -9,6 +9,7 @@
                             label
                             small
                             outlined
+                            close-icon="mdi-close"
                             @click="active(item,index)"
                             @click:close="close(item)"
                     >
@@ -84,6 +85,6 @@
 
 <style scoped>
     .chip-active {
-        border-bottom: #3f51b5 solid 3px !important;
+        border-bottom: #85b71b solid 3px !important;
     }
 </style>
