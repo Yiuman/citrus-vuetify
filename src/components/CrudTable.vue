@@ -1,93 +1,90 @@
 <template>
-    <div>
-        <v-card class="py-2 px-2">
-            <!--按钮及控件-->
-            <widget-button :widgets="widgets" :buttons="buttons" :model-object="queryParam" @widgetChange="queryPage"
-                           @buttonClick="doAction"/>
-            <!--表格-->
-            <v-data-table
-                    v-model="selected"
-                    :item-key="itemKey"
-                    :headers="headerArray"
-                    :items="records"
-                    :options.sync="pageOptions"
-                    fixed-header
-                    :items-per-page="page.size"
-                    :loading="loading"
-                    :server-items-length="total"
-                    hide-default-footer
-                    :show-select="Boolean(itemKey)"
-                    class="elevation-1"
-            >
-                <!--行内操作按钮事件-->
-                <template v-slot:item.actions="{ item }">
-                    <v-btn icon v-for="(operation,index) in actions" :key="index"
-                           @click="doAction(operation.action,item)"
-                           class="mr-2"
-                           :color="operation.color">
-                        <v-icon small>mdi-{{operation.icon}}</v-icon>
-                        {{operation.text}}
-                    </v-btn>
-                </template>
+    <v-card class="py-2 px-2 height-100pc">
+        <!--按钮及控件-->
+        <widget-button :widgets="widgets" :buttons="buttons" :model-object="queryParam" @widgetChange="queryPage"
+                       @buttonClick="doAction"/>
+        <!--表格-->
+        <v-data-table
+                v-model="selected"
+                :item-key="itemKey"
+                :headers="headerArray"
+                :items="records"
+                :options.sync="pageOptions"
+                fixed-header
+                :items-per-page="page.size"
+                :loading="loading"
+                :server-items-length="total"
+                hide-default-footer
+                :show-select="Boolean(itemKey)"
+                class="elevation-0"
+        >
+            <!--行内操作按钮事件-->
+            <template v-slot:item.actions="{ item }">
+                <v-btn icon v-for="(operation,index) in actions" :key="index"
+                       @click="doAction(operation.action,item)"
+                       class="mr-2"
+                       :color="operation.color">
+                    <v-icon small>mdi-{{operation.icon}}</v-icon>
+                    {{operation.text}}
+                </v-btn>
+            </template>
 
-            </v-data-table>
-            <!--分页相关组件-->
-            <v-row justify="end" no-gutters class="mt-2">
-                <v-col md="1">
-                    <div class="pa-2 mt-3 mr-3 text-right">
-                        共{{total}}条
-                    </div>
-                </v-col>
-                <v-col md="auto">
-                    <v-select
-                            label="条/页"
-                            :items="perPageOptions"
-                            v-model="page.size"
-                            style="width: 50px"
-                    />
-                </v-col>
-                <v-col md="auto">
-                    <v-pagination
-                            class="pa-2 text-right page-selection"
-                            prev-icon="mdi-menu-left"
-                            next-icon="mdi-menu-right"
-                            color="#81b90c"
-                            v-model="page.current"
-                            :length="pageCount"
-                            total-visible="5"/>
-                </v-col>
-                <v-col md="auto">
-                    <v-text-field label="跳转到" type="number" v-model="jumpToPage" @keydown="queryPage"
-                                  style="width: 60px"/>
-                </v-col>
-            </v-row>
+        </v-data-table>
+        <!--分页相关组件-->
+        <v-row justify="end" no-gutters class="mt-2">
+            <v-col md="1">
+                <div class="pa-2 mt-3 mr-3 text-right">
+                    共{{total}}条
+                </div>
+            </v-col>
+            <v-col md="auto">
+                <v-select
+                        label="条/页"
+                        :items="perPageOptions"
+                        v-model="page.size"
+                        style="width: 50px"
+                />
+            </v-col>
+            <v-col md="auto">
+                <!--                    color="#81b90c"-->
+                <v-pagination
+                        class="pa-2 text-right page-selection"
+                        prev-icon="mdi-menu-left"
+                        next-icon="mdi-menu-right"
+                        v-model="page.current"
+                        :length="pageCount"
+                        total-visible="5"/>
+            </v-col>
+            <v-col md="auto">
+                <v-text-field label="跳转到" type="number" v-model="jumpToPage" @keydown="queryPage"
+                              style="width: 60px"/>
+            </v-col>
+        </v-row>
 
-            <slot name="add-dialog">
-                <form-dialog v-model="actionSwitch.add" :dialog-view="dialogView"
-                             :current-item="currentItem" @confirm="edit_"/>
-            </slot>
-            <slot name="edit-dialog">
-                <form-dialog v-model="actionSwitch.edit" :dialog-view="dialogView" :current-item="currentItem"
-                             @confirm="edit_"/>
-            </slot>
-            <slot name="delete-dialog">
-                <tips-dialog v-model="actionSwitch.delete" title="确认要删除当前数据项吗?" @confirm="delete_(currentItem)"/>
-            </slot>
+        <slot name="add-dialog">
+            <form-dialog v-model="actionSwitch.add" :dialog-view="dialogView"
+                         :current-item="currentItem" @confirm="edit_"/>
+        </slot>
+        <slot name="edit-dialog">
+            <form-dialog v-model="actionSwitch.edit" :dialog-view="dialogView"
+                         :current-item="currentItem"
+                         @confirm="edit_"/>
+        </slot>
+        <slot name="delete-dialog">
+            <tips-dialog v-model="actionSwitch.delete" title="确认要删除当前数据项吗?" @confirm="delete_(currentItem)"/>
+        </slot>
 
-            <slot name="delete-batch-dialog">
-                <tips-dialog v-model="actionSwitch.batchDelete" title="确认要删除当期所选数据项吗?"
-                             @confirm="batchDelete_(selected)"/>
-            </slot>
+        <slot name="delete-batch-dialog">
+            <tips-dialog v-model="actionSwitch.batchDelete" title="确认要删除当期所选数据项吗?"
+                         @confirm="batchDelete_(selected)"/>
+        </slot>
 
-            <!--消息提示-->
-            <v-snackbar v-model="snackbar.switch" top multi-line>
-                {{ snackbar.text }}
-                <v-btn outlined @click="snackbar.switch = false">确认</v-btn>
-            </v-snackbar>
-        </v-card>
-
-    </div>
-
+        <!--消息提示-->
+        <v-snackbar v-model="snackbar.switch" top multi-line>
+            {{ snackbar.text }}
+            <v-btn outlined @click="snackbar.switch = false">确认</v-btn>
+        </v-snackbar>
+    </v-card>
 
 </template>
 
@@ -164,7 +161,10 @@
                 this.jumpToPage = value;
                 this.queryPage();
             },
-            'page.size': function () {
+            'page.size': function (value, old) {
+                if (value === old) {
+                    return;
+                }
                 this.page.current = 1;
                 this.queryPage();
             },
@@ -175,7 +175,11 @@
                 this.page.current = Number(value);
             },
             'pageOptions': {
-                handler() {
+                handler(value, old) {
+
+                    if (!Object.keys(old).length) {
+                        return;
+                    }
                     this.queryPage();
                 },
                 deep: true
@@ -190,6 +194,7 @@
                 this.headerArray = this.headers;
                 this.widgets = this.widgetModels;
                 this.buttons = this.buttonModels;
+                this.actions = [];
                 this.queryPage();
             },
             queryPage() {
@@ -235,8 +240,8 @@
                         this.dialogView = data.dialogView;
                     }
 
-                    if (data.pages && data.pages <= 5) {
-                        this.pageCount = data.pages
+                    if (data.pages!==null &&  data.pages <= 5) {
+                        this.pageCount = data.pages || 1
                     }
 
                     //若表头没定义则用数据列的
@@ -284,6 +289,6 @@
 <style scoped>
     .page-selection:focus {
         outline: none !important;
-        background-color: green !important;
+        /*background-color: green !important;*/
     }
 </style>

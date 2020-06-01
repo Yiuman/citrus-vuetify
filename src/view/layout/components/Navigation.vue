@@ -1,10 +1,10 @@
 <template>
     <v-navigation-drawer app
+                         color="#fafbfd"
                          permanent
                          :mini-variant="enableMini"
                          :expand-on-hover="enableMini"
     >
-<!--        <v-img v-slot:img :src="bgSrc" />-->
         <menu-group :menus="menus"/>
     </v-navigation-drawer>
 </template>
@@ -22,7 +22,7 @@
             },
             bgSrc: {
                 type: String,
-                default: () => require('../../../assets/logo-text.png')
+                default: () => require('../../../assets/logo.png')
             }
         },
         data: () => ({

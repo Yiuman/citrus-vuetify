@@ -112,6 +112,38 @@ export const constantRoutes = [
             },
         ]
     },
+    {
+        path: '/',
+        component: Layout,
+        children: [
+            {
+                path: '/scopes',
+                name: 'scopes',
+                component: () => import('../components/CrudTable.vue'),
+                props: {namespace: '/rest/scopes'},
+                meta: {
+                    text: '数据范围管理',
+                    icon: 'mdi-account-arrow-left'
+                }
+            },
+        ]
+    },
+    {
+        path: '/',
+        component: Layout,
+        children: [
+            {
+                path: '/auth',
+                name: 'auth',
+                component: () => import('../view/system/Authority.vue'),
+                props: {namespace: '/rest/auth'},
+                meta: {
+                    text: '权限管理',
+                    icon: 'mdi-shield-account-outline'
+                }
+            },
+        ]
+    },
 ];
 
 const router = new VueRouter({

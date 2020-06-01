@@ -26,8 +26,14 @@
 
                     <v-card-actions>
                         <v-spacer/>
-                        <v-btn color="grey darken-1" outlined @click="dialogSwitch=!dialogSwitch">{{cancelText}}</v-btn>
-                        <v-btn color="blue darken-1" outlined @click="save">{{saveText}}</v-btn>
+                        <v-btn small outlined color="grey darken-1"  @click="dialogSwitch=!dialogSwitch">
+                            <v-icon>mdi-close</v-icon>
+                            {{cancelText}}
+                        </v-btn>
+                        <v-btn small outlined color="blue darken-1"  @click="save">
+                            <v-icon>mdi-content-save-outline</v-icon>
+                            {{saveText}}
+                        </v-btn>
                     </v-card-actions>
                 </v-form>
             </v-card>

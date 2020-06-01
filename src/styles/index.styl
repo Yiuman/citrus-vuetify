@@ -14,6 +14,10 @@ html {
   z-index 99
 }
 
+.hover-pointer:hover {
+  cursor pointer
+}
+
 /* 滚动条 */
 ::-webkit-scrollbar-thumb:horizontal { /*水平滚动条的样式*/
   width: 4px;
@@ -55,13 +59,17 @@ input[type=text]:focus
   background none !important
 
 
-input:-webkit-autofill , textarea:-webkit-autofill, select:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 1000px transparent  inset !important;
-  background-color:transparent;
+input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  background-color: transparent;
   transition: background-color 50000s ease-in-out 0s; //背景色透明  生效时长  过渡效果  启用时延迟的时间
 }
+
 input {
-  background-color:transparent;
+  background-color: transparent;
 }
+
+.height-100pc
+  height 100% !important
 
 

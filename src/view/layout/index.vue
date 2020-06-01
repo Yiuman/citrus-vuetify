@@ -3,23 +3,34 @@
         <!-- 菜单导航-->
         <navigation :enable-mini="enableMini"/>
         <!--应用顶部导航条#344763-->
-        <v-app-bar app color="#fff" flat class="app-bar" height="110px">
+        <v-app-bar app
+                   dense
+                   color="#80abfa"
+                   class="app-bar"
+                   elevation="0"
+        >
             <v-app-bar-nav-icon @click.stop="enableMini=!enableMini">
-                <v-icon color="green">{{toggleNavIcon}}</v-icon>
+                <v-icon color="#fafbfd">{{toggleNavIcon}}</v-icon>
             </v-app-bar-nav-icon>
             <v-toolbar-title class="white--text">
-                <v-img height="56" width="185" :src="systemSrc"/>
-<!--                {{systemTitle}}-->
+                <v-img height="20" width="98" :src="systemSrc"/>
+                <!--                {{systemTitle}}-->
             </v-toolbar-title>
 
-            <template v-slot:extension >
+            <v-spacer/>
+
+            <v-btn icon>
+                <v-icon>mdi-heart</v-icon>
+            </v-btn>
+
+            <template v-slot:extension>
                 <visited-bar class="mb-n1"/>
             </template>
         </v-app-bar>
 
         <!--整体容器-->
         <v-content class="main-content">
-            <v-container fluid>
+            <v-container fluid class="height-100pc">
                 <router-view/>
             </v-container>
         </v-content>
@@ -38,7 +49,7 @@
             VisitedBar
         },
         data: () => ({
-            systemSrc:require('../../assets/logo-text-right.png'),
+            systemSrc: require('../../assets/text.png'),
             systemTitle: SYSTEM_CONFIG.systemTile,
             enableMini: true,
         }),
@@ -59,8 +70,9 @@
         height: 44px !important;
     }
 
-    .main-content{
+    .main-content {
         background-color: #f8f8f8;
     }
+
 </style>
 

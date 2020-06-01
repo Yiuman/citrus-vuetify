@@ -11,17 +11,24 @@ const widgetProcessor = {
             ...widget,
             label: widget.text,
             items: widget.model,
-            'item-text':"label",
-            'item-value':'value',
-            multiple:widget.multiple,
-            dense:true,
+            'item-text': "label",
+            'item-value': 'value',
+            multiple: widget.multiple,
+            dense: true,
         }
     },
     'v-text-field': (widget) => {
         return {
             ...widget,
             label: widget.text,
-            dense:true,
+            dense: true,
+        }
+    },
+    'FormSelectTree': (widget) => {
+        return {
+            ...widget,
+            label:widget.text,
+            treeItem:widget.model
         }
     }
 };

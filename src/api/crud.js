@@ -152,6 +152,7 @@ export const mixins = {
         doAction(action, item) {
             const actionMethod = this[action] || this['defaultAction'];
             actionMethod(action, item);
+            this.$emit('action',action,item)
         },
         defaultAction(action) {
             this.actionSwitch[action] = true;

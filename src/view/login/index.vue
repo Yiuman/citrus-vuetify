@@ -3,9 +3,11 @@
         <v-row no-gutters align="center" justify="center">
             <v-col cols="12" sm="8" md="4" lg="4">
                 <v-card class="elevation-10 pa-3 z-index-99 color-white bg-white">
+                    <div class="logo-mount"></div>
                     <v-card-text>
-                        <div class="layout column align-center mb-6 ">
-                           <v-img :src="logoSrc" height="30" width="150"/>
+                        <div id="system-title" class="layout column align-center mb-6 ">
+                            <v-img :src="logoSrc" height="30" width="150"/>
+<!--                                                        Citrus-->
                         </div>
                         <v-form @keydown.enter.native="login">
                             <v-text-field
@@ -56,15 +58,17 @@
 
                 </v-card>
             </v-col>
+            <v-snackbar color="warn" v-model="snackbar.switch" top multi-line>
+                {{ snackbar.text }}
+                <v-btn outlined @click="snackbar.switch = false">确认</v-btn>
+            </v-snackbar>
         </v-row>
-        <vue-threejs-birds :color1="birds.color1" :color2="birds.color2" :quantity="birds.quantity"
+        <vue-threejs-birds style="max-width: none" :color1="birds.color1" :color2="birds.color2"
+                           :quantity="birds.quantity"
                            :canvasBgAlpha="birds.canvasBgAlpha" :wingsSpan="birds.wingsSpan"
                            :colorEffect="birds.colorEffect"/>
         <!--消息提示-->
-        <v-snackbar color="warn"  v-model="snackbar.switch" top multi-line>
-            {{ snackbar.text }}
-            <v-btn  outlined  @click="snackbar.switch = false">确认</v-btn>
-        </v-snackbar>
+
     </v-container>
 </template>
 
@@ -79,7 +83,7 @@
             VueThreejsBirds
         },
         data: () => ({
-            logoSrc:require('../../assets/text.png'),
+            logoSrc: require('../../assets/text.png'),
             captchaSrc: CAPTCHA_BASE_URL,
             model: {
                 loginId: '',
@@ -156,5 +160,85 @@
 
     input::-webkit-input-placeholder
         color rgba(255, 255, 255, 0.1) !important
+
+    .logo-mount
+        position relative
+
+    /*    content: '';
+        position: absolute;
+        z-index: 2;
+        top: 60px;
+        background-image: url("../../assets/logo.png");
+        background-size: 100% 100%;
+        left: 50px;
+        width: 50px;
+        height: 50px;
+        border-radius: 2px;
+        transform: rotate(45deg);
+        -webkit-animation: box .8s infinite;
+    */
+    .logo-mount:before {
+        content: '';
+        position: absolute;
+        z-index: 2;
+        top: -30px;
+        left: 10px;
+        width: 50px;
+        height: 50px;
+        background-image: url("../../assets/logo.png");
+        background-size: 100% 100%;
+        border-radius: 2px;
+        transform: rotate(45deg);
+        -webkit-animation: box .8s infinite;
+    }
+
+    .logo-mount:after {
+        content: '';
+        position: absolute;
+        z-index: 1;
+        top: 48px;
+        left: 12px;
+        width: 44px;
+        height: 3px;
+        background: #eaeaea;
+        border-radius: 100%;
+        -webkit-animation: shadow .8s infinite;
+    }
+
+    //底部阴影动效
+    @-webkit-keyframes shadow {
+        0%, 100% {
+            left: 14px;
+            width: 40px;
+            background: #eaeaea;
+        }
+        50% {
+            top: 46px;
+            left: 10px;
+            width: 50px;
+            height: 7px;
+            background: #eee;
+        }
+    }
+
+    //box跳动+旋转效果
+    @-webkit-keyframes box {
+        0% {
+            top: -30px;
+        }
+        20% {
+            border-radius: 2px;
+        }
+        50% {
+            top: 0;
+            border-bottom-right-radius: 25px;
+        }
+        80% {
+            border-radius: 2px;
+        }
+        100% {
+            top: -30px;
+        }
+    }
 
 </style>
