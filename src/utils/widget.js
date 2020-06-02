@@ -8,7 +8,7 @@ const transform = (widget) => {
 const widgetProcessor = {
     'v-select': (widget) => {
         return {
-            ...widget,
+            key: widget.key,
             label: widget.text,
             items: widget.model,
             'item-text': "label",
@@ -19,16 +19,17 @@ const widgetProcessor = {
     },
     'v-text-field': (widget) => {
         return {
-            ...widget,
+            key: widget.key,
             label: widget.text,
             dense: true,
         }
     },
-    'FormSelectTree': (widget) => {
+    'tree-select': (widget) => {
         return {
             ...widget,
-            label:widget.text,
-            treeItem:widget.model
+            model:'',
+            label: widget.text,
+            treeItem: widget.model
         }
     }
 };

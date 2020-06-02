@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuetify, {VSelect, VTextField} from 'vuetify/lib'
 import TreeModel from '../components/TreeModel'
-import FormSelectTree from '../components/FormSelectTree'
+import TreeSelect from '../components/TreeSelect'
 import '@mdi/font/css/materialdesignicons.css';
 
 Vue.use(Vuetify, {
@@ -9,7 +9,7 @@ Vue.use(Vuetify, {
         VSelect,
         VTextField,
         TreeModel,
-        FormSelectTree
+        TreeSelect
     }
 });
 const opts = {

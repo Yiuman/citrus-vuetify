@@ -1,11 +1,11 @@
 <template>
     <v-treeview
-            dense
             hoverable
             activatable
             rounded
-            :selection-type="selectType"
             v-model="selection"
+            :selection-type="selectType"
+            :dense="isDense"
             :selectable="selectable"
             :multiple-active="multipleActive"
             :items="items"
@@ -18,11 +18,11 @@
             :item-text="itemText"
     >
         <template v-slot:prepend="{ item }">
-            <v-icon v-text="`mdi-${item.children ? 'home-variant' : 'folder-network'}`"/>
+            <v-icon small v-text="`mdi-${item.children ? 'home-variant' : 'folder-network'}`"/>
         </template>
 
         <template v-slot:label="{item}">
-            <div class="hover-pointer" @dblclick="$emit('nodeDbClick',item)">{{item[itemText]}}</div>
+            <div class="hover-pointer font-size-14" @dblclick="$emit('nodeDbClick',item)">{{item[itemText]}}</div>
         </template>
     </v-treeview>
 </template>
@@ -33,6 +33,9 @@
     export default {
         name: "TreeModel",
         props: {
+            value: Array,
+            dense: Boolean,
+            displayRoot: Boolean,
             treeItem: Object,
             namespace: {
                 type: String,
@@ -46,10 +49,6 @@
                 type: Boolean,
                 default: () => false
             },
-            selected: {
-                type: Array,
-                default: () => []
-            },
             selectType: {
                 type: String,
                 default: () => 'leaf'
@@ -57,12 +56,9 @@
             modelText: String,
             modelKey: String,
         },
-        watch: {
-            selection: function () {
-                this.$emit('selection', this.selection)
-            }
-        },
         data: () => ({
+            isDisplayRoot: true,
+            isDense: true,
             itemKey: '',
             lazy: false,
             loading: true,
@@ -72,22 +68,33 @@
             open: [],
             queryParam: {},
         }),
+        watch: {
+            value: function () {
+                this.initSelection();
+            },
+            selection: function () {
+                this.$emit("selection", this.selection)
+            }
+        },
         created() {
             this.init()
         },
         methods: {
             init() {
-                this.selection = this.selected;
+                this.isDisplayRoot = this.displayRoot;
+                this.isDense = this.dense;
                 if (!this.treeItem) {
                     this.crudService = new TreeService(this.namespace);
                     this.load()
                 } else {
                     this.handleNodes(this.treeItem, false);
-                    this.items.splice(0, 1, this.treeItem)
+                    this.items.splice(0, 1, this.treeItem);
                     this.itemText = this.modelText;
                     this.itemKey = this.modelKey;
                 }
-
+            },
+            initSelection() {
+                this.selection = this.value;
             },
             load() {
                 const vm = this;
