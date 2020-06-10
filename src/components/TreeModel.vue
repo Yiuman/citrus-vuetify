@@ -1,21 +1,23 @@
 <template>
     <v-treeview
+            class="hover-pointer"
+            item-disabled="locked"
             hoverable
-            activatable
             rounded
+            return-object
             v-model="selection"
+            :activatable="activatable"
             :selection-type="selectType"
             :dense="isDense"
             :selectable="selectable"
             :multiple-active="multipleActive"
             :items="items"
-            return-object
             :open.sync="open"
             :load-children="loadChildren"
             :item-key="itemKey"
-            @update:active="updateActive"
-            class="hover-pointer"
             :item-text="itemText"
+            :filter="filter"
+            @update:active="updateActive"
     >
         <template v-slot:prepend="{ item }">
             <v-icon small v-text="`mdi-${item.children ? 'home-variant' : 'folder-network'}`"/>
@@ -35,6 +37,11 @@
         props: {
             value: Array,
             dense: Boolean,
+            activatable: {
+                type: Boolean,
+                default: () => true
+            },
+            filter: Function,
             displayRoot: Boolean,
             treeItem: Object,
             namespace: {
@@ -49,12 +56,17 @@
                 type: Boolean,
                 default: () => false
             },
+            //树模型的选择方式，leaf只能选择子节点，independent为单独可选
             selectType: {
                 type: String,
                 default: () => 'leaf'
             },
             modelText: String,
             modelKey: String,
+            /**
+             * 节点处理的扩展方法，用于获取节点的时候进行处理的时候，可能有特殊的节点处理方式，进行扩展
+             */
+            nodeHandleWrapper: Function,
         },
         data: () => ({
             isDisplayRoot: true,
@@ -172,12 +184,14 @@
                 } else {
                     delete node.children;
                 }
+
+                if (this.nodeHandleWrapper) {
+                    this.nodeHandleWrapper(node);
+                }
             },
             updateActive(nodes) {
-                console.warn()
                 this.$emit('nodeActive', nodes);
                 this.$emit("input", nodes)
-
             }
         }
     }

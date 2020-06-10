@@ -119,7 +119,7 @@ export const constantRoutes = [
             {
                 path: '/scopes',
                 name: 'scopes',
-                component: () => import('../components/CrudTable.vue'),
+                component: () => import('../view/system/DataScopes.vue'),
                 props: {namespace: '/rest/scopes'},
                 meta: {
                     text: '数据范围管理',

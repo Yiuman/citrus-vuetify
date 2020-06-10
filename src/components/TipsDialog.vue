@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="dialogSwitch" max-width="290">
         <v-card>
-            <v-card-title class="headline">{{title}}</v-card-title>
+            <v-card-title >{{title}}</v-card-title>
             <v-card-text v-if="tips">
                 {{tips}}
             </v-card-text>
@@ -44,5 +44,7 @@
 </script>
 
 <style scoped>
-
+    .tips-text {
+        font-size: 16px;
+    }
 </style>

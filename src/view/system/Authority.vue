@@ -11,7 +11,7 @@
                                 <v-btn small icon @click="addDialog = false">
                                     <v-icon>mdi-close</v-icon>
                                 </v-btn>
-                                <v-toolbar-title >权限配置</v-toolbar-title>
+                                <v-toolbar-title>权限配置</v-toolbar-title>
                                 <v-spacer/>
                                 <v-toolbar-items>
                                     <v-btn dark text @click="addDialog = false">保存</v-btn>
@@ -36,21 +36,29 @@
                                                         namespace="/rest/menus"
                                                         :selectable="true"
                                                         @selection="selection"
+                                                        :nodeHandleWrapper="nodeHandleWrapper"
                                                         @nodeActive="treeNodeActive"/>
                                             </v-col>
 
                                             <v-divider vertical/>
                                             <v-col cols="5" class="mt-0">
                                                 <v-row>
-                                                    <v-select label="数据范围" placeholder="(若不选择则为所有)"
-                                                              :items="dataScopes"  item-text="scopeName" item-value="scopeId"/>
+                                                    <!--数据范围的选择-->
+                                                    <template
+                                                            v-if="selected && authority.resources[String(selected.id)]">
+                                                        <v-select label="数据范围" placeholder="(若不选择则为所有)"
+                                                                  :items="dataScopes"
+                                                                  v-model="authority.resources[String(selected.id)]['scopeId']"
+                                                                  item-text="scopeName" item-value="scopeId"/>
+                                                    </template>
                                                 </v-row>
                                                 <v-row>
-                                                    <template v-if="selected && operations && operations.length>0 ">
+                                                    <!--操作资源的选择-->
+                                                    <template v-if="selected && authority.resources[String(selected.id)]">
                                                         <v-checkbox class="pr-3" v-for="(operation,index) in operations"
                                                                     :key="index"
                                                                     :value=operation.resourceId
-                                                                    v-model="authority.resources[String(selected.id)]"
+                                                                    v-model="authority.resources[String(selected.id)]['operations']"
                                                                     :label="operation.resourceName"
                                                         />
                                                     </template>
@@ -65,6 +73,7 @@
                     </v-dialog>
                 </v-row>
             </template>
+
         </crud-table>
     </v-card>
 </template>
@@ -94,15 +103,9 @@
         watch: {
             selected: {
                 handler(node) {
-                    if (node && node.id) {
+                    if (node && node.id && node.path) {
                         this.operations = [];
-                        getOperationByKey(node.id).then(data => {
-                            this.operations = data;
-                            if (!this.authority.resources[node.id]) {
-                                this.authority.resources[node.id] = data ? data.map(item => item.id) : []
-                            }
-
-                        })
+                        this.getOperationByResource(node)
                     }
                 }
             }
@@ -113,11 +116,35 @@
                 console.warn(action)
             },
             treeNodeActive(nodes) {
-                this.selected = nodes ? nodes[0] : null;
+                this.selected = nodes && nodes.length > 0 ? nodes[0] : null;
                 console.warn(nodes)
             },
             selection(nodes) {
                 console.warn(nodes)
+            },
+            /**
+             * 获取当前资源节点的资源及数据范围
+             * @param node 当前节点
+             */
+            getOperationByResource(node) {
+                this.operations = [...node.operations];
+                if (!this.authority.resources[node.id]) {
+                    this.authority.resources[node.id] = {
+                        scopeId: null,
+                        operations: this.operations ? this.operations.map(item => item.id) : [],
+                    };
+                }
+            },
+            /**
+             * 用于扩展功能资源树的节点处理，有路径则有数据范围及操作资源
+             * @param node 正在处理的节点
+             */
+            nodeHandleWrapper(node) {
+                if (node && node.id && node.path) {
+                    getOperationByKey(node.id).then(data => {
+                        node.operations = data;
+                    })
+                }
             }
         },
         created() {

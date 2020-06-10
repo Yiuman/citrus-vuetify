@@ -75,7 +75,8 @@
         </slot>
 
         <slot name="delete-batch-dialog">
-            <tips-dialog v-model="actionSwitch.batchDelete" title="确认要删除当期所选数据项吗?"
+            <tips-dialog v-model="actionSwitch.batchDelete"
+                         title="确认要删除当期所选数据项吗?"
                          @confirm="batchDelete_(selected)"/>
         </slot>
 

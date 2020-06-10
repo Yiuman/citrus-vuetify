@@ -3,7 +3,7 @@
         <v-menu v-model="showPanel"
                 eager
                 offset-y
-                :z-index="9999"
+                z-index="9999"
         >
             <template v-slot:activator="{ on }">
                 <v-text-field class="hover-pointer"
@@ -21,6 +21,7 @@
                     v-show="showPanel"
                     class="bg-color-white"
                     style="width: 300px"
+                    :activatable="canActivatable"
                     :select-type="selectType"
                     :selectable="multipleSelect"
                     :model-key="modelKeyField"
@@ -57,6 +58,10 @@
                 type: Boolean,
                 default: () => false,
             },
+            activatable: {
+                type: Boolean,
+                default: () => true,
+            },
             multipleActive: {
                 type: Boolean,
                 default: () => false
@@ -75,15 +80,19 @@
         },
         watch: {
             value: function () {
+                //value改变要判断是否与模型值一致，否则会出先无限递归
                 if (JSON.stringify(this.value) === JSON.stringify(this.modelValue)) {
                     return;
                 }
-
-                //value改变要判断是否与模型值一致，否则会出先无限递归
-
                 this.initSelection();
-
-
+            }
+        },
+        computed: {
+            canActivatable: function () {
+                if (this.multipleSelect) {
+                    return false;
+                }
+                return this.activatable;
             }
         },
         methods: {
