@@ -5,12 +5,12 @@
         <!--应用顶部导航条#344763-->
         <v-app-bar app
                    dense
-                   color="#80abfa"
+                   color="primary"
                    class="app-bar"
                    elevation="0"
         >
             <v-app-bar-nav-icon @click.stop="enableMini=!enableMini">
-                <v-icon color="#fafbfd">{{toggleNavIcon}}</v-icon>
+                <v-icon >{{toggleNavIcon}}</v-icon>
             </v-app-bar-nav-icon>
             <v-toolbar-title class="white--text">
                 <v-img height="20" width="98" :src="systemSrc"/>

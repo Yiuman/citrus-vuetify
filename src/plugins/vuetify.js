@@ -16,6 +16,14 @@ const opts = {
     icons: {
         iconfont: 'mdi',
     },
+    //主题样式
+    theme: {
+        themes: {
+            light: {
+                primary: '#80abfa',
+            }
+        }
+    }
 };
 
 export default new Vuetify(opts)

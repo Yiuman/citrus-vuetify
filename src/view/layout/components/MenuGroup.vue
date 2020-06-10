@@ -2,6 +2,7 @@
     <v-list dense>
         <div v-for="(menu,index) in menus" :key="index">
             <v-list-item
+                    color="primary"
                     v-if="!menu.children"
                     :to="resolvePath(menu)"
                     ripple="ripple"
@@ -18,6 +19,7 @@
             </v-list-item>
 
             <v-list-group
+                    color="primary"
                     v-else
                     :prepend-icon="menu.icon"
             >

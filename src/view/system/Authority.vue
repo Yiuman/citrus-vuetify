@@ -7,11 +7,11 @@
                     <v-dialog v-model="addDialog" hide-overlay transition="dialog-bottom-transition" width="800">
                         <v-card>
                             <!--顶部-->
-                            <v-toolbar dense dark>
-                                <v-btn small icon dark @click="addDialog = false">
+                            <v-toolbar dense color="primary">
+                                <v-btn small icon @click="addDialog = false">
                                     <v-icon>mdi-close</v-icon>
                                 </v-btn>
-                                <v-toolbar-title>权限配置</v-toolbar-title>
+                                <v-toolbar-title >权限配置</v-toolbar-title>
                                 <v-spacer/>
                                 <v-toolbar-items>
                                     <v-btn dark text @click="addDialog = false">保存</v-btn>
@@ -43,14 +43,14 @@
                                             <v-col cols="5" class="mt-0">
                                                 <v-row>
                                                     <v-select label="数据范围" placeholder="(若不选择则为所有)"
-                                                              :items="dataScopes"/>
+                                                              :items="dataScopes"  item-text="scopeName" item-value="scopeId"/>
                                                 </v-row>
                                                 <v-row>
                                                     <template v-if="selected && operations && operations.length>0 ">
                                                         <v-checkbox class="pr-3" v-for="(operation,index) in operations"
                                                                     :key="index"
                                                                     :value=operation.resourceId
-                                                                    v-model="authority.resources[selected.id]"
+                                                                    v-model="authority.resources[String(selected.id)]"
                                                                     :label="operation.resourceName"
                                                         />
                                                     </template>
@@ -122,7 +122,6 @@
         },
         created() {
             getDataScopes().then(data => {
-                console.warn(data);
                 this.dataScopes = data.records
             })
         }

@@ -8,6 +8,7 @@
             <template v-slot:activator="{ on }">
                 <v-text-field class="hover-pointer"
                               readonly
+                              :dense="dense"
                               :label="label"
                               v-model="valueText"
                               v-on="on"
@@ -43,7 +44,11 @@
         name: "TreeSelect",
         components: {TreeModel},
         props: {
-            value: Array,
+            value: [Array, Object, String, Number],
+            dense: {
+                type: Boolean,
+                default: () => true,
+            },
             selectType: {
                 type: String,
                 default: () => 'independent'
@@ -70,19 +75,33 @@
         },
         watch: {
             value: function () {
+                if (JSON.stringify(this.value) === JSON.stringify(this.modelValue)) {
+                    return;
+                }
+
+                //value改变要判断是否与模型值一致，否则会出先无限递归
+
                 this.initSelection();
+
+
             }
         },
         methods: {
             initSelection() {
-                if (this.value && this.value.length > 0) {
-                    const selected = [];
-                    this.value.forEach(id => {
-                        selected.push({[this.modelKeyField]: id})
-                    });
-                    this.selection = selected;
+                if (this.value instanceof Array) {
+                    if (this.value && this.value.length > 0) {
+                        const selected = [];
+                        this.value.forEach(id => {
+                            selected.push({[this.modelKeyField]: id})
+                        });
+                        this.selection = selected;
+                    } else {
+                        this.selection = [];
+                    }
                 } else {
-                    this.selection = [];
+                    const selected = [];
+                    selected.push({[this.modelKeyField]: this.value});
+                    this.selection = selected;
                 }
             },
             nodeActive(nodes) {
@@ -92,17 +111,17 @@
                 this.active(nodes);
             },
             active(nodes) {
-                if (!nodes) {
+                if (!nodes || nodes.length === 0) {
                     return;
                 }
                 if (this.multipleSelect) {
                     this.valueText = nodes.map(item => item[this.modelTextField]).join(',');
                     this.modelValue = nodes.map(item => item[this.modelKeyField]);
-                    this.$emit("selection", this.modelValue);
+                    this.$emit("input", this.modelValue);
                 } else {
                     this.valueText = nodes[0][this.modelTextField];
                     this.modelValue = nodes[0][this.modelKeyField];
-                    this.$emit("selection", this.modelValue);
+                    this.$emit("input", this.modelValue);
                 }
             }
         },
@@ -119,4 +138,11 @@
 </script>
 
 <style scoped>
+    .tree-select:hover {
+        cursor: pointer !important;
+    }
+
+    .tree-select >>> .v-text-field__slot input:hover {
+        cursor: pointer !important;
+    }
 </style>

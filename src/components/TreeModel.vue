@@ -70,6 +70,9 @@
         }),
         watch: {
             value: function () {
+                if (this.value.length === this.selection) {
+                    return;
+                }
                 this.initSelection();
             },
             selection: function () {
@@ -171,12 +174,9 @@
                 }
             },
             updateActive(nodes) {
+                console.warn()
                 this.$emit('nodeActive', nodes);
-                if (this.multipleActive) {
-                    this.$emit("input", nodes)
-                } else {
-                    this.$emit("input", nodes[0])
-                }
+                this.$emit("input", nodes)
 
             }
         }

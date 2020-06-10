@@ -3,9 +3,10 @@
         <v-col>
             <v-sheet elevation="3" tile>
                 <v-chip-group mandatory active-class="chip-active" v-model="activeIndex">
-                    <v-chip v-for="(item,index) in visitedItems" :key="index"
+                    <v-chip v-for="(item,index) in visitedItems"
+                            :key="index"
                             :close="item.deletable"
-                            class="ml-1"
+                            class="ml-1 bar-chip"
                             label
                             small
                             outlined
@@ -15,7 +16,6 @@
                     >
                         {{item.name}}
                     </v-chip>
-
                 </v-chip-group>
             </v-sheet>
         </v-col>
@@ -86,6 +86,16 @@
 <style scoped>
     .chip-active {
         /*border-bottom: #85b71b solid 3px !important;*/
+        border-bottom: #3f51b5 solid 3px !important;
+    }
+
+    .bar-chip {
+        height: 28px !important;
+        margin-top: 2px !important;
+        margin-bottom: 2px !important;
+    }
+
+    .bar-chip:hover {
         border-bottom: #3f51b5 solid 3px !important;
     }
 </style>

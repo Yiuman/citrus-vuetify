@@ -1,3 +1,4 @@
+
 const transform = (widget) => {
     let widgetProcessorElement = widgetProcessor[widget.widgetName];
     if (widgetProcessorElement) {
@@ -26,6 +27,7 @@ const widgetProcessor = {
     },
     'tree-select': (widget) => {
         return {
+            dense:true,
             ...widget,
             model:'',
             label: widget.text,
