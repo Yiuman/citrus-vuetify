@@ -1,19 +1,19 @@
 <template>
     <v-card class="height-100pc">
-        <crud-table namespace="/rest/scopes" @action="actionEvent">
+        <crud-table namespace="/rest/scopes" :exclude-actions="['edit']" @action="actionEvent" ref="$crud$">
             <template v-slot:add-dialog>
                 <v-row justify="center">
                     <v-dialog v-model="addDialog" hide-overlay transition="dialog-bottom-transition" width="800">
                         <v-card>
                             <!--顶部-->
-                            <v-toolbar dense>
+                            <v-toolbar dense height="35px">
                                 <v-btn small icon @click="addDialog = false">
                                     <v-icon>mdi-close</v-icon>
                                 </v-btn>
-                                <v-toolbar-title>数据范围维护</v-toolbar-title>
+                                <v-toolbar-title class="font-size-18">数据范围维护</v-toolbar-title>
                                 <v-spacer/>
                                 <v-toolbar-items>
-                                    <v-btn text @click="addDialog = false">保存</v-btn>
+                                    <v-btn text @click="saveEntity">保存</v-btn>
                                 </v-toolbar-items>
                             </v-toolbar>
 
@@ -24,7 +24,7 @@
                                     <v-card-subtitle>基础信息</v-card-subtitle>
                                     <v-card-text>
                                         <v-text-field label="数据范围名称" clearable v-model="scopeEntity.scopeName"/>
-                                        <v-text-field dense label="描述" clearable v-model="scopeEntity.describe"/>
+                                        <v-text-field label="描述" clearable v-model="scopeEntity.describe"/>
                                     </v-card-text>
 
                                     <v-divider class="mx-4"/>
@@ -35,17 +35,19 @@
                                             <!--组织机构选择-->
                                             <v-col cols="6" class="select-container">
                                                 <tree-model
+                                                        :value="scopeEntity.selectedOrganIds"
+                                                        :return-object="false"
                                                         select-type="independent"
                                                         namespace="/rest/organs"
                                                         :selectable="true"
+                                                        :searchable="true"
                                                         @selection="selection"
                                                         @nodeActive="treeNodeActive"/>
                                             </v-col>
 
                                             <v-divider vertical/>
                                             <v-col cols="5" class="mt-0 ml-3 align-center">
-                                                <template v-if="selected
-                                                                && scopeEntity.scopeDefinesMap[String(selected.id)]">
+                                                <template v-if="scopeRuleShow">
                                                     <div>范围规则</div>
                                                     <v-divider/>
                                                     <v-radio-group
@@ -59,10 +61,7 @@
                                                     </v-radio-group>
                                                 </template>
 
-                                                <template v-if="scopeTypes
-                                                                && scopeTypes.length>0
-                                                                && selected
-                                                                && scopeEntity.scopeDefinesMap[String(selected.id)]">
+                                                <template v-if="scopeTypeShow   ">
                                                     <div>范围类型</div>
                                                     <v-divider/>
                                                     <v-row v-for="(scopeType,index) in scopeTypes" :key="index" dense>
@@ -93,23 +92,38 @@
     import TreeModel from "../../components/TreeModel"
     import {getScopeTypes} from "../../api/auth";
 
+    const DEFAULT_ENTITY = {
+        scopeId: null,
+        scopeName: '',
+        describe: '',
+        selectedOrganIds: [],
+        scopeDefinesMap: {}
+    };
+
     export default {
         name: "DataScopes",
         components: {CrudTable, TreeModel},
         data: () => ({
             addDialog: false,
-            scopeEntity: {
-                scopeId: null,
-                scopeName: '',
-                describe: '',
-                selectedOrganIds: [],
-                scopeDefinesMap: {}
-            },
-            active: [],
+            scopeEntity: JSON.parse(JSON.stringify(DEFAULT_ENTITY)),
             open: [],
             scopeTypes: [],
             selected: {},
+            //观察数据是否已经准备就续,主要是用于动态数组对象的更新控制
+            hasReadiness: false,
         }),
+        computed: {
+            scopeRuleShow: function () {
+                return this.selected && this.scopeEntity.scopeDefinesMap[String(this.selected.id)] && this.hasReadiness;
+            },
+            scopeTypeShow: function () {
+                return (this.scopeTypes
+                    && this.scopeTypes.length > 0
+                    && this.selected
+                    && this.scopeEntity.scopeDefinesMap[String(this.selected.id)])
+                    && this.hasReadiness
+            }
+        },
         watch: {
             selected: {
                 handler(node) {
@@ -126,26 +140,75 @@
                     this.scopeTypes = data;
                 })
             },
-            actionEvent(action) {
-                this.addDialog = true;
-                console.warn(action)
+            //执行的事件
+            actionEvent(action, item) {
+                switch (action) {
+                    case 'add': {
+                        this.scopeEntity = JSON.parse(JSON.stringify(DEFAULT_ENTITY));
+                        this.selection = [];
+                        this.addDialog = true;
+                        break;
+                    }
+                    case 'edit': {
+                        const scopeDefinesMap = {}, selectedOrganIds = [];
+                        if (item.scopeDefines && item.scopeDefines.length > 0) {
+                            item.scopeDefines.forEach(scopeDefine => {
+                                selectedOrganIds.push(scopeDefine.organId);
+                                scopeDefinesMap[scopeDefine.organId] = {
+                                    scopeRule: String(scopeDefine.scopeRule),
+                                    types: scopeDefine.scopeTypes || []
+                                }
+                            })
+                        }
+                        this.scopeEntity = {
+                            ...item,
+                            scopeDefinesMap: scopeDefinesMap,
+                            selectedOrganIds: selectedOrganIds
+                        };
+                        this.$nextTick(() => {
+                            this.addDialog = true;
+                        });
+
+                        break;
+                    }
+                    default:
+
+                }
             },
             treeNodeActive(nodes) {
                 this.selected = nodes && nodes.length > 0 ? nodes[0] : null;
             },
             selection(nodes) {
                 if (nodes) {
-                    this.scopeEntity.selectedOrganIds = nodes.map(item => item.id);
+                    this.scopeEntity.selectedOrganIds = nodes;
                 }
             },
             //初始化节点的数据范围的定义规则
             initNodeScopeDefine(node) {
                 if (!this.scopeEntity.scopeDefinesMap[String(node.id)]) {
+                    this.hasReadiness = false;
                     this.scopeEntity.scopeDefinesMap[String(node.id)] = {
                         scopeRule: '0',
                         types: []
-                    }
+                    };
+                    this.$nextTick(() => {
+                        this.hasReadiness = true;
+                    })
                 }
+            },
+            saveEntity() {
+                const submitEntity = {...this.scopeEntity};
+                submitEntity.scopeDefines = Object.keys(submitEntity.scopeDefinesMap)
+                    .map(scopeDefineId => {
+                        const scopeDefinesMapElement = submitEntity.scopeDefinesMap[scopeDefineId];
+                        return {
+                            scopeId: submitEntity.scopeId,
+                            organId: scopeDefineId,
+                            scopeRule: scopeDefinesMapElement.scopeRule,
+                            scopeTypes: scopeDefinesMapElement.types || []
+                        }
+                    });
+                this.$refs['$crud$'].crudService.save(submitEntity).then(() => this.addDialog = false);
             }
         },
         created() {

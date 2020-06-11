@@ -1,32 +1,47 @@
 <template>
-    <v-treeview
-            class="hover-pointer"
-            item-disabled="locked"
-            hoverable
-            rounded
-            return-object
-            v-model="selection"
-            :activatable="activatable"
-            :selection-type="selectType"
-            :dense="isDense"
-            :selectable="selectable"
-            :multiple-active="multipleActive"
-            :items="items"
-            :open.sync="open"
-            :load-children="loadChildren"
-            :item-key="itemKey"
-            :item-text="itemText"
-            :filter="filter"
-            @update:active="updateActive"
-    >
-        <template v-slot:prepend="{ item }">
-            <v-icon small v-text="`mdi-${item.children ? 'home-variant' : 'folder-network'}`"/>
-        </template>
+    <div class="tree-model">
+        <v-text-field
+                v-if="searchable"
+                class="elevation-0 mb-n8 mx-3"
+                dense
+                outlined
+                v-model="search"
+                label="节点查询"
+                clearable
+                clear-icon="mdi-close-circle-outline"
+                append-icon="mdi-magnify"
+        />
+        <v-treeview
+                class="hover-pointer"
+                item-disabled="locked"
+                hoverable
+                rounded
+                :return-object="returnObject"
+                v-model="selection"
+                :search="search"
+                :activatable="activatable"
+                :selection-type="selectType"
+                :dense="isDense"
+                :selectable="selectable"
+                :multiple-active="multipleActive"
+                :items="items"
+                :filter="filterFunc"
+                :open.sync="open"
+                :load-children="loadChildren"
+                :item-key="itemKey"
+                :item-text="itemText"
+                @update:active="updateActive"
+        >
+            <template v-slot:prepend="{ item }">
+                <v-icon small v-text="`mdi-${item.children ? 'home-variant' : 'folder-network'}`"/>
+            </template>
 
-        <template v-slot:label="{item}">
-            <div class="hover-pointer font-size-14" @dblclick="$emit('nodeDbClick',item)">{{item[itemText]}}</div>
-        </template>
-    </v-treeview>
+            <template v-slot:label="{item}">
+                <div class="hover-pointer font-size-14" @dblclick="$emit('nodeDbClick',item)">{{item[itemText]}}</div>
+            </template>
+        </v-treeview>
+    </div>
+
 </template>
 
 <script>
@@ -37,13 +52,34 @@
         props: {
             value: Array,
             dense: Boolean,
+            openDeep: Number,
+            displayRoot: Boolean,
+            treeItem: Object,
+            modelText: String,
+            modelKey: String,
+            /**
+             * 节点处理的扩展方法，用于获取节点的时候进行处理的时候，可能有特殊的节点处理方式，进行扩展
+             */
+            nodeHandleWrapper: Function,
+            searchable: {
+                type: Boolean,
+                default: () => false
+            },
+            //是否返回对象
+            returnObject: {
+                type: Boolean,
+                default: () => true
+            },
             activatable: {
                 type: Boolean,
                 default: () => true
             },
-            filter: Function,
-            displayRoot: Boolean,
-            treeItem: Object,
+            filter: {
+                type: Function,
+                default: () => function (item, search, textKey) {
+                    return !search || (item[textKey].indexOf(search.trim()) > -1)
+                }
+            },
             namespace: {
                 type: String,
                 default: () => ''
@@ -60,13 +96,7 @@
             selectType: {
                 type: String,
                 default: () => 'leaf'
-            },
-            modelText: String,
-            modelKey: String,
-            /**
-             * 节点处理的扩展方法，用于获取节点的时候进行处理的时候，可能有特殊的节点处理方式，进行扩展
-             */
-            nodeHandleWrapper: Function,
+            }
         },
         data: () => ({
             isDisplayRoot: true,
@@ -79,10 +109,17 @@
             selection: [],
             open: [],
             queryParam: {},
+            search: null,
+            openDeepNumber: 0
         }),
+        computed: {
+            filterFunc() {
+                return this.filter();
+            }
+        },
         watch: {
             value: function () {
-                if (this.value.length === this.selection) {
+                if (JSON.stringify(this.value) === JSON.stringify(this.selection)) {
                     return;
                 }
                 this.initSelection();
@@ -119,6 +156,7 @@
                     vm.itemText = data.itemText;
                     vm.lazy = data.lazy;
                     vm.open = [];
+                    vm.openDeepNumber = 0;
                     const tree = data.tree;
                     if (data.dialogView) {
                         this.dialogView = data.dialogView;
@@ -150,7 +188,6 @@
                     }
 
                     this.loading = false;
-
                 });
             },
             loadChildren(node) {
@@ -168,17 +205,18 @@
 
             },
             handleNodes(node, open) {
+
+                if (node.leaf) {
+                    delete node.children;
+                }
+
                 if (node.children) {
                     node.children.forEach(childNode => {
                         this.handleNodes(childNode, open)
                     });
 
                     if (open || !node.parentId) {
-                        this.open.push(node[this.itemKey])
-                    }
-
-                    if (node.leaf) {
-                        delete node.children;
+                        this.open.push(this.returnObject ? node : node[this.itemKey])
                     }
 
                 } else {

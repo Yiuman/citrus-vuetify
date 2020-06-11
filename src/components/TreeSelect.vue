@@ -1,6 +1,7 @@
 <template>
     <div class="tree-select">
         <v-menu v-model="showPanel"
+                :close-on-content-click="false"
                 eager
                 offset-y
                 z-index="9999"

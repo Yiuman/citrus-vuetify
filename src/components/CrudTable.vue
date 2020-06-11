@@ -5,18 +5,18 @@
                        @buttonClick="doAction"/>
         <!--表格-->
         <v-data-table
+                class="elevation-0"
+                fixed-header
+                hide-default-footer
                 v-model="selected"
                 :item-key="itemKey"
                 :headers="headerArray"
                 :items="records"
                 :options.sync="pageOptions"
-                fixed-header
                 :items-per-page="page.size"
                 :loading="loading"
                 :server-items-length="total"
-                hide-default-footer
                 :show-select="Boolean(itemKey)"
-                class="elevation-0"
         >
             <!--行内操作按钮事件-->
             <template v-slot:item.actions="{ item }">
@@ -56,27 +56,37 @@
                         total-visible="5"/>
             </v-col>
             <v-col md="auto">
-                <v-text-field label="跳转到" type="number" v-model="jumpToPage" @keydown="queryPage"
-                              style="width: 60px"/>
+                <v-text-field
+                        label="跳转到"
+                        style="width: 60px"
+                        type="number"
+                        v-model="jumpToPage"
+                        @keydown="queryPage"
+                />
             </v-col>
         </v-row>
 
         <slot name="add-dialog">
-            <form-dialog v-model="actionSwitch.add" :dialog-view="dialogView"
-                         :current-item="currentItem" @confirm="edit_"/>
-        </slot>
-        <slot name="edit-dialog">
-            <form-dialog v-model="actionSwitch.edit" :dialog-view="dialogView"
+            <form-dialog v-model="actionSwitch.add"
+                         :dialog-view="dialogView"
                          :current-item="currentItem"
                          @confirm="edit_"/>
         </slot>
+
+        <slot name="edit-dialog">
+            <form-dialog v-model="actionSwitch.edit"
+                         :dialog-view="dialogView"
+                         :current-item="currentItem"
+                         @confirm="edit_"/>
+        </slot>
+
         <slot name="delete-dialog">
             <tips-dialog v-model="actionSwitch.delete" title="确认要删除当前数据项吗?" @confirm="delete_(currentItem)"/>
         </slot>
 
         <slot name="delete-batch-dialog">
             <tips-dialog v-model="actionSwitch.batchDelete"
-                         title="确认要删除当期所选数据项吗?"
+                         title="确认要删除当前所选数据项吗?"
                          @confirm="batchDelete_(selected)"/>
         </slot>
 
@@ -241,7 +251,7 @@
                         this.dialogView = data.dialogView;
                     }
 
-                    if (data.pages!==null &&  data.pages <= 5) {
+                    if (data.pages !== null && data.pages <= 5) {
                         this.pageCount = data.pages || 1
                     }
 
@@ -291,5 +301,9 @@
     .page-selection:focus {
         outline: none !important;
         /*background-color: green !important;*/
+    }
+
+    >>> .v-data-table__checkbox .mdi-checkbox-marked {
+        color: #80abfa;
     }
 </style>

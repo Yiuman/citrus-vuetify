@@ -144,15 +144,22 @@ export const mixins = {
     props: {
         //命名空间，与后台RESTFULTCRUD对应，如用户则是/rest/users
         namespace: String,
+        excludeActions: {
+            type: Array,
+            default: () => []
+        },
     },
     data() {
         return JSON.parse(JSON.stringify(DEFAULT_COMMON_DATA));
     },
     methods: {
         doAction(action, item) {
-            const actionMethod = this[action] || this['defaultAction'];
-            actionMethod(action, item);
-            this.$emit('action',action,item)
+            if (!(this.excludeActions.indexOf(action)>-1)) {
+                const actionMethod = this[action] || this['defaultAction'];
+                actionMethod(action, item);
+            }
+
+            this.$emit('action', action, item)
         },
         defaultAction(action) {
             this.actionSwitch[action] = true;
@@ -213,7 +220,6 @@ export const mixins = {
             })
         },
         import() {
-
         },
         export() {
             download(`${this.namespace}/export`);
