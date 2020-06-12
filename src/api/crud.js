@@ -27,6 +27,14 @@ export class CrudService {
     }
 
     /**
+     * 获取对象的实体
+     * @param id 实体ID
+     */
+    getEntity(id){
+        return request.get(`${this.namespace}/${id}`)
+    }
+
+    /**
      * 删除数据
      * @param id
      */

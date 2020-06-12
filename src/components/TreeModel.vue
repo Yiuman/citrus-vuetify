@@ -146,7 +146,18 @@
                 }
             },
             initSelection() {
-                this.selection = this.value;
+                if (this.value.length > 0) {
+                    let valueElement = this.value[0];
+                    if (this.returnObject && !(valueElement instanceof Object)) {
+                        this.selection = this.value.map(itemKey => ({[this.itemKey]: itemKey}))
+                    } else if (!this.returnObject && (valueElement instanceof Object)) {
+                        this.selection = this.value.map(item => item[this.itemKey])
+                    } else {
+                        this.selection = this.value;
+                    }
+                } else {
+                    this.selection = []
+                }
             },
             load() {
                 const vm = this;
