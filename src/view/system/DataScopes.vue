@@ -3,67 +3,71 @@
         <crud-table namespace="/rest/scopes" :exclude-actions="['edit']" @action="actionEvent" ref="$crud$">
             <template v-slot:add-dialog>
                 <v-row justify="center">
-                    <simple-form-slot v-model="addDialog" title="数据范围维护" width="800" :successAction="saveEntity">
-                        <v-form >
-                            <v-card elevation="0">
-                                <v-card-subtitle>基础信息</v-card-subtitle>
-                                <v-card-text>
-                                    <v-text-field label="数据范围名称" clearable v-model="scopeEntity.scopeName"/>
-                                    <v-text-field label="描述" clearable v-model="scopeEntity.describe"/>
-                                </v-card-text>
+                    <simple-form-slot v-model="addDialog"
+                                      title="数据范围维护"
+                                      width="800"
+                                      :successAction="saveEntity"
+                                      @callback="reload"
+                    >
+                        <v-card elevation="0">
+                            <v-card-subtitle>基础信息</v-card-subtitle>
+                            <v-card-text>
+                                <v-text-field label="数据范围名称" clearable v-model="scopeEntity.scopeName"/>
+                                <v-text-field label="描述" clearable v-model="scopeEntity.describe"/>
+                            </v-card-text>
 
-                                <v-divider class="mx-4"/>
+                            <v-divider class="mx-4"/>
 
-                                <v-card-subtitle color="primary">数据范围设置</v-card-subtitle>
-                                <v-card-text>
-                                    <v-row class="pa-4">
-                                        <!--组织机构选择-->
-                                        <v-col cols="6" class="select-container">
-                                            <tree-model
-                                                    :value="scopeEntity.selectedOrganIds"
-                                                    :return-object="false"
-                                                    select-type="independent"
-                                                    namespace="/rest/organs"
-                                                    :selectable="true"
-                                                    :searchable="true"
-                                                    @selection="selection"
-                                                    @nodeActive="treeNodeActive"/>
-                                        </v-col>
+                            <v-card-subtitle color="primary">数据范围设置</v-card-subtitle>
+                            <v-card-text>
+                                <v-row class="pa-4">
+                                    <!--组织机构选择-->
+                                    <v-col cols="6" class="select-container">
+                                        <tree-model
+                                                :value="scopeEntity.selectedOrganIds"
+                                                :display-root="true"
+                                                :return-object="false"
+                                                select-type="independent"
+                                                namespace="/rest/organs"
+                                                :selectable="true"
+                                                :searchable="true"
+                                                @selection="selection"
+                                                @nodeActive="treeNodeActive"/>
+                                    </v-col>
 
-                                        <v-divider vertical/>
-                                        <v-col cols="5" class="mt-0 ml-3 align-center">
-                                            <template v-if="scopeRuleShow">
-                                                <div>范围规则</div>
-                                                <v-divider/>
-                                                <v-radio-group
-                                                        class="ml-1"
-                                                        :row="true"
-                                                        v-model="scopeEntity.scopeDefinesMap[selected]['scopeRule']"
-                                                        :mandatory="true"
-                                                >
-                                                    <v-radio label="包含" value="0"/>
-                                                    <v-radio label="排除" value="1"/>
-                                                </v-radio-group>
-                                            </template>
+                                    <v-divider vertical/>
+                                    <v-col cols="5" class="mt-0 ml-3 align-center">
+                                        <template v-if="scopeRuleShow">
+                                            <div>范围规则</div>
+                                            <v-divider/>
+                                            <v-radio-group
+                                                    class="ml-1"
+                                                    :row="true"
+                                                    v-model="scopeEntity.scopeDefinesMap[selected]['scopeRule']"
+                                                    :mandatory="true"
+                                            >
+                                                <v-radio label="包含" value="0"/>
+                                                <v-radio label="排除" value="1"/>
+                                            </v-radio-group>
+                                        </template>
 
-                                            <template v-if="scopeTypeShow   ">
-                                                <div>范围类型</div>
-                                                <v-divider/>
-                                                <v-row v-for="(scopeType,index) in scopeTypes" :key="index" dense>
-                                                    <!--数据范围类型的选择-->
-                                                    <v-checkbox class="ml-3"
-                                                                :key="index"
-                                                                v-model="scopeEntity.scopeDefinesMap[selected]['types']"
-                                                                :value=scopeType.code
-                                                                :label="scopeType.text"
-                                                    />
-                                                </v-row>
-                                            </template>
-                                        </v-col>
-                                    </v-row>
-                                </v-card-text>
-                            </v-card>
-                        </v-form>
+                                        <template v-if="scopeTypeShow   ">
+                                            <div>范围类型</div>
+                                            <v-divider/>
+                                            <v-row v-for="(scopeType,index) in scopeTypes" :key="index" dense>
+                                                <!--数据范围类型的选择-->
+                                                <v-checkbox class="ml-3"
+                                                            :key="index"
+                                                            v-model="scopeEntity.scopeDefinesMap[selected]['types']"
+                                                            :value=scopeType.code
+                                                            :label="scopeType.text"
+                                                />
+                                            </v-row>
+                                        </template>
+                                    </v-col>
+                                </v-row>
+                            </v-card-text>
+                        </v-card>
                     </simple-form-slot>
                 </v-row>
             </template>
@@ -197,6 +201,9 @@
                         .then(resolve);
                 })
 
+            },
+            reload() {
+                this.$refs['$crud$'].reload();
             }
         },
         created() {

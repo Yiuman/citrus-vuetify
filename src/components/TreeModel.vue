@@ -99,7 +99,6 @@
             }
         },
         data: () => ({
-            isDisplayRoot: true,
             isDense: true,
             itemKey: '',
             lazy: false,
@@ -119,10 +118,8 @@
         },
         watch: {
             value: function () {
-                if (JSON.stringify(this.value) === JSON.stringify(this.selection)) {
-                    return;
-                }
-                this.initSelection();
+                this.assignment();
+
             },
             selection: function () {
                 this.$emit("selection", this.selection)
@@ -132,8 +129,27 @@
             this.init()
         },
         methods: {
+            //Value赋值
+            assignment() {
+                let valueAdapter = [];
+                if (this.value.length > 0) {
+                    let valueElement = this.value[0];
+                    if (this.returnObject && !(valueElement instanceof Object)) {
+                        valueAdapter = this.value.map(itemKey => ({[this.itemKey]: itemKey, id: itemKey}))
+                    } else if (!this.returnObject && (valueElement instanceof Object)) {
+                        valueAdapter = this.value.map(item => item[this.itemKey])
+                    } else {
+                        valueAdapter = this.value;
+                    }
+                }
+
+                //比较
+                if (JSON.stringify(valueAdapter) === JSON.stringify(this.selection)) {
+                    return;
+                }
+                this.selection = valueAdapter;
+            },
             init() {
-                this.isDisplayRoot = this.displayRoot;
                 this.isDense = this.dense;
                 if (!this.treeItem) {
                     this.crudService = new TreeService(this.namespace);
@@ -143,20 +159,6 @@
                     this.items.splice(0, 1, this.treeItem);
                     this.itemText = this.modelText;
                     this.itemKey = this.modelKey;
-                }
-            },
-            initSelection() {
-                if (this.value.length > 0) {
-                    let valueElement = this.value[0];
-                    if (this.returnObject && !(valueElement instanceof Object)) {
-                        this.selection = this.value.map(itemKey => ({[this.itemKey]: itemKey}))
-                    } else if (!this.returnObject && (valueElement instanceof Object)) {
-                        this.selection = this.value.map(item => item[this.itemKey])
-                    } else {
-                        this.selection = this.value;
-                    }
-                } else {
-                    this.selection = []
                 }
             },
             load() {
@@ -177,7 +179,7 @@
                         vm.handleNodes(tree, !vm.lazy || Boolean(Object.keys(vm.queryParam).length));
 
                         //是否显示根节点
-                        if (data.displayRoot) {
+                        if (data.displayRoot && this.displayRoot) {
                             this.items.splice(0, 1, tree)
                         } else {
                             this.items = [...tree.children]
@@ -198,7 +200,12 @@
                         vm.buttons = data.buttons;
                     }
 
-                    this.loading = false;
+                    this.$nextTick(() => {
+                        this.assignment();
+                        this.loading = false;
+                    });
+
+
                 });
             },
             loadChildren(node) {

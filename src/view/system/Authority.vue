@@ -4,61 +4,70 @@
             <!--编辑页面-->
             <template v-slot:add-dialog>
                 <v-row justify="center">
-                    <simple-form-slot v-model="addDialog" title="权限配置" width="800" :successAction="saveEntity">
-                        <v-form>
-                            <v-card elevation="0">
-                                <v-card-subtitle>基础信息</v-card-subtitle>
-                                <v-card-text>
-                                    <v-text-field label="权限名称" clearable v-model="authority.authorityName"/>
-                                    <v-text-field dense label="描述" clearable v-model="authority.describe"/>
-                                </v-card-text>
+                    <simple-form-slot v-model="addDialog"
+                                      title="权限配置"
+                                      width="800"
+                                      :successAction="saveEntity"
+                                      @callback="reload"
+                    >
+                        <v-card elevation="0">
+                            <v-card-subtitle>基础信息</v-card-subtitle>
+                            <v-card-text>
+                                <v-text-field label="权限名称"
+                                              :rules="[v =>(v !== undefined && v !== null && v !== '') || `权限名称不能为空`]"
+                                              clearable v-model="authority.authorityName"/>
 
-                                <v-divider class="mx-4"/>
+                                <v-text-field label="描述" clearable v-model="authority.remark"/>
+                            </v-card-text>
 
-                                <v-card-subtitle color="primary">功能设置</v-card-subtitle>
-                                <v-card-text>
-                                    <v-row class="pa-4" justify="space-between">
-                                        <!--选择功能-->
-                                        <v-col cols="5" class="select-container">
-                                            <tree-model
-                                                    namespace="/rest/menus"
-                                                    :selectable="true"
-                                                    @selection="selection"
-                                                    :nodeHandleWrapper="nodeHandleWrapper"
-                                                    @nodeActive="treeNodeActive"/>
-                                        </v-col>
+                            <v-divider class="mx-4"/>
 
-                                        <v-divider vertical/>
-                                        <v-col cols="5" class="mt-0">
-                                            <v-row>
-                                                <!--数据范围的选择-->
-                                                <template
-                                                        v-if="showScopes">
-                                                    <v-select label="数据范围"
-                                                              placeholder="(若不选择则为所有)"
-                                                              :items="dataScopes"
-                                                              v-model="authority.resourceMap[selected.id]['scopeId']"
-                                                              item-text="scopeName" item-value="scopeId"/>
-                                                </template>
-                                            </v-row>
-                                            <v-row>
-                                                <!--操作资源的选择-->
-                                                <template
-                                                        v-if="showOperations">
-                                                    <v-checkbox class="pr-3" v-for="(operation,index) in operations"
-                                                                :key="index"
-                                                                :value=operation.resourceId
-                                                                :label="operation.resourceName"
-                                                                v-model="authority.resourceMap[String(selected.id)]['operations']"
-                                                    />
-                                                </template>
-                                            </v-row>
+                            <v-card-subtitle color="primary">功能设置</v-card-subtitle>
+                            <v-card-text>
+                                <v-row class="pa-4" justify="space-between">
+                                    <!--选择功能-->
+                                    <v-col cols="5" class="select-container">
+                                        <tree-model
+                                                namespace="/rest/menus"
+                                                :value="authority.selectResources"
+                                                :display-root="false"
+                                                :searchable="true"
+                                                :selectable="true"
+                                                @selection="selection"
+                                                :nodeHandleWrapper="nodeHandleWrapper"
+                                                @nodeActive="treeNodeActive"/>
+                                    </v-col>
 
-                                        </v-col>
-                                    </v-row>
-                                </v-card-text>
-                            </v-card>
-                        </v-form>
+                                    <v-divider vertical/>
+                                    <v-col cols="5" class="mt-0">
+                                        <v-row>
+                                            <!--数据范围的选择-->
+                                            <template
+                                                    v-if="showScopes">
+                                                <v-select label="数据范围"
+                                                          placeholder="(若不选择则为所有)"
+                                                          :items="dataScopes"
+                                                          v-model="authority.resourceMap[selected.id]['scopeId']"
+                                                          item-text="scopeName" item-value="scopeId"/>
+                                            </template>
+                                        </v-row>
+                                        <v-row>
+                                            <!--操作资源的选择-->
+                                            <template
+                                                    v-if="showOperations">
+                                                <v-checkbox class="pr-3" v-for="(operation,index) in operations"
+                                                            :key="index"
+                                                            :value=operation.resourceId
+                                                            :label="operation.resourceName"
+                                                            v-model="authority.resourceMap[String(selected.id)]['operations']"
+                                                />
+                                            </template>
+                                        </v-row>
+
+                                    </v-col>
+                                </v-row>
+                            </v-card-text>
+                        </v-card>
                     </simple-form-slot>
                 </v-row>
             </template>
@@ -76,7 +85,7 @@
     const DEFAULT_ENTITY = {
         authorityId: null,
         authorityName: '',
-        describe: '',
+        remark: '',
         selectResources: [],
         resourceMap: {}
     };
@@ -127,14 +136,16 @@
                         break;
                     }
                     case 'edit': {
+                        //获取当前权限的资源列表
                         const resourceMap = {}, selectResources = [];
                         this.getService().getEntity(item.authorityId).then(data => {
                             if (data.resources && data.resources.length > 0) {
                                 data.resources.forEach(resource => {
                                     selectResources.push(resource.resourceId);
+                                    const operationIds = resource.operations ? resource.operations.map(item => item.resourceId) : [];
                                     resourceMap[resource.resourceId] = {
                                         scopeId: resource.scopeId,
-                                        operations: resource.operations
+                                        operations: operationIds
                                     }
                                 })
                             }
@@ -198,20 +209,20 @@
                 submitEntity.resources = this.authority.selectResources.map(resourceId => {
                     //处理当前选择的资源的操作资源
                     let operations = this.authority.resourceMap[resourceId].operations
-                    .map(operation=>({
-                        authorityId: this.authority.authorityId,
-                        scopeId: this.authority.resourceMap[resourceId].scopeId,
-                        objectId:resourceId,
-                        resourceId: operation,
-                        type:'2'
-                    }));
+                        .map(operation => ({
+                            authorityId: this.authority.authorityId,
+                            scopeId: this.authority.resourceMap[resourceId].scopeId,
+                            objectId: resourceId,
+                            resourceId: operation,
+                            type: '2'
+                        }));
 
                     return {
                         authorityId: this.authority.authorityId,
                         scopeId: this.authority.resourceMap[resourceId].scopeId,
                         operations: operations,
                         resourceId: resourceId,
-                        type:'0'
+                        type: '0'
                     }
                 });
                 return new Promise(resolve => {
@@ -221,6 +232,9 @@
             },
             getService() {
                 return this.$refs['$crud$'].crudService;
+            },
+            reload() {
+                this.$refs['$crud$'].reload();
             }
         },
         created() {

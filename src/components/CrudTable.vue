@@ -101,12 +101,12 @@
 
 <script>
     import {CrudService, mixins as crudMixins} from "../api/crud";
-    import transform from "../utils/widget";
+    import {convertWidget} from "../utils/widget";
     import FormDialog from "./FormDialog";
     import TipsDialog from "./TipsDialog";
     import WidgetButton from "./WidgetButton";
 
-    crudMixins.methods.transform = transform;
+    crudMixins.methods.transform = convertWidget;
 
     export default {
         name: "CrudTable",

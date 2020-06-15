@@ -22,7 +22,7 @@
 </template>
 
 <script>
-    import transform from '../utils/widget';
+    import {convertWidget} from '../utils/widget';
 
     export default {
         name: "WidgetButton",
@@ -33,7 +33,7 @@
         },
         methods: {
             convert(widget) {
-                return transform(widget);
+                return convertWidget(widget);
             },
             widgetChange() {
                 this.$emit("widgetChange");

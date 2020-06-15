@@ -4,17 +4,19 @@
             <v-card>
                 <!--顶部-->
                 <v-toolbar dense color="#fafbfd" class="mb-3" elevation="3">
-                    <v-btn  icon @click="toggleSwitch">
+                    <v-btn icon @click="toggleSwitch">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
                     <v-toolbar-title class="font-size-18 font-weight-bold">{{title}}</v-toolbar-title>
                     <v-spacer/>
-                    <v-btn  color="success" icon @click="executeSuccess">
+                    <v-btn color="success" icon @click="executeSuccess">
                         <v-icon>mdi-check</v-icon>
                     </v-btn>
                 </v-toolbar>
 
-                <slot/>
+                <v-form ref="form">
+                    <slot/>
+                </v-form>
             </v-card>
         </v-dialog>
     </div>
@@ -33,7 +35,7 @@
                 type: [Number, String],
                 default: () => '800'
             },
-            successAction: Function
+            successAction: Function,
         },
         computed: {
             dialogSwitch: {
@@ -42,6 +44,11 @@
                 },
                 set(val) {
                     //grants_改变由父组件控制
+                    const form = this.$refs.form;
+                    if (form) {
+                        form.resetValidation();
+                    }
+
                     this.$emit("input", val);
                 }
             },
@@ -51,15 +58,27 @@
                 this.dialogSwitch = !this.dialogSwitch;
             },
             executeSuccess() {
-                if (this.successAction) {
-                    this.successAction()
-                        .then(() => {this.toggleSwitch();})
-                } else {
-                    this.toggleSwitch();
+                let formValid = true;
+                const form = this.$refs.form;
+                if (form) {
+                    formValid = form.validate()
                 }
+
+                if (formValid) {
+                    if (this.successAction) {
+                        this.successAction()
+                            .then(() => {
+                                this.toggleSwitch();
+                                //整个提交流程执行完成的回调
+                                this.$emit('callback')
+                            })
+                    } else {
+                        this.toggleSwitch();
+                    }
+                }
+
             }
         }
-
     }
 </script>
 

@@ -8,15 +8,16 @@
                 <v-toolbar-title>{{dialogView.title}}</v-toolbar-title>
             </v-toolbar>
             <v-card>
-                <v-form>
+                <v-form ref="form">
                     <v-card-text>
                         <v-container>
                             <v-row>
-                                <v-col :md="12/(editFields.length>3?3:editFields.length)" v-for="(editField,index) in editFields"
+                                <v-col :md="12/(editFields.length>3?3:editFields.length)"
+                                       v-for="(editField,index) in editFields"
                                        :key="index"
                                 >
                                     <component :is="editField.widget.widgetName"
-                                               v-bind="transform(editField.widget)"
+                                               v-bind="convertFieldWidget(editField)"
                                                v-model="currentItem[editField.widget.key]"
                                     />
                                 </v-col>
@@ -26,11 +27,11 @@
 
                     <v-card-actions>
                         <v-spacer/>
-                        <v-btn small outlined color="grey darken-1"  @click="dialogSwitch=!dialogSwitch">
+                        <v-btn small outlined color="grey darken-1" @click="dialogSwitch=!dialogSwitch">
                             <v-icon>mdi-close</v-icon>
                             {{cancelText}}
                         </v-btn>
-                        <v-btn small outlined color="blue darken-1"  @click="save">
+                        <v-btn small outlined color="blue darken-1" @click="save">
                             <v-icon>mdi-content-save-outline</v-icon>
                             {{saveText}}
                         </v-btn>
@@ -42,11 +43,11 @@
 </template>
 
 <script>
-    import transform from "../utils/widget";
+    import {convertFieldWidget} from "../utils/widget";
 
     const mixins = {
         methods: {
-            transform
+            convertFieldWidget
         }
     };
     export default {
@@ -75,6 +76,7 @@
                     return this.value;
                 },
                 set(val) {
+                    this.$refs.form.resetValidation();
                     //grants_改变由父组件控制
                     this.$emit("input", val);
                 }
@@ -87,7 +89,9 @@
         },
         methods: {
             save() {
-                this.$emit("confirm", this.currentItem);
+                if (this.$refs.form.validate()) {
+                    this.$emit("confirm", this.currentItem);
+                }
             }
         }
     }
