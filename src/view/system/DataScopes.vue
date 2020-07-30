@@ -6,13 +6,16 @@
                     <simple-form-slot v-model="addDialog"
                                       title="数据范围维护"
                                       width="800"
+                                      :fullscreen="true"
                                       :successAction="saveEntity"
                                       @callback="reload"
                     >
                         <v-card elevation="0">
                             <v-card-subtitle>基础信息</v-card-subtitle>
                             <v-card-text>
-                                <v-text-field label="数据范围名称" clearable v-model="scopeEntity.scopeName"/>
+                                <v-text-field label="数据范围名称"
+                                              :rules="[v =>(v !== undefined && v !== null && v !== '') || `数据范围名称不能为空`]"
+                                              clearable v-model="scopeEntity.scopeName"/>
                                 <v-text-field label="描述" clearable v-model="scopeEntity.describe"/>
                             </v-card-text>
 

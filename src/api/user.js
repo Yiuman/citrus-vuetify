@@ -8,4 +8,8 @@ export const login = (data) => {
     return request.post('/rest/authenticate',data);
 };
 
+export const getCurrentUser= ()=>{
+    return request.get("/rest/users/current");
+};
+
 

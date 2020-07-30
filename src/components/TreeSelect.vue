@@ -4,6 +4,7 @@
                 :close-on-content-click="false"
                 eager
                 offset-y
+                absolute
                 z-index="9999"
         >
             <template v-slot:activator="{ on }">
@@ -20,7 +21,7 @@
 
             <tree-model
                     v-show="showPanel"
-                    class="bg-color-white"
+                    class="selector-tree-model"
                     style="width: 300px"
                     :activatable="canActivatable"
                     :select-type="selectType"
@@ -121,9 +122,6 @@
                 this.active(nodes);
             },
             active(nodes) {
-                if (!nodes || nodes.length === 0) {
-                    return;
-                }
                 if (this.multipleSelect) {
                     this.valueText = nodes.map(item => item[this.modelTextField]).join(',');
                     this.modelValue = nodes.map(item => item[this.modelKeyField]);
@@ -155,4 +153,10 @@
     .tree-select >>> .v-text-field__slot input:hover {
         cursor: pointer !important;
     }
+
+    .selector-tree-model {
+        height: 300px !important;
+        background: #fff !important;
+    }
+
 </style>

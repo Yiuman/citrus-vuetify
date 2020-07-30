@@ -1,10 +1,12 @@
-import {login} from '../../api/user'
+import {getCurrentUser, login} from '../../api/user'
 import storage from "../../utils/storage";
 
 const state = {
     token: storage.get('token'),
     name: '',
+    avatar: '',
     roles: [],
+    userOnlineInfo: null
 };
 
 const mutations = {
@@ -23,6 +25,9 @@ const mutations = {
     },
     SET_ROLES: (state, roles) => {
         state.roles = roles
+    },
+    SET_USER_ONLINE_INFO: (state, userOnlineInfo) => {
+        state.userOnlineInfo = userOnlineInfo;
     }
 };
 
@@ -38,6 +43,18 @@ const actions = {
             })
         })
     },
+    getCurrent({commit}) {
+        return new Promise(((resolve, reject) => {
+            getCurrentUser().then(user => {
+                commit('SET_NAME', user.username);
+                commit('SET_AVATAR', user.avatar);
+                commit('SET_USER_ONLINE_INFO', user);
+                resolve();
+            }).catch(reason => {
+                reject(reason);
+            })
+        }))
+    }
 };
 
 export default {

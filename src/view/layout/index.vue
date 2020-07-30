@@ -10,7 +10,7 @@
                    elevation="0"
         >
             <v-app-bar-nav-icon @click.stop="enableMini=!enableMini">
-                <v-icon >{{toggleNavIcon}}</v-icon>
+                <v-icon>{{toggleNavIcon}}</v-icon>
             </v-app-bar-nav-icon>
             <v-toolbar-title class="white--text">
                 <v-img height="20" width="98" :src="systemSrc"/>
@@ -20,7 +20,10 @@
             <v-spacer/>
 
             <v-btn icon>
-                <v-icon>mdi-heart</v-icon>
+                <v-avatar color="#b9cdef" size="36">
+                    <span class="white--text headline">{{currentUser}}</span>
+                </v-avatar>
+                <!--                <v-icon>mdi-heart</v-icon>-->
             </v-btn>
 
             <template v-slot:extension>
@@ -56,6 +59,13 @@
         computed: {
             toggleNavIcon() {
                 return this.enableMini ? 'mdi-format-indent-increase' : 'mdi-format-indent-decrease';
+            },
+            currentUser() {
+                let username = this.$store.state.user.name;
+                if (username && username.length > 1) {
+                    username = username.substring(0, 1);
+                }
+                return username;
             }
         }
     }

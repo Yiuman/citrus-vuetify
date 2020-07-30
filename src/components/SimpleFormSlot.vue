@@ -1,6 +1,9 @@
 <template>
     <div>
-        <v-dialog v-model="dialogSwitch" hide-overlay transition="dialog-bottom-transition" :width="width">
+        <v-dialog v-model="dialogSwitch" hide-overlay
+                  transition="dialog-bottom-transition"
+                  :width="width"
+                  :fullscreen="fullscreen">
             <v-card>
                 <!--顶部-->
                 <v-toolbar dense color="#fafbfd" class="mb-3" elevation="3">
@@ -34,6 +37,10 @@
             width: {
                 type: [Number, String],
                 default: () => '800'
+            },
+            fullscreen:{
+                type:Boolean,
+                default:()=>false
             },
             successAction: Function,
         },

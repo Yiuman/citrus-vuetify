@@ -5,6 +5,7 @@ import Layout from '../view/layout/index'
 import {createMenus, createDefaultVisitedBar} from "../utils/app";
 import {SYSTEM_CONFIG} from '../config'
 import store from "../store";
+// import menu from "../store/modules/menu";
 
 Vue.use(VueRouter);
 
@@ -147,17 +148,63 @@ export const constantRoutes = [
 ];
 
 const router = new VueRouter({
-    routes: [...systemRoutes, ...constantRoutes],
+    routes: [...systemRoutes],
 });
 
 router.beforeEach((to, from, next) => {
-    if (SYSTEM_CONFIG.permitUrls.some(i => i === to.path) || store.state.user.token) {
+    if (to.path === '/login') {
         next();
+    }
+    if (store.state.user.token || SYSTEM_CONFIG.permitUrls.some(i => i === to.path)) {
+        if (store.state.user.token && !store.state.user.userOnlineInfo) {
+
+            store.dispatch("user/getCurrent").then(() => {
+                addRouters();
+                next({...to,replace:true});
+            }).catch((err) => {
+                console.warn(err);
+                router.replace('/login')
+            })
+        } else {
+            addRouters();
+            next();
+        }
+
     } else {
         router.replace('/login')
     }
 });
 
-store.state.menu.menus = createMenus(constantRoutes);
+// store.state.menu.menus = createMenus(constantRoutes);
+const addRouters = () => {
+    const menus = store.state.user.userOnlineInfo.menus;
+    const routers = menus.filter(menu => menu.path).map(menu => {
+        return {
+            path: '/',
+            component: Layout,
+            children: [
+                {
+                    path: menu.path,
+                    name: menu.resourceName,
+                    component: loadComponent(menu.component),
+                    props: {namespace: menu.path},
+                    meta: {
+                        text: menu.resourceName,
+                        icon: menu.icon
+                    }
+                },
+            ]
+        };
+    });
+
+    router.addRoutes(routers);
+    store.state.menu.menus = createMenus(routers);
+    store.state.menu.inited = true;
+};
+
+const loadComponent = (component) => {
+    //必须@/
+    return (resolve) => require([`@/${component}`], resolve);
+};
 store.state.visited.visitedItems = createDefaultVisitedBar(systemRoutes);
 export default router

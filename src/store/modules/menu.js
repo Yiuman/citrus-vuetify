@@ -1,5 +1,6 @@
 const state = {
-    menus: []
+    menus: [],
+    inited: false,
 };
 
 const mutations = {

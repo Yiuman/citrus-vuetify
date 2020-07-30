@@ -29,6 +29,7 @@ export const convertWidget = (widget) => {
 const widgetProcessor = {
     'v-select': (widget) => {
         return {
+            ...widget,
             key: widget.key,
             label: widget.text,
             items: widget.model,
