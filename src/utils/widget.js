@@ -33,6 +33,7 @@ const widgetProcessor = {
             key: widget.key,
             label: widget.text,
             items: widget.model,
+            'x-samll':true,
             'item-text': "label",
             'item-value': 'value',
             multiple: widget.multiple,

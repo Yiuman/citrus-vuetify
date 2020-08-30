@@ -37,7 +37,7 @@
             </template>
 
             <template v-slot:label="{item}">
-                <div class="hover-pointer font-size-14" @dblclick="$emit('nodeDbClick',item)">{{item[itemText]}}</div>
+                <div class="hover-pointer font-size-14" @dblclick="$emit(`nodeDbClick`,item)">{{item[itemText]}}</div>
             </template>
         </v-treeview>
     </div>
