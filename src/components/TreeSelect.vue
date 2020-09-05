@@ -160,6 +160,8 @@
 
   .selector-tree-model {
     height: 300px !important;
-    background: #fff !important;
+    background: 
+    
+    #fff !important;
   }
 </style>

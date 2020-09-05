@@ -1,13 +1,56 @@
 <template>
   <v-card class="py-2 px-2 height-100pc crud-card" elevation="1">
     <!--按钮及控件-->
-    <widget-button
-      :widgets="widgets"
-      :buttons="buttons"
-      :model-object="queryParam"
-      @widgetChange="queryPage"
-      @buttonClick="doAction"
-    />
+    <v-row no-gutters justify="space-between" align="center">
+      <v-col>
+        <ButtonRender :buttons="buttons" @buttonClick="doAction" />
+      </v-col>
+      <!--控件的渲染-->
+      <v-col align="end" class="pr-2">
+        <div class="col-item" @click="showFilter = !showFilter">
+          <v-icon small color="#8091a5">mdi-filter-menu-outline</v-icon>
+          过滤
+        </div>
+        <FilterNavigation
+          v-model="showFilter"
+          :widgets="widgets"
+          :widget-model="queryParam"
+          @confirm="queryPage"
+        />
+        <span class="separator"></span>
+        <div class="col-item">
+          共<span class="total-count">{{ total }}</span
+          >条数据
+        </div>
+        <span class="separator"></span>
+        <div class="col-item">
+          <v-menu offset-y rounded="0">
+            <template v-slot:activator="{ on }">
+              <v-icon small color="#8091a5" v-on="on">mdi-cog-outline</v-icon>
+            </template>
+            <v-list dense>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-subtitle class="setting-title">
+                    每页显示数量
+                  </v-list-item-subtitle>
+                  <div class="setting-content">
+                    <template v-for="(perPage, index) in perPageOptions">
+                      <span
+                        :key="index"
+                        :class="[page.size === perPage ? 'per-current' : '']"
+                        @click="page.size = perPage"
+                        >{{ perPage }}</span
+                      >
+                    </template>
+                  </div>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+      </v-col>
+    </v-row>
     <!--表格-->
     <v-data-table
       class="crud-table elevation-0"
@@ -25,22 +68,29 @@
     >
       <!--行内操作按钮事件-->
       <template v-slot:[`item.actions`]="{ item }">
-        <v-btn
-          icon
-          v-for="(operation, index) in actions"
-          :key="index"
-          @click="doAction(operation.action, item)"
-          class="mr-2"
-          :color="operation.color"
-        >
-          <v-icon small>mdi-{{ operation.icon }}</v-icon>
-          {{ operation.text }}
-        </v-btn>
+        <v-menu top offset-y rounded="0" transition="slide-y-transition">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn width="0" height="0" tile fab v-bind="attrs" v-on="on">
+              <v-icon small>mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense>
+            <v-list-item
+              v-for="(operation, index) in actions"
+              :key="index"
+              @click="doAction(operation.action, item)"
+            >
+              <v-list-item-title>{{
+                operation.text || operation.action
+              }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </template>
     </v-data-table>
     <!--分页相关组件-->
     <v-row justify="end" no-gutters class="mt-2">
-      <v-col md="1">
+      <!-- <v-col md="1">
         <div class="pa-2 mt-3 mr-3 text-right">共{{ total }}条</div>
       </v-col>
       <v-col md="auto">
@@ -50,7 +100,7 @@
           v-model="page.size"
           style="width: 50px"
         />
-      </v-col>
+      </v-col> -->
       <v-col md="auto">
         <!--                    color="#81b90c"-->
         <v-pagination
@@ -73,23 +123,6 @@
         />
       </v-col>
     </v-row>
-
-    <!-- <slot name="add-dialog">
-      <form-dialog
-        v-model="actionSwitch.add"
-        :dialog-view="dialogView"
-        :current-item="currentItem"
-        @confirm="edit_"
-      />
-    </slot> -->
-    <!-- <slot name="edit-dialog">
-      <form-dialog
-        v-model="actionSwitch.edit"
-        :dialog-view="dialogView"
-        :current-item="currentItem"
-        @confirm="edit_"
-      />
-    </slot> -->
     <slot name="add-dialog">
       <FormNavigation
         v-model="actionSwitch.add"
@@ -132,18 +165,19 @@
 </template>
 
 <script>
-  import { CrudService, mixins as crudMixins } from "../api/crud";
-  import { convertWidget } from "../utils/widget";
-  import TipsDialog from "./TipsDialog";
-  import WidgetButton from "./WidgetButton";
-  import FormNavigation from "./FormNavigation";
+  import { CrudService, mixins as crudMixins } from "@/api/crud";
+  import { convertWidget } from "@/utils/widget";
+  import TipsDialog from "@/components/TipsDialog";
+  import ButtonRender from "@/components/ButtonRender";
+  import FormNavigation from "@/components/FormNavigation";
+  import FilterNavigation from "@/components/FilterNavigation";
 
   crudMixins.methods.transform = convertWidget;
 
   export default {
     name: "CrudTable",
     mixins: [crudMixins],
-    components: { WidgetButton, TipsDialog, FormNavigation },
+    components: { TipsDialog, FormNavigation, ButtonRender, FilterNavigation },
     props: {
       //表头
       headers: {
@@ -169,7 +203,7 @@
       //表头数组
       headerArray: [],
       //每页的条数定义
-      perPageOptions: [5, 10, 20, 30],
+      perPageOptions: [10, 20, 30],
       //页面的定义信息，外部排序，外部分页等
       pageOptions: {},
       // 页面信息，查询条数，及当前页
@@ -192,6 +226,7 @@
       //行内操作事件按钮
       actions: [],
       loadMethod: "queryPage",
+      showFilter: false,
     }),
     watch: {
       namespace: "initCrud",
@@ -317,12 +352,13 @@
             data.actions.length > 0
           ) {
             this.actions = data.actions;
-            this.headerArray.push({
-              text: "操作",
+            this.headerArray.unshift({
+              text: "",
               value: "actions",
-              align: "center",
+              class: "crud-actons-td",
+              align: "start",
               sortable: false,
-              width: "auto",
+              width: "1",
             });
           }
 
@@ -356,5 +392,77 @@
 
   .crud-table >>> .v-data-table__wrapper tbody tr:nth-child(2n + 1) {
     background: #f8f8f8;
+  }
+
+  .crud-table >>> .crud-actons-td {
+    padding: 0 1px !important;
+  }
+
+  .crud-table >>> .actions-menu {
+    border-radius: none !important;
+  }
+
+  .col-item {
+    display: inline-block;
+    font-size: 14px;
+    color: #8091a5;
+    cursor: pointer;
+  }
+
+  .total-count {
+    color: #000;
+    padding: 0 5px;
+  }
+
+  .per-page {
+    display: inline-block;
+    width: 30px;
+    height: 20px;
+  }
+
+  .separator {
+    border-right: 1px solid #dfe6ee;
+    width: 1px;
+    height: 18px;
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+
+  .setting-title {
+    min-width: 20px;
+    font-size: 12px;
+    color: #8091a5;
+  }
+
+  .setting-content {
+    margin-top: 5px;
+  }
+
+  .setting-content span {
+    font-size: 12px;
+    padding: 3px;
+    cursor: pointer;
+    margin: 0 1px;
+    border: 1px solid #ebebeb;
+  }
+
+  .setting-content span:hover {
+    background: #d7e6fe;
+    color: #3582fb;
+    border: 1px solid #3582fb !important;
+    z-index: 1;
+    cursor: pointer;
+  }
+
+  .per-current {
+    background: #d7e6fe;
+    color: #3582fb;
+    border: 1px solid #3582fb !important;
+    z-index: 1;
+    cursor: default;
+  }
+
+  .crud-table >>> .v-progress-linear{
+    height: 1px !important;
   }
 </style>

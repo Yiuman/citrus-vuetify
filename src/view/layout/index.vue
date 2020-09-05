@@ -32,11 +32,11 @@
         </v-app-bar>
 
         <!--整体容器-->
-        <v-content class="main-content">
+        <v-main class="main-content">
             <v-container fluid class="height-100pc">
                 <router-view/>
             </v-container>
-        </v-content>
+        </v-main>
     </div>
 </template>
 

@@ -16,11 +16,8 @@
             />
           </v-col>
         </v-row>
-      </v-container>
-      <v-spacer />
 
-      <!-- 按钮 -->
-      <v-container>
+        <v-divider />
         <v-row justify="end">
           <v-col md="4" align="end">
             <v-btn
