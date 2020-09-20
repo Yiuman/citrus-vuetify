@@ -33,7 +33,7 @@
             outlined
             tile
             class="mr-2"
-            color="blue darken-1"
+            color="primary"
             @click="confirm"
           >
             {{ confirmText }}
@@ -79,10 +79,6 @@
           this.$emit("input", val);
         },
       },
-    },
-    mounted() {
-      console.warn(this.widgetModel);
-      console.warn(this.widgets);
     },
     watch: {
       modelObject: function() {

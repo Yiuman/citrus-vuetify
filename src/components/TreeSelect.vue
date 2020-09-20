@@ -158,10 +158,13 @@
     cursor: pointer !important;
   }
 
+  .tree-select-menu{
+    background: #fff;
+  }
+
   .selector-tree-model {
     height: 300px !important;
-    background: 
-    
-    #fff !important;
+    background: #fff !important;
+    padding: 10px 0;
   }
 </style>

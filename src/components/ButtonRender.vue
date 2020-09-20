@@ -5,7 +5,7 @@
         v-if="!button.group"
         :key="index"
         class="my-1 ml-2"
-        @click="buttonClick(button.action)"
+        @click="buttonClick(button)"
         :color="button.color"
         depressed
         tile
@@ -42,7 +42,7 @@
             v-for="(operation, index) in button.actions"
             :key="index"
             :color="operation.color"
-            @click="buttonClick(operation.action)"
+            @click="buttonClick(operation)"
           >
             <v-list-item-icon>
               <v-icon small left :color="operation.color"
@@ -66,8 +66,8 @@
       buttons: Array,
     },
     methods: {
-      buttonClick(action) {
-        this.$emit("buttonClick", action);
+      buttonClick(button) {
+        this.$emit("buttonClick", button.action,null,button);
       },
     },
   };

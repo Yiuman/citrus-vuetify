@@ -1,56 +1,5 @@
 <template>
   <v-card class="py-2 px-2 height-100pc crud-card" elevation="1">
-    <!--按钮及控件-->
-    <v-row no-gutters justify="space-between" align="center">
-      <v-col>
-        <ButtonRender :buttons="buttons" @buttonClick="doAction" />
-      </v-col>
-      <!--控件的渲染-->
-      <v-col align="end" class="pr-2">
-        <div class="col-item" @click="showFilter = !showFilter">
-          <v-icon small color="#8091a5">mdi-filter-menu-outline</v-icon>
-          过滤
-        </div>
-        <FilterNavigation
-          v-model="showFilter"
-          :widgets="widgets"
-          :widget-model="queryParam"
-          @confirm="queryPage"
-        />
-        <span class="separator"></span>
-        <div class="col-item">
-          共<span class="total-count">{{ total }}</span
-          >条数据
-        </div>
-        <span class="separator"></span>
-        <div class="col-item">
-          <v-menu offset-y rounded="0">
-            <template v-slot:activator="{ on }">
-              <v-icon small color="#8091a5" v-on="on">mdi-cog-outline</v-icon>
-            </template>
-            <v-list dense>
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle class="setting-title">
-                    每页显示数量
-                  </v-list-item-subtitle>
-                  <div class="setting-content">
-                    <template v-for="(perPage, index) in perPageOptions">
-                      <span
-                        :key="index"
-                        :class="[page.size === perPage ? 'per-current' : '']"
-                        @click="page.size = perPage"
-                        >{{ perPage }}</span
-                      >
-                    </template>
-                  </div>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </div>
-      </v-col>
-    </v-row>
     <!--表格-->
     <v-data-table
       class="crud-table elevation-0"
@@ -66,6 +15,68 @@
       :server-items-length="total"
       :show-select="Boolean(itemKey)"
     >
+      <!-- 表格头部 -->
+      <template v-slot:top>
+        <!--按钮及控件-->
+        <v-row no-gutters justify="space-between" align="center">
+          <v-col>
+            <ButtonRender :buttons="buttons" @buttonClick="doAction" />
+          </v-col>
+          <!--控件的渲染-->
+          <v-col align="end" class="pr-2">
+            <template v-if="widgets && widgets.length > 0">
+              <div class="col-item" @click="showFilter = !showFilter">
+                <v-icon small color="#8091a5">mdi-filter-menu-outline</v-icon>
+                过滤
+              </div>
+              <FilterNavigation
+                v-model="showFilter"
+                :widgets="widgets"
+                :widget-model="queryParam"
+                @confirm="queryPage"
+              />
+              <span class="separator"></span>
+            </template>
+
+            <div class="col-item-readonly">
+              共<span class="total-count">{{ total }}</span
+              >条数据
+            </div>
+            <span class="separator"></span>
+            <div class="col-item">
+              <v-menu offset-y rounded="0">
+                <template v-slot:activator="{ on }">
+                  <v-icon small color="#8091a5" v-on="on"
+                    >mdi-cog-outline</v-icon
+                  >
+                </template>
+                <v-list dense>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-subtitle class="setting-title">
+                        每页显示数量
+                      </v-list-item-subtitle>
+                      <div class="setting-content">
+                        <template v-for="(perPage, index) in perPageOptions">
+                          <span
+                            :key="index"
+                            :class="[
+                              page.size === perPage ? 'per-current' : '',
+                            ]"
+                            @click="page.size = perPage"
+                            >{{ perPage }}</span
+                          >
+                        </template>
+                      </div>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </div>
+          </v-col>
+        </v-row>
+      </template>
+
       <!--行内操作按钮事件-->
       <template v-slot:[`item.actions`]="{ item }">
         <v-menu top offset-y rounded="0" transition="slide-y-transition">
@@ -78,7 +89,7 @@
             <v-list-item
               v-for="(operation, index) in actions"
               :key="index"
-              @click="doAction(operation.action, item)"
+              @click="doAction(operation.action, item, operation)"
             >
               <v-list-item-title>{{
                 operation.text || operation.action
@@ -88,29 +99,18 @@
         </v-menu>
       </template>
     </v-data-table>
+
     <!--分页相关组件-->
-    <v-row justify="end" no-gutters class="mt-2">
-      <!-- <v-col md="1">
-        <div class="pa-2 mt-3 mr-3 text-right">共{{ total }}条</div>
-      </v-col>
+    <v-row justify="end" no-gutters class="mt-2" v-if="pageTotal > 0">
       <v-col md="auto">
-        <v-select
-          label="条/页"
-          :items="perPageOptions"
-          v-model="page.size"
-          style="width: 50px"
-        />
-      </v-col> -->
-      <v-col md="auto">
-        <!--                    color="#81b90c"-->
         <v-pagination
           class="pa-2 text-right page-selection v-size--small"
           prev-icon="mdi-menu-left"
           next-icon="mdi-menu-right"
           v-model="page.current"
-          :length="pageCount"
+          :length="this.pageTotal"
           color="#80abfa"
-          total-visible="5"
+          :total-visible="5"
         />
       </v-col>
       <v-col md="auto">
@@ -168,8 +168,8 @@
   import { CrudService, mixins as crudMixins } from "@/api/crud";
   import { convertWidget } from "@/utils/widget";
   import TipsDialog from "@/components/TipsDialog";
-  import ButtonRender from "@/components/ButtonRender";
   import FormNavigation from "@/components/FormNavigation";
+  import ButtonRender from "@/components/ButtonRender";
   import FilterNavigation from "@/components/FilterNavigation";
 
   crudMixins.methods.transform = convertWidget;
@@ -267,6 +267,9 @@
     },
     created() {
       this.initCrud();
+    },
+    mounted() {
+      this.queryParams = { ...this.$route.query };
     },
     methods: {
       initCrud() {
@@ -402,11 +405,17 @@
     border-radius: none !important;
   }
 
-  .col-item {
+  .col-item,
+  .col-item-readonly {
     display: inline-block;
     font-size: 14px;
     color: #8091a5;
     cursor: pointer;
+  }
+
+  .col-item:hover,
+  .col-item:hover > * {
+    color: #3582fb !important;
   }
 
   .total-count {
@@ -462,7 +471,7 @@
     cursor: default;
   }
 
-  .crud-table >>> .v-progress-linear{
+  .crud-table >>> .v-progress-linear {
     height: 1px !important;
   }
 </style>

@@ -21,6 +21,7 @@ const opts = {
         themes: {
             light: {
                 primary: '#80abfa',
+                // primary: '#80abfa',
             }
         }
     }

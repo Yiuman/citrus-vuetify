@@ -1,6 +1,12 @@
 <template>
-  <v-navigation-drawer v-model="dialogSwitch" absolute temporary :width="width">
-    <v-form ref="form">
+  <v-navigation-drawer
+    v-model="dialogSwitch"
+    disable-resize-watcher
+    absolute
+    temporary
+    :width="width"
+  >
+    <v-form ref="form" v-show="dialogSwitch">
       <!-- 字段渲染 -->
       <v-container>
         <v-row>
@@ -35,7 +41,7 @@
               outlined
               tile
               class="mr-2"
-              color="blue darken-1"
+              color="primary"
               @click="save"
             >
               {{ saveText }}
