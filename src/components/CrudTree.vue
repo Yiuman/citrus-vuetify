@@ -35,7 +35,44 @@
         :item-text="itemText"
       >
         <template v-slot:label="{ item }">
-          <div @dblclick="edit('edit', item)">{{ item[itemText] }}</div>
+          <div @dblclick="edit('edit', item)">
+            <v-row>
+              <v-col> {{ item[itemText] }}</v-col>
+              <v-col align="end" class="mr-3">
+                <v-menu
+                  v-if="item.id && actions && actions.length>0"
+                  top
+                  offset-y
+                  rounded="0"
+                  transition="slide-y-transition"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      width="0"
+                      height="0"
+                      tile
+                      fab
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      <v-icon small>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list dense>
+                    <v-list-item
+                      v-for="(operation, index) in actions"
+                      :key="index"
+                      @click="doAction(operation.action, item, operation)"
+                    >
+                      <v-list-item-title>{{
+                        operation.text || operation.action
+                      }}</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </v-col>
+            </v-row>
+          </div>
         </template>
         <template v-slot:prepend="{ item }">
           <v-icon
@@ -105,7 +142,7 @@
       itemText: "",
       items: [],
       open: [],
-      showFilter:false,
+      showFilter: false,
     }),
     created() {
       this.init();
@@ -121,7 +158,8 @@
       load() {
         const vm = this;
         vm.loading = true;
-        vm.crudService.load(vm.queryParam).then((data) => {
+        const queryParam = { ...vm.queryParam, ...vm.$route.query };
+        vm.crudService.load(queryParam).then((data) => {
           vm.itemKey = data.itemKey;
           vm.itemText = data.itemText;
           vm.lazy = data.lazy;
@@ -155,6 +193,15 @@
           //初始化按钮
           if ((!vm.buttons || vm.buttons.length === 0) && data.buttons) {
             vm.buttons = data.buttons;
+          }
+
+          //初始化列事件
+          if (
+            (!this.actions || this.actions.length === 0) &&
+            data.actions &&
+            data.actions.length > 0
+          ) {
+            this.actions = data.actions;
           }
 
           this.loading = false;

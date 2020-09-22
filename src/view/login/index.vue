@@ -58,10 +58,10 @@
 
                 </v-card>
             </v-col>
-            <v-snackbar color="warn" v-model="snackbar.switch" top multi-line>
+            <v-alert color="error" v-model="snackbar.switch" top>
                 {{ snackbar.text }}
-                <v-btn outlined @click="snackbar.switch = false">确认</v-btn>
-            </v-snackbar>
+                <!-- <v-btn outlined @click="snackbar.switch = false">确认</v-btn> -->
+            </v-alert>
         </v-row>
         <vue-threejs-birds style="max-width: none" :color1="birds.color1" :color2="birds.color2"
                            :quantity="birds.quantity"

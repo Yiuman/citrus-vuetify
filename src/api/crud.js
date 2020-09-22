@@ -140,6 +140,8 @@ const DEFAULT_COMMON_DATA = {
   widgets: [],
   //顶部按钮
   buttons: [],
+  //行内操作，对象操作
+  actions: [],
   loadMethod: "load",
   dialogView: {
     width: 800,
@@ -171,7 +173,14 @@ export const mixins = {
   methods: {
     doAction(action, item, operator) {
       if (operator.script) {
-        ScriptHandler.execute(action);
+        this.currentItem = item;
+
+        if (action.startsWith("function")){
+            ScriptHandler.execute(action, this);
+        }else{
+            ScriptHandler.executeEl(this, action);
+        }
+         
       }
       if (!(this.excludeActions.indexOf(action) > -1)) {
         const actionMethod = this[action] || this["defaultAction"];

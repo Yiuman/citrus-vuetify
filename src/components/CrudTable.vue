@@ -109,7 +109,7 @@
           next-icon="mdi-menu-right"
           v-model="page.current"
           :length="this.pageTotal"
-          color="#80abfa"
+          color="primary"
           :total-visible="5"
         />
       </v-col>
@@ -224,7 +224,6 @@
       //记录数组
       records: [],
       //行内操作事件按钮
-      actions: [],
       loadMethod: "queryPage",
       showFilter: false,
     }),
@@ -268,9 +267,6 @@
     created() {
       this.initCrud();
     },
-    mounted() {
-      this.queryParams = { ...this.$route.query };
-    },
     methods: {
       initCrud() {
         this.crudService = new CrudService(this.namespace);
@@ -278,11 +274,16 @@
         this.widgets = this.widgetModels;
         this.buttons = this.buttonModels;
         this.actions = [];
+
         this.queryPage();
       },
       queryPage() {
         this.loading = true;
-        const queryParams = { ...this.page, ...this.queryParam };
+        const queryParams = {
+          ...this.page,
+          ...this.queryParam,
+          ...this.$route.query,
+        };
         const sortBy = this.pageOptions.sortBy;
         if (sortBy && sortBy.length) {
           queryParams.sortBy = sortBy[0];

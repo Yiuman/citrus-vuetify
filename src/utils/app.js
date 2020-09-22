@@ -30,7 +30,6 @@ export const createMenus = (routes, filter) => {
     }
   });
 
-  console.warn(menus);
   return menus;
 };
 
