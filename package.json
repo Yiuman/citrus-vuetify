@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
+    "geopattern": "^1.2.3",
     "js-cookie": "^2.2.1",
     "qs": "latest",
     "stylus": "^0.54.7",

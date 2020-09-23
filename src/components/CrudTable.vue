@@ -1,5 +1,5 @@
 <template>
-  <v-card class="py-2 px-2 height-100pc crud-card" elevation="1">
+  <v-card class="py-2 px-2 height-100pc crud-card" elevation="1" >
     <!--表格-->
     <v-data-table
       class="crud-table elevation-0"
@@ -79,7 +79,7 @@
 
       <!--行内操作按钮事件-->
       <template v-slot:[`item.actions`]="{ item }">
-        <v-menu top offset-y rounded="0" transition="slide-y-transition">
+        <v-menu top offset-y rounded="0" transition="scale-transition" origin="left bottom">
           <template v-slot:activator="{ on, attrs }">
             <v-btn width="0" height="0" tile fab v-bind="attrs" v-on="on">
               <v-icon small>mdi-dots-vertical</v-icon>
@@ -108,7 +108,7 @@
           prev-icon="mdi-menu-left"
           next-icon="mdi-menu-right"
           v-model="page.current"
-          :length="this.pageTotal"
+          :length.sync="this.pageTotal"
           color="primary"
           :total-visible="5"
         />
@@ -274,7 +274,7 @@
         this.widgets = this.widgetModels;
         this.buttons = this.buttonModels;
         this.actions = [];
-
+        this.pageOptions = {};
         this.queryPage();
       },
       queryPage() {

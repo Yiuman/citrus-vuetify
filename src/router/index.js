@@ -27,6 +27,21 @@ const systemRoutes = [
     name: "login",
     component: Login,
   },
+  {
+    path: "/",
+    name: "layout",
+    component: Layout,
+    children: [
+      {
+        path: "/usercenter",
+        name: "usercenter",
+        component: () => import("@/view/user/index.vue"),
+        meta: {
+          text: "个人中心",
+        },
+      },
+    ],
+  }
 ];
 
 /**

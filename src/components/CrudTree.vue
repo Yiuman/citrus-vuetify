@@ -42,9 +42,11 @@
                 <v-menu
                   v-if="item.id && actions && actions.length>0"
                   top
+                  left
                   offset-y
                   rounded="0"
-                  transition="slide-y-transition"
+                  transition="scale-transition"
+                  origin="bottom right"
                 >
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
