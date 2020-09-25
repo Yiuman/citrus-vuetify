@@ -1,5 +1,5 @@
 <template>
-  <v-card class="py-2 px-2 height-100pc crud-card" elevation="1" >
+  <v-card class="py-2 px-2 height-100pc crud-card" elevation="1">
     <!--表格-->
     <v-data-table
       class="crud-table elevation-0"
@@ -79,7 +79,13 @@
 
       <!--行内操作按钮事件-->
       <template v-slot:[`item.actions`]="{ item }">
-        <v-menu top offset-y rounded="0" transition="scale-transition" origin="left bottom">
+        <v-menu
+          top
+          offset-y
+          rounded="0"
+          transition="scale-transition"
+          origin="left bottom"
+        >
           <template v-slot:activator="{ on, attrs }">
             <v-btn width="0" height="0" tile fab v-bind="attrs" v-on="on">
               <v-icon small>mdi-dots-vertical</v-icon>
@@ -102,17 +108,17 @@
 
     <!--分页相关组件-->
     <v-row justify="end" no-gutters class="mt-2" v-if="pageTotal > 0">
-      <v-col md="auto">
-        <v-pagination
-          class="pa-2 text-right page-selection v-size--small"
-          prev-icon="mdi-menu-left"
-          next-icon="mdi-menu-right"
-          v-model="page.current"
-          :length.sync="this.pageTotal"
-          color="primary"
-          :total-visible="5"
-        />
-      </v-col>
+      <!-- <v-col md="auto"> -->
+      <v-pagination
+        class="pa-2 page-selection v-size--small"
+        prev-icon="mdi-menu-left"
+        next-icon="mdi-menu-right"
+        v-model="page.current"
+        :length.sync="pageTotal"
+        color="primary"
+        :total-visible.sync="pageCount"
+      />
+      <!-- </v-col> -->
       <v-col md="auto">
         <v-text-field
           label="跳转到"
@@ -214,7 +220,7 @@
       //跳转到的页数
       jumpToPage: 1,
       //最多
-      pageCount: 5,
+      pageCount: 10,
       //总页数
       pageTotal: 1,
       //加载中...
@@ -323,10 +329,9 @@
             this.dialogView = data.dialogView;
           }
 
-          if (data.pages !== null && data.pages <= 5) {
+          if (data.pages !== null && data.pages <= 10) {
             this.pageCount = data.pages || 1;
           }
-
           //若表头没定义则用数据列的
           if (!this.headerArray || this.headerArray.length === 0) {
             if (data.headers) {

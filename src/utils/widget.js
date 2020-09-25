@@ -61,15 +61,10 @@ const widgetProcessor = {
 };
 
 //校验器适配器，用于处理字段的校验
-const validatorAdapter = (editField) => {
+export const validatorAdapter = (editField) => {
   const validators = {
     //必填项
-    required: function(v) {
-      return (
-        (v !== undefined && v !== null && v !== "") ||
-        `${editField.text}不能为空`
-      );
-    },
+    required: required(editField.text),
     //手机号码
     phone: function(v) {
       return /^1[3456789]\d{9}$/.test(v) || `${editField.text}格式错误`;
@@ -77,4 +72,10 @@ const validatorAdapter = (editField) => {
   };
 
   return editField.rules.map((ruleName) => validators[ruleName]);
+};
+
+export const required = function(name) {
+  return function(v) {
+    return (v !== undefined && v !== null && v !== "") || `${name}不能为空`;
+  };
 };
