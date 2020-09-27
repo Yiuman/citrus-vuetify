@@ -175,12 +175,11 @@ export const mixins = {
       if (operator.script) {
         this.currentItem = item;
 
-        if (action.startsWith("function")){
-            ScriptHandler.execute(action, this);
-        }else{
-            ScriptHandler.executeEl(this, action);
+        if (action.startsWith("function")) {
+          ScriptHandler.execute(action, this);
+        } else {
+          ScriptHandler.executeEl(this, action);
         }
-         
       }
       if (!(this.excludeActions.indexOf(action) > -1)) {
         const actionMethod = this[action] || this["defaultAction"];
@@ -209,9 +208,19 @@ export const mixins = {
       this.crudService
         .save(item)
         .then(() => {
+          this.$toasted.show("操作成功", {
+            position: "top-center",
+            type: "success",
+            icon: "check-bold",
+          });
           this.reload();
         })
         .catch((err) => {
+          this.$toasted.show(err.message, {
+            position: "top-center",
+            type: "error",
+            icon: "alert-circle",
+          });
           console.warn(err);
         });
     },
@@ -230,15 +239,30 @@ export const mixins = {
       this.crudService
         .delete(item[this.itemKey])
         .then(() => {
+          this.$toasted.show("操作成功", {
+            position: "top-center",
+            type: "success",
+            icon: "check-bold",
+          });
           this.reload();
         })
         .catch((err) => {
+          this.$toasted.show(err.message, {
+            position: "top-center",
+            type: "error",
+            icon: "alert-circle",
+          });
           console.warn(err);
         });
     },
     batchDelete(action) {
       if (!this.selected || this.selected.length === 0) {
-        this.showTips("请勾选需要删除的数据项");
+        // this.showTips("请勾选需要删除的数据项");
+        this.$toasted.show("请勾选需要删除的数据项", {
+          position: "top-center",
+          type: "info",
+          icon: "alert-circle",
+        });
       } else {
         this.defaultAction(action);
       }

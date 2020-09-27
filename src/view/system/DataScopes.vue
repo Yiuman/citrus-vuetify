@@ -7,7 +7,6 @@
       ref="$crud$"
     >
       <template v-slot:add-dialog>
-       
         <simple-form-navigation
           v-model="addDialog"
           width="800"
@@ -230,7 +229,23 @@
           };
         });
         return new Promise((resolve) => {
-          this.$refs["$crud$"].crudService.save(submitEntity).then(resolve);
+          this.$refs["$crud$"].crudService
+            .save(submitEntity)
+            .then(() => {
+              this.$toasted.show("操作成功", {
+                position: "top-center",
+                type: "success",
+                icon: "check-bold",
+              });
+              resolve();
+            })
+            .catch((err) => {
+              this.$toasted.show(err.message, {
+                position: "top-center",
+                type: "error",
+                icon: "alert-circle",
+              });
+            });
         });
       },
       reload() {

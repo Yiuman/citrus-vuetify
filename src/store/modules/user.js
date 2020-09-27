@@ -60,7 +60,6 @@ const actions = {
     });
   },
   resetCurrent({ commit }, userInfo) {
-    console.warn("resetCurrent", userInfo);
     commit("SET_NAME", userInfo.username);
     commit("SET_AVATAR", userInfo.avatar);
     commit("SET_USER_ONLINE_INFO", userInfo);
