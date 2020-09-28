@@ -300,6 +300,10 @@
               ? this.userInfo.roles.map((item) => item.roleName)
               : "无",
           },
+          {
+            icon:"mdi-update",
+            text:`加入于 ${this.$moment(this.userInfo.createdTime).format('YYYY-MM-DD')}`
+          }
         ];
       },
       initAccessLogs() {

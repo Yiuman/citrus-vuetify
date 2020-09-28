@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialogSwitch" max-width="290">
+    <v-dialog v-model="dialogSwitch">
         <v-card>
             <v-card-title >{{title}}</v-card-title>
             <v-card-text v-if="tips">

@@ -9,6 +9,13 @@ export const login = (data) => {
 };
 
 /**
+ * 登出
+ */
+export const logout = () => {
+  return request.post("/rest/logout");
+};
+
+/**
  * 获取个人信息
  */
 export const getCurrentUser = () => {

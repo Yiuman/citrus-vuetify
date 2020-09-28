@@ -162,11 +162,64 @@
       />
     </slot>
 
-    <!--消息提示-->
-    <v-snackbar v-model="snackbar.switch" top multi-line>
-      {{ snackbar.text }}
-      <v-btn outlined @click="snackbar.switch = false">确认</v-btn>
-    </v-snackbar>
+    <slot name="import-dialog">
+      <v-dialog v-model="actionSwitch.import" width="400">
+        <v-card class="pa-2">
+          <v-row no-gutters justify="space-between" align="center">
+            <v-col md="6" align="center" class="import-col">
+              <v-hover v-slot:default="{ hover }">
+                <div
+                  class="import-item-box"
+                  :class="{ 'on-hover': hover }"
+                  @click="exportTemplate"
+                >
+                  <div>
+                    <v-icon color="primary" size="100"
+                      >mdi-file-download-outline
+                    </v-icon>
+                  </div>
+                  <div class="text">下载模板</div>
+                </div>
+              </v-hover>
+            </v-col>
+
+            <v-col md="6" align="center" class="import-col">
+              <v-hover v-slot:default="{ hover }">
+                <div class="import-item-box" :class="{ 'on-hover': hover }">
+                  <div>
+                    <file-upload
+                      ref="import-upload"
+                      :headers="authHeanders"
+                      :post-action="apiBase + namespace + '/import'"
+                      @input-file="inputFile"
+                      @input-filter="inputFilter"
+                      class="import-upload"
+                      v-model="importFiles"
+                    >
+                      <v-icon color="primary" size="100"
+                        >mdi-file-upload-outline</v-icon
+                      >
+                    </file-upload>
+                  </div>
+                  <div class="text" style="margin-top:-8px">上传数据</div>
+                </div>
+              </v-hover>
+            </v-col>
+          </v-row>
+          <v-row no-gutters justify="space-between" align="center">
+            <v-col md="12">
+              <v-progress-linear
+                v-if="importFiles.length"
+                color="light-blue"
+                height="10"
+                :value="importFiles[0].progress"
+                striped
+              ></v-progress-linear>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-dialog>
+    </slot>
   </v-card>
 </template>
 
@@ -177,13 +230,20 @@
   import FormNavigation from "@/components/FormNavigation";
   import ButtonRender from "@/components/ButtonRender";
   import FilterNavigation from "@/components/FilterNavigation";
+  import FileUpload from "vue-upload-component";
 
   crudMixins.methods.transform = convertWidget;
 
   export default {
     name: "CrudTable",
     mixins: [crudMixins],
-    components: { TipsDialog, FormNavigation, ButtonRender, FilterNavigation },
+    components: {
+      TipsDialog,
+      FormNavigation,
+      ButtonRender,
+      FilterNavigation,
+      FileUpload,
+    },
     props: {
       //表头
       headers: {
@@ -479,5 +539,26 @@
 
   .crud-table >>> .v-progress-linear {
     height: 1px !important;
+  }
+
+  .import-item-box {
+    margin: 10px;
+    cursor: pointer;
+    background-color: #fafafa;
+    transition: opacity 0.4s ease-in-out;
+  }
+
+  .import-item-box:not(.on-hover) {
+    opacity: 0.6;
+  }
+
+  .import-upload >>> label {
+    cursor: pointer;
+  }
+
+  .import-item-box .text {
+    color: #80abfa;
+    font-weight: bold;
+    padding-bottom: 10px;
   }
 </style>

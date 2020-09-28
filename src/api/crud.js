@@ -1,5 +1,5 @@
 import request, { download } from "../utils/request";
-import { API_BASE_PATH } from "../config";
+import { API_BASE_PATH } from "@/config.js";
 
 const ScriptHandler = {
   execute(scriptStr, options) {
@@ -106,7 +106,7 @@ export class TreeService extends CrudService {
    * 重新初始化树，重新预排序
    */
   init() {
-    return request.post(`${API_BASE_PATH}/${this.namespace}/tree/init`);
+    return request.post(`/${this.namespace}/tree/init`);
   }
 }
 
@@ -118,6 +118,10 @@ export default (namespace) => {
  * 默认的CRUD通用数据
  */
 const DEFAULT_COMMON_DATA = {
+  apiBase: API_BASE_PATH,
+  authHeanders: {},
+  //导入文件
+  importFiles: [],
   //用于定义选择的对象的键
   itemKey: "",
   //当前选择或编辑的对象
@@ -130,6 +134,7 @@ const DEFAULT_COMMON_DATA = {
     edit: false,
     delete: false,
     batchDelete: false,
+    import: false,
   },
   activeAction: "",
   //所选对象的ID
@@ -148,11 +153,6 @@ const DEFAULT_COMMON_DATA = {
     fullscreen: false,
     editFields: [],
   },
-  //消息提示
-  snackbar: {
-    switch: false,
-    text: "",
-  },
 };
 
 /**
@@ -169,6 +169,11 @@ export const mixins = {
   },
   data() {
     return JSON.parse(JSON.stringify(DEFAULT_COMMON_DATA));
+  },
+  mounted() {
+    this.authHeanders = this.$store.state.user.token
+      ? { Authorization: "Bearer " + this.$store.state.user.token }
+      : {};
   },
   methods: {
     doAction(action, item, operator) {
@@ -282,13 +287,21 @@ export const mixins = {
           console.warn(err);
         });
     },
-    import() {},
-    export() {
+    import(action) {
+      this.defaultAction(action);
+    },
+    inputFile(newFile) {
+      if (newFile && !newFile.active) {
+        // 获得相应数据
+        this.$refs["import-upload"].active = true;
+      }
+    },
+    inputFilter() {},
+    exportTemplate() {
       download(`${this.namespace}/export`);
     },
-    showTips(text) {
-      this.snackbar.text = text;
-      this.snackbar.switch = true;
+    export() {
+      download(`${this.namespace}/export`);
     },
   },
 };

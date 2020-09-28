@@ -1,4 +1,4 @@
-import { getCurrentUser, login } from "../../api/user";
+import { getCurrentUser, login, logout } from "../../api/user";
 import storage from "../../utils/storage";
 
 const state = {
@@ -45,6 +45,24 @@ const actions = {
         });
     });
   },
+  logout({ commit }) {
+    return new Promise((resolve, reject) => {
+      logout()
+        .then(() => {
+          //全部置空
+          commit("SET_TOKEN", null);
+          commit("SET_NAME", "");
+          commit("SET_AVATAR", "");
+          commit("SET_ROLES", []);
+          commit("SET_USER_ONLINE_INFO", null);
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
+  //获取当前用户
   getCurrent({ commit }) {
     return new Promise((resolve, reject) => {
       getCurrentUser()
@@ -59,6 +77,7 @@ const actions = {
         });
     });
   },
+  //重置当前用户信息，一般是更新了用户信息后进行
   resetCurrent({ commit }, userInfo) {
     commit("SET_NAME", userInfo.username);
     commit("SET_AVATAR", userInfo.avatar);

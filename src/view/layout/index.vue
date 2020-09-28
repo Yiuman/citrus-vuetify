@@ -14,6 +14,7 @@
 
       <v-spacer />
 
+      <!-- 头像列表，操作 -->
       <v-menu
         bottom
         offset-y
@@ -73,10 +74,17 @@
       systemSrc: require("../../assets/text.png"),
       systemTitle: SYSTEM_CONFIG.systemTile,
       enableMini: true,
-      actions: [{
-          text:'个人中心',
-          action:'/usercenter'
-      }],
+      actions: [
+        {
+          text: "个人中心",
+          action: "/usercenter",
+        },
+        {
+          text: "登出",
+          action: "logout",
+          method: true,
+        },
+      ],
     }),
     computed: {
       toggleNavIcon() {
@@ -97,7 +105,27 @@
     },
     methods: {
       doAction(operation) {
-        this.$router.push(operation.action);
+        if (operation.method) {
+          this[operation.action]();
+        } else {
+          this.$router.push(operation.action);
+        }
+      },
+      logout() {
+        this.$store
+          .dispatch("user/logout")
+          .then(() => {
+            this.$router.push("/login");
+          })
+          .catch((err) => {
+            console.warn(err);
+            this.refreshCaptcha();
+            this.$toasted.show(err.message, {
+              position: "top-center",
+              type: "error",
+              icon: "alert-circle",
+            });
+          });
       },
     },
   };
