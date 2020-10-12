@@ -8,8 +8,13 @@
         <v-icon>{{ toggleNavIcon }}</v-icon>
       </v-app-bar-nav-icon>
       <v-toolbar-title class="white--text">
-        <v-img height="20" width="98" :src="systemSrc" />
-        <!--                {{systemTitle}}-->
+        <v-img
+          v-if="systemSrc"
+          height="20"
+          width="98"
+          :src="systemSrc"
+        />
+        <div class="system-title" v-if="systemTitle">{{ systemTitle }}</div>
       </v-toolbar-title>
 
       <v-spacer />
@@ -71,8 +76,8 @@
       VisitedBar,
     },
     data: () => ({
-      systemSrc: require("../../assets/text.png"),
-      systemTitle: SYSTEM_CONFIG.systemTile,
+      systemSrc: SYSTEM_CONFIG.systemImageSrc,
+      systemTitle: SYSTEM_CONFIG.systemTitle,
       enableMini: true,
       actions: [
         {
@@ -142,6 +147,11 @@
 
   .main-content {
     background-color: #fefefe;
+  }
+
+  .system-title{
+    color: #000;
+    font-weight: bold;
   }
 
   .slide-right-enter-active,

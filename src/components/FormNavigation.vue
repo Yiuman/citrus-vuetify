@@ -4,23 +4,24 @@
     disable-resize-watcher
     absolute
     temporary
-    :width="width"
+    :width="dialogView.width || width"
   >
     <v-form ref="form" v-show="dialogSwitch">
       <!-- 字段渲染 -->
       <v-container>
         <v-row>
-          <v-col
-            :md="12 / (editFields.length > 2 ? 2 : editFields.length)"
-            v-for="(editField, index) in editFields"
-            :key="index"
-          >
-            <component
-              :is="editField.widget.widgetName"
-              v-bind="convertFieldWidget(editField)"
-              v-model="currentItem[editField.widget.key]"
-            />
-          </v-col>
+          <template v-for="(editFieldWidget, index) in editFieldWidgets">
+            <v-col
+              :md="getColMd(editFieldWidget, editFieldWidgets.length)"
+              :key="index"
+            >
+              <component
+                :is="editFieldWidget.widgetName"
+                v-bind="editFieldWidget"
+                v-model="currentItem[editFieldWidget.key]"
+              />
+            </v-col>
+          </template>
         </v-row>
 
         <v-divider />
@@ -101,6 +102,16 @@
           return this.dialogView.editFields;
         },
       },
+      editFieldWidgets: {
+        get() {
+          if (this.editFields) {
+            return this.editFields.map((editField) =>
+              this.convertFieldWidget(editField)
+            );
+          }
+          return null;
+        },
+      },
     },
     methods: {
       save() {
@@ -108,8 +119,18 @@
           this.$emit("confirm", this.currentItem);
         }
       },
+      getColMd(widget, widgetsLength) {
+        const col12Widgets = ["v-textarea"];
+        if (col12Widgets.indexOf(widget.widgetName) > -1) {
+          return 12;
+        }
+
+        return 12 / (widgetsLength > 2 ? 2 : widgetsLength);
+      },
     },
   };
 </script>
 
-<style></style>
+<style>
+
+</style>

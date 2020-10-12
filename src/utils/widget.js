@@ -27,6 +27,7 @@ export const convertWidget = (widget) => {
 };
 
 const widgetProcessor = {
+  //选择控件
   "v-select": (widget) => {
     return {
       ...widget,
@@ -39,8 +40,11 @@ const widgetProcessor = {
       "small-chips": true,
       multiple: widget.multiple,
       dense: true,
+      widgetName: "v-autocomplete",
+      clearable: true,
     };
   },
+  //input控件
   "v-text-field": (widget) => {
     return {
       ...widget,
@@ -49,6 +53,17 @@ const widgetProcessor = {
       dense: true,
     };
   },
+  //文办控件
+  "v-textarea": (widget) => {
+    return {
+      ...widget,
+      key: widget.key,
+      label: widget.text,
+      dense: true,
+      rows: 1,
+    };
+  },
+  //树形选择控件
   "tree-select": (widget) => {
     return {
       ...widget,

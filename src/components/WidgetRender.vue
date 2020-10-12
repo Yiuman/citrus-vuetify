@@ -1,14 +1,14 @@
 <template>
   <component
-        :is="widget.widgetName"
-        v-bind="convert(widget)"
-        v-model="modelObject[widget.key]"
-        @change="widgetChange"
-      />
+    :is="convertWidget.widgetName"
+    v-bind="convertWidget"
+    v-model="modelObject[convertWidget.key]"
+    @change="widgetChange"
+  />
 </template>
 
 <script>
-import { convertWidget } from "../utils/widget";
+  import { convertWidget } from "../utils/widget";
 
   export default {
     name: "WidgetRender",
@@ -16,10 +16,14 @@ import { convertWidget } from "../utils/widget";
       widget: Object,
       modelObject: Object,
     },
-    methods: {
-      convert(widget) {
-        return convertWidget(widget);
+    computed: {
+      convertWidget: {
+        get() {
+          return convertWidget(this.widget);
+        },
       },
+    },
+    methods: {
       widgetChange() {
         this.$emit("widgetChange");
       },
@@ -27,6 +31,4 @@ import { convertWidget } from "../utils/widget";
   };
 </script>
 
-<style>
-
-</style>
+<style></style>

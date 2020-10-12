@@ -5,6 +5,7 @@
       class="crud-table elevation-0"
       fixed-header
       hide-default-footer
+      :show-expand="showExpand"
       v-model="selected"
       :item-key="itemKey"
       :headers="headerArray"
@@ -103,6 +104,16 @@
             </v-list-item>
           </v-list>
         </v-menu>
+      </template>
+
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length">
+          <slot
+            name="data-expanded-item"
+            :headers="headers"
+            :item="item"
+          ></slot>
+        </td>
       </template>
     </v-data-table>
 
@@ -264,6 +275,10 @@
         type: Array,
         default: () => [],
       },
+      showExpand: {
+        type: Boolean,
+        default: () => false,
+      },
     },
     data: () => ({
       //表头数组
@@ -424,6 +439,22 @@
             this.headerArray.unshift({
               text: "",
               value: "actions",
+              class: "crud-actons-td",
+              align: "start",
+              sortable: false,
+              width: "1",
+            });
+          }
+
+          if (
+            this.showExpand &&
+            this.headerArray.filter(
+              (item) => item.value === "data-table-expand"
+            ).length === 0
+          ) {
+            this.headerArray.push({
+              text: "",
+              value: "data-table-expand",
               class: "crud-actons-td",
               align: "start",
               sortable: false,

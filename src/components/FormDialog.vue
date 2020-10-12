@@ -1,8 +1,8 @@
 <template>
     <div style="width: 300px !important;">
         <v-dialog v-model="dialogSwitch"
-                  :width="600"
-                  :max-width="`${dialogView.width?dialogView.width:600}px`"
+                  :width="dialogView.width || 600"
+                  :max-width="`${dialogView.width || 600}px`"
                   :fullscreen="dialogView && dialogView.fullscreen">
             <v-toolbar dense :color="dialogView.color" v-if="Boolean(dialogView.title)">
                 <v-toolbar-title>{{dialogView.title}}</v-toolbar-title>
