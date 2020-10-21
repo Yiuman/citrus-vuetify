@@ -1,8 +1,8 @@
-// 采购管理
+// 销售管理
 <template>
-  <v-card class="purchase height-100pc">
+  <v-card class="sale height-100pc">
     <crud-table
-      namespace="/rest/purchases"
+      namespace="/rest/sales"
       :exclude-actions="['edit']"
       :show-expand="true"
       @action="actionEvent"
@@ -16,21 +16,40 @@
           @callback="reload"
         >
           <v-card elevation="0">
-            <v-card-subtitle>采购单信息</v-card-subtitle>
+            <v-card-subtitle>销售单信息</v-card-subtitle>
             <v-card-text>
               <v-row class="my-n6">
                 <v-col md="6">
                   <v-text-field
-                    label="进货单号"
+                    label="销售单号"
                     clearable
-                    v-model="purchaseModel.purchaseNo"
+                    v-model="saleModel.saleNo"
                   />
                 </v-col>
                 <v-col md="6">
                   <date-picker
-                    label="进货日期"
-                    v-model="purchaseModel.purchaseDate"
+                    label="销售日期"
+                    v-model="saleModel.saleDate"
                   ></date-picker>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col md="12">
+                  <v-text-field
+                    label="客户联系方式"
+                    clearable
+                    v-model="saleModel.contactInfo"
+                  />
+                </v-col>
+              </v-row>
+              <v-row class="my-n6">
+                <v-col md="12">
+                  <v-textarea
+                    label="售货地址"
+                    clearable
+                    rows="1"
+                    v-model="saleModel.address"
+                  />
                 </v-col>
               </v-row>
             </v-card-text>
@@ -41,7 +60,7 @@
               <v-row>
                 <v-col>商品信息</v-col>
                 <v-col align="end" class="font-weight-black"
-                  >总计：{{ purchaseTotal }}</v-col
+                  >总计：{{ saleTotal }}</v-col
                 >
               </v-row>
             </v-card-subtitle>
@@ -63,10 +82,10 @@
                 disable-pagination
                 hide-default-footer
                 :headers="productHeaders"
-                :items="purchaseModel.products"
+                :items="saleModel.products"
               >
                 <template v-slot:item.index="{ item }">
-                  {{ purchaseModel.products.indexOf(item) + 1 }}
+                  {{ saleModel.products.indexOf(item) + 1 }}
                 </template>
                 <template v-slot:item.productName="props">
                   <v-edit-dialog
@@ -113,6 +132,7 @@
                       <v-text-field
                         label="数量"
                         type="number"
+                        :max="props.item.inventory"
                         v-model="props.item.amount"
                       ></v-text-field>
                     </template>
@@ -123,7 +143,7 @@
                 </template>
                 <template v-slot:item.data-item-reduce="{ item }">
                   <v-btn
-                    v-if="purchaseModel.products.length > 1"
+                    v-if="saleModel.products.length > 1"
                     width="0"
                     height="0"
                     tile
@@ -178,14 +198,15 @@
     price: 0,
     amount: 0,
   };
-  const DEFAULT_PURCHASE_MODEL = {
-    purchaseId: null,
-    purchaseNo: "",
-    purchaseDate: null,
+  const DEFAULT_SALE_MODEL = {
+    saleId:null,
+    saleNo: "",
+    saleDate: null,
     products: [
       {
         productId: "-",
         productName: "-",
+        inventory: 0,
         productNo: "-",
         price: 0,
         amount: 0,
@@ -196,7 +217,7 @@
     components: { CrudTable, SimpleFormNavigation },
     data: () => ({
       addDialog: false,
-      purchaseModel: JSON.parse(JSON.stringify(DEFAULT_PURCHASE_MODEL)),
+      saleModel: JSON.parse(JSON.stringify(DEFAULT_SALE_MODEL)),
       productHeaders: [
         {
           text: "序号",
@@ -212,8 +233,9 @@
           value: "productName",
         },
         { text: "货号", value: "productNo", sortable: false },
+        { text: "当前库存", value: "inventory", sortable: false },
         { text: "单价", value: "price", sortable: false },
-        { text: "数量", value: "amount", sortable: false },
+        { text: "销售数量", value: "amount", sortable: false },
         { text: "合计", value: "total", sortable: false },
         { text: "", value: "data-item-reduce", sortable: false, width: "1" },
       ],
@@ -222,10 +244,10 @@
       selectedProduct: {},
     }),
     computed: {
-      purchaseTotal() {
+      saleTotal() {
         let total = 0;
-        if (this.purchaseModel.products) {
-          this.purchaseModel.products.forEach((item) => {
+        if (this.saleModel.products) {
+          this.saleModel.products.forEach((item) => {
             total += Number(item.price * item.amount);
           });
         }
@@ -248,15 +270,15 @@
         switch (action) {
           case "add":
             this.addDialog = true;
-            this.purchaseModel = JSON.parse(
-              JSON.stringify(DEFAULT_PURCHASE_MODEL)
-            );
+            this.saleModel = JSON.parse(JSON.stringify(DEFAULT_SALE_MODEL));
             break;
           case "edit":
-            this.purchaseModel.purchaseId = item.purchaseId;
-            this.purchaseModel.purchaseNo = item.purchaseNo;
-            this.purchaseModel.purchaseDate = item.purchaseDate;
-            this.purchaseModel.products = item.products;
+            this.saleModel.saleId = item.saleId;
+            this.saleModel.saleNo = item.saleNo;
+            this.saleModel.saleDate = item.saleDate;
+            this.saleModel.address = item.address;
+            this.saleModel.contactInfo = item.contactInfo;
+            this.saleModel.products = item.products;
             this.addDialog = true;
             break;
           default:
@@ -266,7 +288,7 @@
       saveEntity() {
         return new Promise((resolve) => {
           this.getService()
-            .save(this.purchaseModel)
+            .save(this.saleModel)
             .then(() => {
               this.$toasted.show("操作成功", {
                 position: "top-center",
@@ -296,6 +318,7 @@
           item.productName = this.selectedProduct.productName;
           item.productNo = this.selectedProduct.productNo;
           item.price = this.selectedProduct.buyPrice;
+          item.inventory = this.selectedProduct.inventory;
         }
 
         this.$nextTick(() => {
@@ -303,13 +326,13 @@
         });
       },
       addProduct() {
-        this.purchaseModel.products.push(
+        this.saleModel.products.push(
           JSON.parse(JSON.stringify(DEFAULT_PRODUCT))
         );
       },
       reduceProduct(item) {
-        const editedIndex = this.purchaseModel.products.indexOf(item);
-        this.purchaseModel.products.splice(editedIndex, 1);
+        const editedIndex = this.saleModel.products.indexOf(item);
+        this.saleModel.products.splice(editedIndex, 1);
       },
       getService() {
         return this.$refs["$crud$"].crudService;

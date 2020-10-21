@@ -22,6 +22,7 @@
       :first-day-of-week="0"
       locale="zh-cn"
       v-model="date"
+      show-current
       @input="cofirmDate"
     ></v-date-picker>
   </v-menu>

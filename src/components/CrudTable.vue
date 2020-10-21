@@ -572,6 +572,10 @@
     height: 1px !important;
   }
 
+  .crud-table >>> .v-data-table__expanded__content {
+    box-shadow: unset;
+  }
+
   .import-item-box {
     margin: 10px;
     cursor: pointer;
