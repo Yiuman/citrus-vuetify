@@ -191,20 +191,21 @@
   import CrudTable from "@/components/CrudTable";
   import SimpleFormNavigation from "@/components/SimpleFormNavigation";
   import request from "../../utils/request";
+  import moment from "moment"; //导入文件
   const DEFAULT_PRODUCT = {
-    productId: "-",
+    productId: 0,
     productName: "-",
     productNo: "-",
     price: 0,
     amount: 0,
   };
   const DEFAULT_SALE_MODEL = {
-    saleId:null,
+    saleId: null,
     saleNo: "",
     saleDate: null,
     products: [
       {
-        productId: "-",
+        productId: 0,
         productName: "-",
         inventory: 0,
         productNo: "-",
@@ -271,6 +272,7 @@
           case "add":
             this.addDialog = true;
             this.saleModel = JSON.parse(JSON.stringify(DEFAULT_SALE_MODEL));
+            this.saleModel.saleDate = moment(new Date()).format("YYYY-MM-DD");
             break;
           case "edit":
             this.saleModel.saleId = item.saleId;
@@ -287,25 +289,49 @@
       },
       saveEntity() {
         return new Promise((resolve) => {
-          this.getService()
-            .save(this.saleModel)
-            .then(() => {
-              this.$toasted.show("操作成功", {
-                position: "top-center",
-                type: "success",
-                icon: "check-bold",
+          if (this.beforeSave()) {
+            this.getService()
+              .save(this.saleModel)
+              .then(() => {
+                this.$toasted.show("操作成功", {
+                  position: "top-center",
+                  type: "success",
+                  icon: "check-bold",
+                });
+                resolve();
+              })
+              .catch((err) => {
+                this.$toasted.show(err.message, {
+                  position: "top-center",
+                  type: "error",
+                  icon: "alert-circle",
+                });
+                console.warn(err);
               });
-              resolve();
-            })
-            .catch((err) => {
-              this.$toasted.show(err.message, {
-                position: "top-center",
-                type: "error",
-                icon: "alert-circle",
-              });
-              console.warn(err);
-            });
+          }
         });
+      },
+      beforeSave() {
+        let validated = true;
+        let productCheckIndex = [];
+        this.purchaseModel.products.forEach((element, index) => {
+          if (!element.productId || element.productId === 0) {
+            validated = false;
+            productCheckIndex.push(index + 1);
+          }
+        });
+
+        if (!validated) {
+          this.$toasted.show(
+            `请完善第${productCheckIndex.join(",")}个商品信息`,
+            {
+              position: "top-center",
+              type: "error",
+              icon: "alert-circle",
+            }
+          );
+        }
+        return validated;
       },
       reload() {
         this.$refs.$crud$.reload();

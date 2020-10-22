@@ -118,7 +118,7 @@
     </v-data-table>
 
     <!--分页相关组件-->
-    <v-row justify="end" no-gutters class="mt-2" v-if="pageTotal > 0">
+    <v-row justify="end" no-gutters class="mt-2" v-if="pageTotal > 1">
       <!-- <v-col md="auto"> -->
       <v-pagination
         class="pa-2 page-selection v-size--small"
@@ -160,6 +160,7 @@
     <slot name="delete-dialog">
       <tips-dialog
         v-model="actionSwitch.delete"
+        width="300px"
         title="确认要删除当前数据项吗?"
         @confirm="delete_(currentItem)"
       />
@@ -167,6 +168,7 @@
 
     <slot name="delete-batch-dialog">
       <tips-dialog
+        width="350px"
         v-model="actionSwitch.batchDelete"
         title="确认要删除当前所选数据项吗?"
         @confirm="batchDelete_(selected)"

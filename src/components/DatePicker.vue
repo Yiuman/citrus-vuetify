@@ -7,12 +7,12 @@
     offset-y
     min-width="290px"
   >
-    <template v-slot:activator="{ on, attrs }">
+    <template v-slot:activator="{ on }">
       <v-text-field
         :value="dateText"
         :label="label"
         readonly
-        v-bind="attrs"
+        v-bind="$attrs"
         clearable
         @click:clear="clearDate"
         v-on="on"

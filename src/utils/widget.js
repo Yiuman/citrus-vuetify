@@ -73,6 +73,13 @@ const widgetProcessor = {
       treeItem: widget.model,
     };
   },
+  "date-picker": (widget) => {
+    return {
+      ...widget,
+      label:widget.text,   
+      dense: true,
+    };
+  },
 };
 
 //校验器适配器，用于处理字段的校验
