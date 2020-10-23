@@ -22,7 +22,7 @@
               outlined
               tile
               class="mr-2"
-              color="blue darken-1"
+              color="primary"
               @click="executeSuccess"
             >
               {{ saveText }}

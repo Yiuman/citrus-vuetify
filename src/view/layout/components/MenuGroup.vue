@@ -24,11 +24,6 @@
       <v-list-group color="primary" v-else :prepend-icon="menu.icon">
         <template v-slot:activator>
           <v-list-item-title>{{ menu.text }}</v-list-item-title>
-          <!-- <v-list-item-content>
-                        <v-list-item-title>
-                            {{ menu.text }}
-                        </v-list-item-title>
-                    </v-list-item-content> -->
         </template>
 
         <menu-group :menus="menu.children" :base-path="resolvePath(menu)" />

@@ -6,10 +6,11 @@
     temporary
     hide-overlay
     :width="width"
+    
   >
     <!-- 字段渲染 -->
     <v-container>
-      <v-row v-if="widgetModel">
+      <v-row v-if="widgetModel" class="px-4">
         <v-col :md="12" v-for="(widget, index) in widgets" :key="index">
           <widget-render :widget="widget" :model-object="widgetModel" />
         </v-col>
@@ -56,7 +57,7 @@
       value: Boolean,
       width: {
         type: String || Number,
-        default: () => "300",
+        default: () => "400",
       },
       widgets: Array,
       widgetModel: Object,
