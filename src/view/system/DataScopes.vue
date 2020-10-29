@@ -1,6 +1,6 @@
 // 数据范围管理列表
 <template>
-  <v-card class="height-100pc">
+  <div class="height-100pc">
     <crud-table
       namespace="/rest/scopes"
       :exclude-actions="['edit']"
@@ -75,20 +75,16 @@
                   <template v-if="scopeTypeShow">
                     <div>范围类型</div>
                     <v-divider />
-                    <v-row
+                    <!--数据范围类型的选择-->
+                    <v-checkbox
+                      class="ml-3 mb-n4"
                       v-for="(scopeType, index) in scopeTypes"
                       :key="index"
                       dense
-                    >
-                      <!--数据范围类型的选择-->
-                      <v-checkbox
-                        class="ml-3"
-                        :key="index"
-                        v-model="scopeEntity.scopeDefinesMap[selected]['types']"
-                        :value="scopeType.code"
-                        :label="scopeType.text"
-                      />
-                    </v-row>
+                      v-model="scopeEntity.scopeDefinesMap[selected]['types']"
+                      :value="scopeType.code"
+                      :label="scopeType.text"
+                    />
                   </template>
                 </v-col>
               </v-row>
@@ -97,7 +93,7 @@
         </simple-form-navigation>
       </template>
     </crud-table>
-  </v-card>
+  </div>
 </template>
 
 <script>
@@ -261,7 +257,7 @@
 
 <style scoped>
   .select-container {
-    height: 377px !important;
+    height: 320px !important;
     overflow: auto !important;
     width: 100% !important;
   }

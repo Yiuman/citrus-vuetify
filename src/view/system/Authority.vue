@@ -1,6 +1,6 @@
 // 权限管理列表
 <template>
-  <v-card class="height-100pc">
+  <div class="height-100pc">
     <crud-table
       namespace="/rest/auth"
       :exclude-actions="['edit']"
@@ -40,6 +40,7 @@
                 <!--选择功能-->
                 <v-col cols="6" class="select-container">
                   <tree-model
+                    :open-deep="1"
                     namespace="/rest/menus"
                     :value="authority.selectResources"
                     :display-root="false"
@@ -90,7 +91,7 @@
         </simple-form-navigation>
       </template>
     </crud-table>
-  </v-card>
+  </div>
 </template>
 
 <script>

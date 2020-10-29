@@ -12,7 +12,7 @@
               outlined
               tile
               class="mr-2"
-              color="grey darken-1"
+              color="secondary"
               @click="toggleSwitch"
             >
               {{ cancelText }}

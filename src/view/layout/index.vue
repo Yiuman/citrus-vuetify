@@ -10,9 +10,12 @@
       class="app-bar"
       elevation="0"
     >
-      <v-app-bar-nav-icon @click.stop="enableMini = !enableMini">
+      <v-app-bar-nav-icon small @click.stop="enableMini = !enableMini">
         <v-icon>{{ toggleNavIcon }}</v-icon>
       </v-app-bar-nav-icon>
+      <!-- 面包屑导航 -->
+      <v-breadcrumbs v-if="config.breadcrumb" :items="breadCrumbs"></v-breadcrumbs>
+
       <v-toolbar-title v-if="config.toolbarTitle">
         <v-img
           v-if="config.systemImageSrc"
@@ -28,22 +31,6 @@
       <v-spacer />
 
       <!-- 这里开始是右边 -->
-      <div>
-        <v-btn small icon @click="enableSearch = !enableSearch">
-          <v-icon>mdi-magnify</v-icon>
-        </v-btn>
-      </div>
-      <div class="mr-4 mb-n5">
-        <v-autocomplete  rounded filled dense v-show="enableSearch">
-        </v-autocomplete>
-      </div>
-      <div class="mr-3">
-        <v-btn icon small>
-          <v-badge dot left color="error"
-            ><v-icon color="">mdi-bell</v-icon></v-badge
-          >
-        </v-btn>
-      </div>
 
       <!-- 头像列表，操作 -->
       <v-menu
@@ -94,6 +81,7 @@
   import Navigation from "./components/Navigation";
   import VisitedBar from "./components/VisitedBar";
   import { SYSTEM_CONFIG as config } from "../../config";
+  import { createBreadCrumbs } from "@/utils/app";
 
   export default {
     name: "Layout",
@@ -132,6 +120,9 @@
       },
       routerKey() {
         return this.$route.meta.id;
+      },
+      breadCrumbs() {
+        return createBreadCrumbs(this.$route);
       },
     },
     methods: {
@@ -172,7 +163,7 @@
   }
 
   .main-content {
-    /* background-color: #fefefe; */
+    background-color: #f0f2f5;
     padding-top: 86px !important;
   }
 

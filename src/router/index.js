@@ -48,7 +48,7 @@ const systemRoutes = [
         },
       },
     ],
-  }
+  },
 ];
 
 /**
@@ -193,7 +193,7 @@ router.beforeEach((to, from, next) => {
           router.replace("/login");
         });
     } else {
-    //   addRouters();
+      //   addRouters();
       next();
     }
   } else {
@@ -209,6 +209,9 @@ const addRouters = () => {
   const routers = menus
     .filter((menu) => menu.path)
     .map((menu) => {
+      const parent = menus.filter(
+        (menuItem) => menuItem.resourceId === menu.parentId
+      )[0];
       return {
         path: "/",
         component: Layout,
@@ -223,6 +226,7 @@ const addRouters = () => {
               parentId: menu.parentId,
               text: menu.resourceName,
               icon: menu.icon,
+              parent,
             },
           },
         ],

@@ -43,7 +43,6 @@ export const createDefaultVisitedBar = (routes, filter, barArray = []) => {
     routes.filter((i) => filter(i));
   }
   routes.forEach((route) => {
-    console.warn(JSON.stringify(route.meta))
     if (route.children) {
       createDefaultVisitedBar(route.children, null, barArray);
     } else {
@@ -84,4 +83,31 @@ export const listToTree = (list, tree, parentId) => {
       tree.push(child);
     }
   });
+};
+
+/**
+ *
+ * 根据当前路由生成面包屑
+ * @param {*} currentRoute 当前路由
+ * @param {*} list 返回的面包屑集合
+ * @param {*} index 层级下标倒序
+ */
+export const createBreadCrumbs = (currentRoute, list = [], index = 0) => {
+  if (currentRoute) {
+    let text = currentRoute.meta
+      ? currentRoute.meta.text
+      : currentRoute.resourceName || currentRoute.name;
+    list.push({
+      text,
+      disabled: index == 0 || currentRoute.path === null,
+      href: currentRoute.path,
+      index,
+    });
+
+    if (currentRoute.meta && currentRoute.meta.parent) {
+      createBreadCrumbs(currentRoute.meta.parent, list, ++index);
+    }
+  }
+  list.sort((o1, o2) => o2.index - o1.index);
+  return list;
 };

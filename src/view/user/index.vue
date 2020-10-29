@@ -120,7 +120,7 @@
                       outlined
                       tile
                       class="mr-2"
-                      color="grey darken-1"
+                      color="secondary"
                       @click="resetProfile"
                     >
                       重置

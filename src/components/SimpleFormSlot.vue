@@ -6,13 +6,13 @@
                   :fullscreen="fullscreen">
             <v-card>
                 <!--顶部-->
-                <v-toolbar dense color="#fafbfd" class="mb-3" elevation="3">
+                <v-toolbar dense color="secondary" class="mb-3" elevation="3">
                     <v-btn icon @click="toggleSwitch">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
                     <v-toolbar-title class="font-size-18 font-weight-bold">{{title}}</v-toolbar-title>
                     <v-spacer/>
-                    <v-btn color="success" icon @click="executeSuccess">
+                    <v-btn color="primary" icon @click="executeSuccess">
                         <v-icon>mdi-check</v-icon>
                     </v-btn>
                 </v-toolbar>

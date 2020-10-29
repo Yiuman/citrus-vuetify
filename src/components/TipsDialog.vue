@@ -8,10 +8,10 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="grey darken-1" text @click="dialogSwitch = false"
+        <v-btn color="secondary" text @click="dialogSwitch = false"
           >取消</v-btn
         >
-        <v-btn color="green darken-1" text @click="confirmAction">确定</v-btn>
+        <v-btn color="primary" text @click="confirmAction">确定</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

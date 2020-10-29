@@ -62,7 +62,7 @@
         this.chart = echarts.init(this.$el, "macarons");
         this.setOptions(this.chartData);
       },
-      setOptions({ purchases, sales,expenses,profits } = {}) {
+      setOptions({ purchases, sales, expenses, profits } = {}) {
         this.chart.setOption({
           xAxis: {
             data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],

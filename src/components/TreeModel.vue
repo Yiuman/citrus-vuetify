@@ -27,9 +27,11 @@
       :items="items"
       :filter="filterFunc"
       :open.sync="open"
+      :open-all="openAll"
       :load-children="loadChildren"
       :item-key="itemKey"
       :item-text="itemText"
+      selected-color="primary"
       @update:active="updateActive"
     >
       <!-- <template v-slot:prepend="{ item }">
@@ -60,6 +62,10 @@
       value: Array,
       dense: Boolean,
       openDeep: Number,
+      openAll: {
+        type: Boolean,
+        defalut: () => false,
+      },
       displayRoot: Boolean,
       treeItem: Object,
       modelText: String,
@@ -186,10 +192,11 @@
           }
 
           if (tree) {
-            vm.handleNodes(
-              tree,
-              !vm.lazy || Boolean(Object.keys(vm.queryParam).length)
-            );
+            const isOpen =
+              this.openAll &&
+              (!vm.lazy || Boolean(Object.keys(vm.queryParam).length));
+              console.warn(isOpen)
+            vm.handleNodes(tree, isOpen);
 
             //是否显示根节点
             if (data.displayRoot && this.displayRoot) {
@@ -240,7 +247,7 @@
             this.handleNodes(childNode, open);
           });
 
-          if (open || !node.parentId) {
+          if (open && !node.parentId) {
             this.open.push(this.returnObject ? node : node[this.itemKey]);
           }
         } else {
@@ -270,7 +277,7 @@
     font-size: 16px;
   }
 
-  .tree-search-text{
-      margin: 0 15px;
+  .tree-search-text {
+    margin: 0 15px;
   }
 </style>

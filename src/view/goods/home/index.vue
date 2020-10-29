@@ -1,5 +1,5 @@
 <template>
-  <div class=" height-100pc mx-3">
+  <div class="height-100pc mx-3 goods-home">
     <v-row justify="center">
       <template v-for="(item, itemIndex) in indicators">
         <v-col :key="itemIndex" cols="12" md="3">
@@ -19,7 +19,7 @@
                   <v-row justify="center" class="text-h5">{{
                     item.title
                   }}</v-row>
-                  <v-row justify="center" class="mt-5 text-h7">{{
+                  <v-row justify="center" class="ml-n1 mt-5 text-h7">{{
                     item.text
                   }}</v-row>
                 </v-col>
@@ -30,10 +30,14 @@
       </template>
     </v-row>
 
-    <v-row justify="center" class="mt-10 mx-3">
-      <v-row justify="start" class="text-subtitle-2 ml-3">本周业务量</v-row>
-      <line-chart :chart-data="lineChartData"></line-chart>
-    </v-row>
+    <div>
+      <v-row class="ml-3 my-2">
+        本周业务量
+      </v-row>
+      <v-card class="pt-4">
+        <line-chart width="98%" :chart-data="lineChartData"></line-chart>
+      </v-card>
+    </div>
   </div>
 </template>
 
@@ -92,5 +96,9 @@
 
   .item-card:not(.on-hover) {
     opacity: 0.6;
+  }
+
+  .line-chart {
+    background: #fff;
   }
 </style>

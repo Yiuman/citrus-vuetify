@@ -1,88 +1,167 @@
 <template>
-  <v-card :loading="loading" class="py-2 px-2 height-100pc crud-tree">
-    <!--按钮及控件-->
-    <v-row no-gutters justify="space-between" align="center">
-      <v-col>
-        <ButtonRender :buttons="buttons" @buttonClick="doAction" />
-      </v-col>
-      <!--控件的渲染-->
-      <v-col align="end" class="pr-2">
-        <template v-if="widgets && widgets.length > 0">
-          <div class="col-item" @click="showFilter = !showFilter">
-            <v-icon small color="#8091a5">mdi-filter-menu-outline</v-icon>
-            过滤
-          </div>
-          <FilterNavigation
-            v-model="showFilter"
-            :widgets="widgets"
-            :widget-model="queryParam"
-            @confirm="load"
-          />
-        </template>
-      </v-col>
-    </v-row>
-    <v-card-text>
-      <v-treeview
-        dense
-        hoverable
-        activatable
-        rounded
-        :items="items"
-        :open.sync="open"
-        :load-children="loadChildren"
-        :item-key="itemKey"
-        @update:active="updateActive"
-        :item-text="itemText"
-      >
-        <template v-slot:label="{ item }">
-          <div @dblclick="edit('edit', item)">
-            <v-row>
-              <v-col> {{ item[itemText] }}</v-col>
-              <v-col align="end" class="mr-3">
-                <v-menu
-                  v-if="item.id && actions && actions.length > 0"
-                  top
-                  left
-                  offset-y
-                  rounded="0"
-                  transition="scale-transition"
-                  origin="bottom right"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      width="0"
-                      height="0"
-                      tile
-                      fab
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <v-icon small>mdi-dots-vertical</v-icon>
-                    </v-btn>
-                  </template>
-                  <v-list dense>
-                    <v-list-item
-                      v-for="(operation, index) in actions"
-                      :key="index"
-                      @click="doAction(operation.action, item, operation)"
-                    >
-                      <v-list-item-title>{{
-                        operation.text || operation.action
-                      }}</v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
+  <div class="height-100pc">
+    <v-card :loading="loading" class="py-2 px-2 height-100pc crud-tree">
+      <!--按钮及控件-->
+      <v-row no-gutters justify="space-between" align="center">
+        <v-col>
+          <ButtonRender :buttons="buttons" @buttonClick="doAction" />
+        </v-col>
+        <!--控件的渲染-->
+        <v-col align="end" class="pr-2">
+          <template v-if="widgets && widgets.length > 0">
+            <div class="col-item" @click="showFilter = !showFilter">
+              <v-icon small color="#8091a5">mdi-filter-menu-outline</v-icon>
+              过滤
+            </div>
+            <FilterNavigation
+              v-model="showFilter"
+              :widgets="widgets"
+              :widget-model="queryParam"
+              @confirm="load"
+            />
+          </template>
+        </v-col>
+      </v-row>
+      <v-card-text>
+        <v-treeview
+          dense
+          hoverable
+          activatable
+          rounded
+          :items="items"
+          :open.sync="open"
+          :load-children="loadChildren"
+          :item-key="itemKey"
+          @update:active="updateActive"
+          :item-text="itemText"
+        >
+          <template v-slot:label="{ item }">
+            <div @dblclick="edit('edit', item)">
+              <v-row>
+                <v-col> {{ item[itemText] }}</v-col>
+                <v-col align="end" class="mr-3">
+                  <v-menu
+                    v-if="item.id && actions && actions.length > 0"
+                    top
+                    left
+                    offset-y
+                    rounded="0"
+                    transition="scale-transition"
+                    origin="bottom right"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        width="0"
+                        height="0"
+                        tile
+                        fab
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <v-icon small>mdi-dots-vertical</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list dense>
+                      <v-list-item
+                        v-for="(operation, index) in actions"
+                        :key="index"
+                        @click="doAction(operation.action, item, operation)"
+                      >
+                        <v-list-item-title>{{
+                          operation.text || operation.action
+                        }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </v-col>
+              </v-row>
+            </div>
+          </template>
+          <template v-slot:prepend="{ item }">
+            <v-icon
+              v-text="
+                `mdi-${item.children ? 'home-variant' : 'folder-network'}`
+              "
+            />
+          </template>
+        </v-treeview>
+      </v-card-text>
+
+      <slot name="delete-dialog">
+        <tips-dialog
+          v-model="actionSwitch.delete"
+          title="确认要删除当前数据项吗?"
+          @confirm="delete_(currentItem)"
+        />
+      </slot>
+
+      <slot name="delete-batch-dialog">
+        <tips-dialog
+          v-model="actionSwitch.batchDelete"
+          title="确认要删除当期所选数据项吗?"
+          @confirm="batchDelete_(selected)"
+        />
+      </slot>
+
+      <slot name="import-dialog">
+        <v-dialog v-model="actionSwitch.import" width="400">
+          <v-card class="pa-2">
+            <v-row no-gutters justify="space-between" align="center">
+              <v-col md="6" align="center" class="import-col">
+                <v-hover v-slot:default="{ hover }">
+                  <div
+                    class="import-item-box"
+                    :class="{ 'on-hover': hover }"
+                    @click="exportTemplate"
+                  >
+                    <div>
+                      <v-icon color="primary" size="100"
+                        >mdi-file-download-outline
+                      </v-icon>
+                    </div>
+                    <div class="text">下载模板</div>
+                  </div>
+                </v-hover>
+              </v-col>
+
+              <v-col md="6" align="center" class="import-col">
+                <v-hover v-slot:default="{ hover }">
+                  <div class="import-item-box" :class="{ 'on-hover': hover }">
+                    <div>
+                      <file-upload
+                        ref="import-upload"
+                        :headers="authHeanders"
+                        :post-action="apiBase + namespace + '/import'"
+                        @input-file="inputFile"
+                        @input-filter="inputFilter"
+                        class="import-upload"
+                        v-model="importFiles"
+                      >
+                        <v-icon color="primary" size="100"
+                          >mdi-file-upload-outline</v-icon
+                        >
+                      </file-upload>
+                    </div>
+                    <div class="text" style="margin-top:-8px">上传数据</div>
+                  </div>
+                </v-hover>
               </v-col>
             </v-row>
-          </div>
-        </template>
-        <template v-slot:prepend="{ item }">
-          <v-icon
-            v-text="`mdi-${item.children ? 'home-variant' : 'folder-network'}`"
-          />
-        </template>
-      </v-treeview>
-    </v-card-text>
+            <v-row no-gutters justify="space-between" align="center">
+              <v-col md="12">
+                <v-progress-linear
+                  v-if="importFiles.length"
+                  color="light-blue"
+                  height="10"
+                  :value="importFiles[0].progress"
+                  striped
+                ></v-progress-linear>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-dialog>
+      </slot>
+    </v-card>
     <slot name="add-dialog">
       <FormNavigation
         v-model="actionSwitch.add"
@@ -99,81 +178,7 @@
         @confirm="edit_"
       />
     </slot>
-    <slot name="delete-dialog">
-      <tips-dialog
-        v-model="actionSwitch.delete"
-        title="确认要删除当前数据项吗?"
-        @confirm="delete_(currentItem)"
-      />
-    </slot>
-
-    <slot name="delete-batch-dialog">
-      <tips-dialog
-        v-model="actionSwitch.batchDelete"
-        title="确认要删除当期所选数据项吗?"
-        @confirm="batchDelete_(selected)"
-      />
-    </slot>
-
-    <slot name="import-dialog">
-      <v-dialog v-model="actionSwitch.import" width="400">
-        <v-card class="pa-2">
-          <v-row no-gutters justify="space-between" align="center">
-            <v-col md="6" align="center" class="import-col">
-              <v-hover v-slot:default="{ hover }">
-                <div
-                  class="import-item-box"
-                  :class="{ 'on-hover': hover }"
-                  @click="exportTemplate"
-                >
-                  <div>
-                    <v-icon color="primary" size="100"
-                      >mdi-file-download-outline
-                    </v-icon>
-                  </div>
-                  <div class="text">下载模板</div>
-                </div>
-              </v-hover>
-            </v-col>
-
-            <v-col md="6" align="center" class="import-col">
-              <v-hover v-slot:default="{ hover }">
-                <div class="import-item-box" :class="{ 'on-hover': hover }">
-                  <div>
-                    <file-upload
-                      ref="import-upload"
-                      :headers="authHeanders"
-                      :post-action="apiBase + namespace + '/import'"
-                      @input-file="inputFile"
-                      @input-filter="inputFilter"
-                      class="import-upload"
-                      v-model="importFiles"
-                    >
-                      <v-icon color="primary" size="100"
-                        >mdi-file-upload-outline</v-icon
-                      >
-                    </file-upload>
-                  </div>
-                  <div class="text" style="margin-top:-8px">上传数据</div>
-                </div>
-              </v-hover>
-            </v-col>
-          </v-row>
-          <v-row no-gutters justify="space-between" align="center">
-            <v-col md="12">
-              <v-progress-linear
-                v-if="importFiles.length"
-                color="light-blue"
-                height="10"
-                :value="importFiles[0].progress"
-                striped
-              ></v-progress-linear>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-dialog>
-    </slot>
-  </v-card>
+  </div>
 </template>
 
 <script>
@@ -407,7 +412,7 @@
   }
 
   .import-item-box .text {
-    color: #80abfa;
+    color: #3582fb;
     font-weight: bold;
     padding-bottom: 10px;
   }

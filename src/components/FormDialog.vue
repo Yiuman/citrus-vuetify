@@ -27,11 +27,11 @@
 
                     <v-card-actions>
                         <v-spacer/>
-                        <v-btn small outlined color="grey darken-1" @click="dialogSwitch=!dialogSwitch">
+                        <v-btn small outlined color="secondary" @click="dialogSwitch=!dialogSwitch">
                             <v-icon>mdi-close</v-icon>
                             {{cancelText}}
                         </v-btn>
-                        <v-btn small color="blue darken-1" @click="save">
+                        <v-btn small color="primary" @click="save">
                             <v-icon>mdi-content-save-outline</v-icon>
                             {{saveText}}
                         </v-btn>
