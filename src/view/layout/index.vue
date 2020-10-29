@@ -3,21 +3,47 @@
     <!-- 菜单导航-->
     <navigation :enable-mini="enableMini" />
     <!--应用顶部导航条#344763-->
-    <v-app-bar app dense color="primary" class="app-bar" elevation="0">
+    <v-app-bar
+      app
+      dense
+      :color="config.appBarColor"
+      class="app-bar"
+      elevation="0"
+    >
       <v-app-bar-nav-icon @click.stop="enableMini = !enableMini">
         <v-icon>{{ toggleNavIcon }}</v-icon>
       </v-app-bar-nav-icon>
-      <v-toolbar-title class="white--text">
+      <v-toolbar-title v-if="config.toolbarTitle">
         <v-img
-          v-if="systemSrc"
+          v-if="config.systemImageSrc"
           height="20"
           width="98"
-          :src="systemSrc"
+          :src="config.systemImageSrc"
         />
-        <div class="system-title" v-if="systemTitle">{{ systemTitle }}</div>
+        <div class="system-title" v-if="config.systemTitle">
+          {{ config.systemTitle }}
+        </div>
       </v-toolbar-title>
 
       <v-spacer />
+
+      <!-- 这里开始是右边 -->
+      <div>
+        <v-btn small icon @click="enableSearch = !enableSearch">
+          <v-icon>mdi-magnify</v-icon>
+        </v-btn>
+      </div>
+      <div class="mr-4 mb-n5">
+        <v-autocomplete  rounded filled dense v-show="enableSearch">
+        </v-autocomplete>
+      </div>
+      <div class="mr-3">
+        <v-btn icon small>
+          <v-badge dot left color="error"
+            ><v-icon color="">mdi-bell</v-icon></v-badge
+          >
+        </v-btn>
+      </div>
 
       <!-- 头像列表，操作 -->
       <v-menu
@@ -28,8 +54,8 @@
         origin="bottom"
       >
         <template v-slot:activator="{ on, attrs }">
-          <v-btn icon v-bind="attrs" v-on="on">
-            <v-avatar color="#b9cdef" size="36">
+          <v-btn class="mr-1" small icon v-bind="attrs" v-on="on">
+            <v-avatar color="#b9cdef" size="32">
               <span class="white--text headline">{{ currentUser }}</span>
             </v-avatar>
           </v-btn>
@@ -48,7 +74,7 @@
       </v-menu>
 
       <template v-slot:extension>
-        <visited-bar class="mb-n1" />
+        <visited-bar />
       </template>
     </v-app-bar>
 
@@ -67,7 +93,7 @@
 <script>
   import Navigation from "./components/Navigation";
   import VisitedBar from "./components/VisitedBar";
-  import { SYSTEM_CONFIG } from "../../config";
+  import { SYSTEM_CONFIG as config } from "../../config";
 
   export default {
     name: "Layout",
@@ -76,9 +102,9 @@
       VisitedBar,
     },
     data: () => ({
-      systemSrc: SYSTEM_CONFIG.systemImageSrc,
-      systemTitle: SYSTEM_CONFIG.systemTitle,
+      config,
       enableMini: true,
+      enableSearch: false,
       actions: [
         {
           text: "个人中心",
@@ -142,14 +168,15 @@
 
   .app-bar >>> .v-toolbar__extension {
     padding: 0 !important;
-    height: 44px !important;
+    height: 36px !important;
   }
 
   .main-content {
-    background-color: #fefefe;
+    /* background-color: #fefefe; */
+    padding-top: 86px !important;
   }
 
-  .system-title{
+  .system-title {
     color: #000;
     font-weight: bold;
   }

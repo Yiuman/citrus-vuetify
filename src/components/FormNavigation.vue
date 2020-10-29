@@ -39,7 +39,6 @@
             </v-btn>
             <v-btn
               small
-              outlined
               tile
               class="mr-2"
               color="primary"

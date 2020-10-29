@@ -1,0 +1,96 @@
+<template>
+  <div class=" height-100pc mx-3">
+    <v-row justify="center">
+      <template v-for="(item, itemIndex) in indicators">
+        <v-col :key="itemIndex" cols="12" md="3">
+          <v-hover v-slot="{ hover }">
+            <v-card
+              class="item-card"
+              :elevation="hover ? 12 : 2"
+              :class="{ 'on-hover': hover }"
+            >
+              <v-row class="mx-3">
+                <v-col md="6" align="center">
+                  <v-icon :color="item.color" size="100">{{
+                    item.icon
+                  }}</v-icon>
+                </v-col>
+                <v-col md="6">
+                  <v-row justify="center" class="text-h5">{{
+                    item.title
+                  }}</v-row>
+                  <v-row justify="center" class="mt-5 text-h7">{{
+                    item.text
+                  }}</v-row>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-hover>
+        </v-col>
+      </template>
+    </v-row>
+
+    <v-row justify="center" class="mt-10 mx-3">
+      <v-row justify="start" class="text-subtitle-2 ml-3">本周业务量</v-row>
+      <line-chart :chart-data="lineChartData"></line-chart>
+    </v-row>
+  </div>
+</template>
+
+<script>
+  import { getHomePanels } from "@/api/goods";
+  import LineChart from "@/view/goods/home/LineChart";
+
+  const lineChartData = {
+    purchases: [100, 120, 161, 134, 105, 160, 165],
+    sales: [120, 82, 91, 154, 162, 140, 145],
+    expenses: [110, 70, 150, 50, 46, 80, 111],
+    profits: [99, 55, 110, 67, 88, 44, 76],
+  };
+  const DEFUALT_PANELS = [
+    { icon: "mdi-dolly", color: "blue", title: "商品", text: "4(件)" },
+    {
+      icon: "mdi-cart-arrow-up",
+      color: "cyan",
+      title: "总销售额",
+      text: "1100.00（元）",
+    },
+    {
+      icon: "mdi-cash-refund",
+      color: "red",
+      title: "支出",
+      text: "568.20（元）",
+    },
+    {
+      icon: "mdi-currency-cny",
+      color: "amber",
+      title: "利润",
+      text: "-368.20（元）",
+    },
+  ];
+  export default {
+    name: "GoodsHome",
+    components: {
+      LineChart,
+    },
+    data: () => ({
+      lineChartData,
+      indicators: DEFUALT_PANELS,
+    }),
+    mounted() {
+      getHomePanels().then((homePanels) => {
+        this.indicators = homePanels;
+      });
+    },
+  };
+</script>
+
+<style>
+  .item-card {
+    transition: opacity 0.4s ease-in-out;
+  }
+
+  .item-card:not(.on-hover) {
+    opacity: 0.6;
+  }
+</style>

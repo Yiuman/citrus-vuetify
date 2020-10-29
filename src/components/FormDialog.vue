@@ -31,7 +31,7 @@
                             <v-icon>mdi-close</v-icon>
                             {{cancelText}}
                         </v-btn>
-                        <v-btn small outlined color="blue darken-1" @click="save">
+                        <v-btn small color="blue darken-1" @click="save">
                             <v-icon>mdi-content-save-outline</v-icon>
                             {{saveText}}
                         </v-btn>

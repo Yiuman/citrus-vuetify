@@ -1,17 +1,20 @@
 <template>
+  <!-- color="#fafbfd" -->
   <v-navigation-drawer
     app
-    color="#fafbfd"
+    dark
+    :color="config.menuColor"
     permanent
     class="menu-navigation-drawer"
     :mini-variant="enableMini"
     :expand-on-hover="enableMini"
   >
-    <menu-group :menus="menus" />
+    <menu-group :menus="menus" :enable-mini="enableMini"/>
   </v-navigation-drawer>
 </template>
 
 <script>
+  import { SYSTEM_CONFIG as config } from "@/config";
   import MenuGroup from "./MenuGroup";
 
   export default {
@@ -29,6 +32,7 @@
     },
     data: () => ({
       menus: [],
+      config,
     }),
     mounted() {
       this.menus = this.$store.state.menu.menus;

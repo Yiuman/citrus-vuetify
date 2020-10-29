@@ -8,8 +8,13 @@ export const API_BASE_PATH =
  * @type {{systemTile: string}}
  */
 export const SYSTEM_CONFIG = {
+  appBarColor:'#fff',
+  menuColor:"#2a68c9",
+  menuTextColor:"#fff",
   // systemTitle: "广大家具",
 
+  // 标题在主要工具拦
+  toolbarTitle:false,
   systemImageSrc:require("./assets/text.png"),
   // systemImageSrc: "",
 

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="py-2 px-2 height-100pc crud-card" elevation="1">
+  <v-card class="py-2 height-100pc crud-card" elevation="1">
     <!--表格-->
     <v-data-table
       class="crud-table elevation-0"
@@ -118,7 +118,7 @@
     </v-data-table>
 
     <!--分页相关组件-->
-    <v-row justify="end" no-gutters class="mt-2" v-if="pageTotal > 1">
+    <v-row justify="end" no-gutters class="mb-n3" v-if="pageTotal > 1">
       <!-- <v-col md="auto"> -->
       <v-pagination
         class="pa-2 page-selection v-size--small"
@@ -473,7 +473,7 @@
 
 <style scoped>
   body >>> .v-data-table__checkbox .mdi-checkbox-marked {
-    color: #80abfa;
+    color: #3582fb;
   }
 
   .crud-card {
@@ -489,11 +489,17 @@
   }
 
   .crud-table >>> .mdi-checkbox-marked {
-    color: #80abfa;
+    color: #3582fb;
   }
 
   .crud-table >>> .v-data-table__wrapper tbody tr:nth-child(2n + 1) {
     background: #f8f8f8;
+  }
+
+  .crud-table >>> tbody tr:hover {
+    box-shadow: 0 3px 15px -2px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+    background: #fff !important;
   }
 
   .crud-table >>> .crud-actons-td {

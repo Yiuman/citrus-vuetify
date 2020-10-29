@@ -33,9 +33,12 @@ const opts = {
     themes: {
       light: {
         // primary: '#9fa8da',
-        primary: "#80abfa",
+        // primary: "#80abfa",
         // primary: "#4777c9",
-        // primary: '#80abfa',
+        // primary: '#2a68c9',
+        primary: '#3582fb',
+        // primary: '#1867c0',
+        
       },
     },
   },

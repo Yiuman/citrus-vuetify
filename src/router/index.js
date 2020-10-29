@@ -17,10 +17,17 @@ const systemRoutes = [
     path: "/",
     name: "layout",
     component: Layout,
-    meta: {
-      text: "首页",
-      defaultVisited: true,
-    },
+    children: [
+      {
+        path: "/",
+        name: "goodsHome",
+        component: () => import("@/view/goods/home/index.vue"),
+        meta: {
+          text: "首页",
+          defaultVisited: true,
+        },
+      },
+    ],
   },
   {
     path: "/login",

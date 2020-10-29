@@ -11,7 +11,7 @@
       <template v-slot:add-dialog>
         <simple-form-navigation
           v-model="addDialog"
-          width="800"
+          width="1000"
           :successAction="saveEntity"
           @callback="reload"
         >
@@ -103,6 +103,7 @@
                         v-model="selectedProduct"
                         label="商品"
                         clearable
+                        item-value="productId"
                         item-text="productName"
                         :items="productItems"
                         :loading="searchLoading"
@@ -113,14 +114,16 @@
                     </template>
                   </v-edit-dialog>
                 </template>
-                <template v-slot:item.price="props">
+                <template v-slot:item.salePrice="props">
                   <v-edit-dialog large save-text="确定" cancel-text="取消">
-                    <span class="font-editable"> {{ props.item.price }}</span>
+                    <span class="font-editable">
+                      {{ props.item.salePrice }}</span
+                    >
                     <template v-slot:input>
                       <v-text-field
-                        label="单价"
+                        label="销售单价"
                         type="number"
-                        v-model="props.item.price"
+                        v-model="props.item.salePrice"
                       ></v-text-field>
                     </template>
                   </v-edit-dialog>
@@ -138,9 +141,18 @@
                     </template>
                   </v-edit-dialog>
                 </template>
-                <template v-slot:item.total="{ item }">
-                  {{ item.price * item.amount }}
+                <template v-slot:item.costTotal="{ item }">
+                  {{ item.costPrice * item.amount }}
                 </template>
+                <template v-slot:item.saleTotal="{ item }">
+                  {{ item.salePrice * item.amount }}
+                </template>
+                <template v-slot:item.profits="{ item }">
+                  {{
+                    item.salePrice * item.amount - item.costPrice * item.amount
+                  }}
+                </template>
+
                 <template v-slot:item.data-item-reduce="{ item }">
                   <v-btn
                     v-if="saleModel.products.length > 1"
@@ -166,17 +178,23 @@
             <thead>
               <tr>
                 <th>货名</th>
-                <th>单价</th>
-                <th>数量</th>
-                <th>总价</th>
+                <th>成本价</th>
+                <th>销售价</th>
+                <th>销售数量</th>
+                <th>成本总价</th>
+                <th>销售总价</th>
+                <th>利润</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="product in item.products" :key="product.productId">
                 <td>{{ product.productName }}</td>
-                <td>{{ product.price }}</td>
+                <td>{{ product.costPrice }}</td>
+                <td>{{ product.salePrice }}</td>
                 <td>{{ product.amount }}</td>
-                <td>{{ product.total }}</td>
+                <td>{{ product.costTotal }}</td>
+                <td>{{ product.saleTotal }}</td>
+                <td>{{ product.profits }}</td>
               </tr>
             </tbody>
           </template>
@@ -196,8 +214,13 @@
     productId: 0,
     productName: "-",
     productNo: "-",
-    price: 0,
+    inventory: 0,
+    costPrice: 0,
+    salePrice: 0,
+    costTotal: 0,
+    saleTotal: 0,
     amount: 0,
+    profits: 0,
   };
   const DEFAULT_SALE_MODEL = {
     saleId: null,
@@ -207,10 +230,14 @@
       {
         productId: 0,
         productName: "-",
-        inventory: 0,
         productNo: "-",
-        price: 0,
+        inventory: 0,
+        costPrice: 0,
+        salePrice: 0,
+        costTotal: 0,
+        saleTotal: 0,
         amount: 0,
+        profits: 0,
       },
     ],
   };
@@ -235,9 +262,12 @@
         },
         { text: "货号", value: "productNo", sortable: false },
         { text: "当前库存", value: "inventory", sortable: false },
-        { text: "单价", value: "price", sortable: false },
+        { text: "成本单价", value: "costPrice", sortable: false },
+        { text: "销售单价", value: "salePrice", sortable: false },
         { text: "销售数量", value: "amount", sortable: false },
-        { text: "合计", value: "total", sortable: false },
+        { text: "成本合计", value: "costTotal", sortable: false },
+        { text: "销售合计", value: "saleTotal", sortable: false },
+        { text: "利润", value: "profits", sortable: false },
         { text: "", value: "data-item-reduce", sortable: false, width: "1" },
       ],
       productItems: [],
@@ -249,7 +279,7 @@
         let total = 0;
         if (this.saleModel.products) {
           this.saleModel.products.forEach((item) => {
-            total += Number(item.price * item.amount);
+            total += Number(item.salePrice * item.amount);
           });
         }
 
@@ -314,7 +344,7 @@
       beforeSave() {
         let validated = true;
         let productCheckIndex = [];
-        this.purchaseModel.products.forEach((element, index) => {
+        this.saleModel.products.forEach((element, index) => {
           if (!element.productId || element.productId === 0) {
             validated = false;
             productCheckIndex.push(index + 1);
@@ -343,7 +373,8 @@
           item.productId = this.selectedProduct.productId;
           item.productName = this.selectedProduct.productName;
           item.productNo = this.selectedProduct.productNo;
-          item.price = this.selectedProduct.buyPrice;
+          item.costPrice = item.costPrice || this.selectedProduct.buyPrice;
+          item.salePrice = item.salePrice || this.selectedProduct.salePrice;
           item.inventory = this.selectedProduct.inventory;
         }
 

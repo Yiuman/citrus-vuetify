@@ -1,9 +1,10 @@
 <template>
   <v-row justify="space-around">
     <v-col>
-      <v-sheet tile elevation="1">
+      <v-sheet tile elevation="2">
         <v-chip-group
           mandatory
+          class="ml-1"
           active-class="chip-active"
           v-model="activeIndex"
         >
@@ -11,7 +12,7 @@
             v-for="(item, index) in visitedItems"
             :key="index"
             :close="item.deletable"
-            class="ml-1 bar-chip"
+            class="bar-chip"
             label
             small
             outlined
@@ -166,18 +167,18 @@
 <style scoped>
   .chip-active {
     /*border-bottom: #85b71b solid 3px !important;*/
-    border-bottom: #80abfa solid 2px !important;
+    border-bottom: #2a68c9 solid 2px !important;
   }
 
   .bar-chip {
     border-radius: 0 !important;
-    height: 28px !important;
+    height: 26px !important;
     margin-top: 2px !important;
     margin-bottom: 2px !important;
   }
 
   .bar-chip:hover {
-    border-bottom: #80abfa solid 2px !important;
+    border-bottom: #2a68c9 solid 2px !important;
   }
 
   .operation-text {

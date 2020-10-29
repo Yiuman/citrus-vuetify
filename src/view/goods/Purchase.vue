@@ -147,9 +147,9 @@
             <thead>
               <tr>
                 <th>货名</th>
-                <th>单价</th>
+                <th>进货价</th>
                 <th>数量</th>
-                <th>总价</th>
+                <th>进货总价</th>
               </tr>
             </thead>
             <tbody>

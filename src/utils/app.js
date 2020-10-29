@@ -38,21 +38,25 @@ export const createMenus = (routes, filter) => {
  * @param routes 路由
  * @param filter 过滤器
  */
-export const createDefaultVisitedBar = (routes, filter) => {
+export const createDefaultVisitedBar = (routes, filter, barArray = []) => {
   if (filter) {
     routes.filter((i) => filter(i));
   }
-  let defaultVisitedItems = [];
   routes.forEach((route) => {
-    const meta = route.meta;
-    if (meta && meta.defaultVisited) {
-      defaultVisitedItems.push({
-        name: meta && meta.text ? meta.text : route.name,
-        path: route.path,
-      });
+    console.warn(JSON.stringify(route.meta))
+    if (route.children) {
+      createDefaultVisitedBar(route.children, null, barArray);
+    } else {
+      const meta = route.meta;
+      if (meta && meta.defaultVisited) {
+        barArray.push({
+          name: meta && meta.text ? meta.text : route.name,
+          path: route.path,
+        });
+      }
     }
   });
-  return defaultVisitedItems;
+  return barArray;
 };
 
 /**
