@@ -31,18 +31,23 @@
     </v-row>
 
     <div>
-      <v-row class="ml-3 my-2">
-        本周业务量
-      </v-row>
-      <v-card class="pt-4">
-        <line-chart width="98%" :chart-data="lineChartData"></line-chart>
+      <v-card class="pt-4 my-2" v-if="chartLoaded">
+        <v-row class="ml-3">
+          近7天业务量
+        </v-row>
+        <line-chart
+          width="98%"
+          :chart-data="lineChartData"
+          :indicators="lineChartIndicators"
+          :dimension="dimension"
+        ></line-chart>
       </v-card>
     </div>
   </div>
 </template>
 
 <script>
-  import { getHomePanels } from "@/api/goods";
+  import { getHomePanels, getWeekAnalysis } from "@/api/goods";
   import LineChart from "@/view/goods/home/LineChart";
 
   const lineChartData = {
@@ -80,10 +85,27 @@
     data: () => ({
       lineChartData,
       indicators: DEFUALT_PANELS,
+      lineChartIndicators: [],
+      dimension: [],
+      chartLoaded: false,
     }),
     mounted() {
       getHomePanels().then((homePanels) => {
         this.indicators = homePanels;
+      });
+
+      getWeekAnalysis().then((result) => {
+        this.lineChartIndicators = result.indicators;
+        this.dimension = result.dimension;
+        this.lineChartData = {
+          purchases: result.data[0],
+          sales: result.data[1],
+          expenses: result.data[2],
+          profits: result.data[3],
+        };
+        this.$nextTick(() => {
+          this.chartLoaded = true;
+        });
       });
     },
   };

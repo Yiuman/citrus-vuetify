@@ -5,8 +5,9 @@
     absolute
     temporary
     hide-overlay
+    :style="{ top: `${scrollTop}px` }"
+    :height="navigationHeight"
     :width="width"
-    
   >
     <!-- 字段渲染 -->
     <v-container>
@@ -29,14 +30,7 @@
           >
             {{ cancelText }}
           </v-btn>
-          <v-btn
-            small
-            outlined
-            tile
-            class="mr-2"
-            color="primary"
-            @click="confirm"
-          >
+          <v-btn small tile class="mr-2" color="primary" @click="confirm">
             {{ confirmText }}
           </v-btn>
         </v-col>
@@ -70,6 +64,10 @@
         default: () => "过滤",
       },
     },
+    data: () => ({
+      scrollTop: 0,
+      navigationHeight: "100%",
+    }),
     computed: {
       dialogSwitch: {
         get() {
@@ -85,10 +83,29 @@
       modelObject: function() {
         console.warn(this.modelObject);
       },
+      dialogSwitch: function(data) {
+        if (data) {
+          this.handleScroll();
+        }
+      },
     },
     methods: {
       confirm() {
         this.$emit("confirm");
+      },
+      handleScroll() {
+        const scrollTop =
+          window.pageYOffset ||
+          document.documentElement.scrollTop ||
+          document.body.scrollTop;
+        if (scrollTop && scrollTop !== 0) {
+          this.scrollTop = scrollTop - 12;
+        } else {
+          this.scrollTop = 0;
+        }
+
+        this.navigationHeight =
+          document.body.scrollHeight - this.scrollTop - 108;
       },
     },
   };

@@ -14,7 +14,10 @@
         <v-icon>{{ toggleNavIcon }}</v-icon>
       </v-app-bar-nav-icon>
       <!-- 面包屑导航 -->
-      <v-breadcrumbs v-if="config.breadcrumb" :items="breadCrumbs"></v-breadcrumbs>
+      <v-breadcrumbs
+        v-if="config.breadcrumb"
+        :items="breadCrumbs"
+      ></v-breadcrumbs>
 
       <v-toolbar-title v-if="config.toolbarTitle">
         <v-img
@@ -140,7 +143,6 @@
             this.$router.push("/login");
           })
           .catch((err) => {
-            console.warn(err);
             this.refreshCaptcha();
             this.$toasted.show(err.message, {
               position: "top-center",
@@ -155,6 +157,7 @@
 <style scoped>
   .app-bar {
     height: auto !important;
+    z-index: 999 !important;
   }
 
   .app-bar >>> .v-toolbar__extension {

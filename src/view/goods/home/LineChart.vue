@@ -31,6 +31,14 @@
         type: Object,
         required: true,
       },
+      dimension: {
+        type: Array,
+        default: () => ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+      },
+      indicators: {
+        type: Array,
+        default: () => ["采购额", "销售额", "支出", "利润"],
+      },
     },
     data() {
       return {
@@ -65,15 +73,15 @@
       setOptions({ purchases, sales, expenses, profits } = {}) {
         this.chart.setOption({
           xAxis: {
-            data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+            data: this.dimension,
             boundaryGap: false,
             axisTick: {
               show: false,
             },
           },
           grid: {
-            left: 10,
-            right: 10,
+            left: 50,
+            right: 50,
             bottom: 20,
             top: 30,
             containLabel: true,
@@ -91,7 +99,7 @@
             },
           },
           legend: {
-            data: ["采购额", "销售额", "支出", "利润"],
+            data: this.indicators,
           },
           series: [
             {

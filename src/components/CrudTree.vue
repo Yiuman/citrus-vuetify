@@ -87,6 +87,23 @@
         </v-treeview>
       </v-card-text>
 
+      <slot name="add-dialog">
+        <FormNavigation
+          v-model="actionSwitch.add"
+          :dialog-view="dialogView"
+          :current-item="currentItem"
+          @confirm="edit_"
+        />
+      </slot>
+      <slot name="edit-dialog">
+        <FormNavigation
+          v-model="actionSwitch.edit"
+          :dialog-view="dialogView"
+          :current-item="currentItem"
+          @confirm="edit_"
+        />
+      </slot>
+
       <slot name="delete-dialog">
         <tips-dialog
           v-model="actionSwitch.delete"
@@ -162,22 +179,6 @@
         </v-dialog>
       </slot>
     </v-card>
-    <slot name="add-dialog">
-      <FormNavigation
-        v-model="actionSwitch.add"
-        :dialog-view="dialogView"
-        :current-item="currentItem"
-        @confirm="edit_"
-      />
-    </slot>
-    <slot name="edit-dialog">
-      <FormNavigation
-        v-model="actionSwitch.edit"
-        :dialog-view="dialogView"
-        :current-item="currentItem"
-        @confirm="edit_"
-      />
-    </slot>
   </div>
 </template>
 
@@ -317,6 +318,7 @@
 </script>
 
 <style scoped>
+ 
   .crud-tree >>> .v-treeview-node__root {
     margin-top: 0;
     margin-bottom: 0;

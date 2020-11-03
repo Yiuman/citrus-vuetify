@@ -15,12 +15,12 @@
         :items-per-page="page.size"
         :loading="loading"
         :server-items-length="total"
-        :show-select="Boolean(itemKey)"
+        :show-select="Boolean(itemKey) && hasSelect"
       >
         <!-- 表格头部 -->
         <template v-slot:top>
           <!--按钮及控件-->
-          <v-row no-gutters justify="space-between" align="center">
+          <v-row no-gutters justify="space-between" align="center" class="mx-2">
             <v-col>
               <ButtonRender :buttons="buttons" @buttonClick="doAction" />
             </v-col>
@@ -119,7 +119,12 @@
       </v-data-table>
 
       <!--分页相关组件-->
-      <v-row justify="end"  no-gutters class="mb-n3 mr-5 crud-table-pagination" v-if="pageTotal > 1">
+      <v-row
+        justify="end"
+        no-gutters
+        class="mb-n3 mr-5 crud-table-pagination"
+        v-if="pageTotal > 1"
+      >
         <!-- <v-col md="auto"> -->
         <v-pagination
           class="pa-2 page-selection v-size--small"
@@ -143,6 +148,23 @@
           />
         </v-col>
       </v-row>
+
+      <slot name="add-dialog">
+        <FormNavigation
+          v-model="actionSwitch.add"
+          :dialog-view="dialogView"
+          :current-item="currentItem"
+          @confirm="edit_"
+        />
+      </slot>
+      <slot name="edit-dialog">
+        <FormNavigation
+          v-model="actionSwitch.edit"
+          :dialog-view="dialogView"
+          :current-item="currentItem"
+          @confirm="edit_"
+        />
+      </slot>
 
       <slot name="delete-dialog">
         <tips-dialog
@@ -221,23 +243,6 @@
         </v-dialog>
       </slot>
     </v-card>
-
-    <slot name="add-dialog">
-      <FormNavigation
-        v-model="actionSwitch.add"
-        :dialog-view="dialogView"
-        :current-item="currentItem"
-        @confirm="edit_"
-      />
-    </slot>
-    <slot name="edit-dialog">
-      <FormNavigation
-        v-model="actionSwitch.edit"
-        :dialog-view="dialogView"
-        :current-item="currentItem"
-        @confirm="edit_"
-      />
-    </slot>
   </div>
 </template>
 
@@ -305,12 +310,15 @@
       pageCount: 10,
       //总页数
       pageTotal: 1,
+
       //加载中...
       loading: true,
       //总记录数
       total: 0,
       //记录数组
       records: [],
+      //是否可选
+      hasSelect: true,
       //行内操作事件按钮
       loadMethod: "queryPage",
       showFilter: false,
@@ -367,6 +375,7 @@
       },
       queryPage() {
         this.loading = true;
+        this.$vuetify.goTo(0, { offset: 0 });
         const queryParams = {
           ...this.page,
           ...this.queryParam,
@@ -405,6 +414,7 @@
         this.crudService.list(queryParams).then((data) => {
           this.total = data.total;
           this.itemKey = data.itemKey;
+          this.hasSelect = data.hasSelect;
           this.records = handlerRecord(data);
           this.pageTotal = data.pages;
           if (data.dialogView) {
@@ -481,10 +491,6 @@
     color: #3582fb;
   }
 
-  .crud-card {
-    border-radius: 0 !important;
-  }
-
   .page-selection >>> .v-pagination__item:focus {
     border: none !important;
   }
@@ -501,11 +507,11 @@
     background: #f8f8f8;
   }
 
-  .crud-table >>> tbody tr:hover {
+  /* .crud-table >>> tbody tr:hover {
     box-shadow: 0 3px 15px -2px rgba(0, 0, 0, 0.12);
     transform: translateY(-2px);
     background: #fff !important;
-  }
+  } */
 
   .crud-table >>> .crud-actons-td {
     padding: 0 1px !important;

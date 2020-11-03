@@ -1,9 +1,11 @@
 <template>
+  <!--  -->
   <v-navigation-drawer
     v-model="dialogSwitch"
-    disable-resize-watcher
     absolute
     temporary
+    :style="{ top: `${scrollTop}px` }"
+    :height="navigationHeight"
     :width="dialogView.width || width"
   >
     <v-form ref="form" v-show="dialogSwitch">
@@ -37,13 +39,7 @@
             >
               {{ cancelText }}
             </v-btn>
-            <v-btn
-              small
-              tile
-              class="mr-2"
-              color="primary"
-              @click="save"
-            >
+            <v-btn small tile class="mr-2" color="primary" @click="save">
               {{ saveText }}
             </v-btn>
           </v-col>
@@ -85,6 +81,10 @@
         default: () => "保存",
       },
     },
+    data: () => ({
+      scrollTop: 0,
+      navigationHeight: "100%",
+    }),
     computed: {
       dialogSwitch: {
         get() {
@@ -112,6 +112,16 @@
         },
       },
     },
+    watch: {
+      dialogSwitch: function(data) {
+        if (data) {
+          this.handleScroll();
+        }
+      },
+    },
+    mounted() {
+      // window.addEventListener("scroll", this.handleScroll, true);
+    },
     methods: {
       save() {
         if (this.$refs.form.validate()) {
@@ -126,10 +136,22 @@
 
         return 12 / (widgetsLength > 2 ? 2 : widgetsLength);
       },
+      handleScroll() {
+        const scrollTop =
+          window.pageYOffset ||
+          document.documentElement.scrollTop ||
+          document.body.scrollTop;
+        if (scrollTop && scrollTop !== 0) {
+          this.scrollTop = scrollTop - 12;
+        } else {
+          this.scrollTop = 0;
+        }
+
+        this.navigationHeight =
+          document.body.scrollHeight - this.scrollTop - 108;
+      },
     },
   };
 </script>
 
-<style>
-
-</style>
+<style></style>

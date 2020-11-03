@@ -1,10 +1,10 @@
 <template>
-  <v-row justify="space-around">
+  <v-row justify="space-around" class="width-100pc">
     <v-col>
-      <v-sheet tile elevation="2">
+      <v-sheet tile elevation="2" class="width-100pc">
         <v-chip-group
           mandatory
-          class="ml-1"
+          class="ml-1 bar-chip-group"
           active-class="chip-active"
           v-model="activeIndex"
         >
@@ -165,6 +165,13 @@
 </script>
 
 <style scoped>
+  .bar-sheet {
+    width: 100%;
+  }
+  .chip-group {
+    max-width: calc(100% - 0);
+    overflow-x: auto;
+  }
   .chip-active {
     /*border-bottom: #85b71b solid 3px !important;*/
     border-bottom: #2a68c9 solid 2px !important;
