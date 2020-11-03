@@ -11,8 +11,10 @@ export const SYSTEM_CONFIG = {
   appBarColor: "#fff",
   //面包屑导航
   breadcrumb: true,
-  menuColor: "#2a68c9",
-  menuTextColor: "#fff",
+  menuDark: false,
+  menuBgSrc: require("./assets/wave.svg"),
+  menuColor: "#fff",
+  menuTextColor: "black",
   // systemTitle: "广大家具",
 
   // 标题在主要工具拦

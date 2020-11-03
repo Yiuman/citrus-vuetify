@@ -273,7 +273,6 @@
       initBaseInfo() {
         this.userInfo = this.$store.state.user.userOnlineInfo;
         this.usercard = GeoPattern.generate(String(this.userInfo.userId), {
-          color: "#80abfa",
         }).toDataUrl();
         this.resetProfile();
 

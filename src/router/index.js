@@ -204,8 +204,10 @@ router.beforeEach((to, from, next) => {
 // store.state.menu.menus = createMenus(constantRoutes);
 const addRouters = () => {
   const menus = store.state.user.userOnlineInfo.menus;
-  const menuTree = [];
+  let menuTree = [];
   listToTree(menus, menuTree, null);
+ 
+
   const routers = menus
     .filter((menu) => menu.path)
     .map((menu) => {
@@ -234,6 +236,10 @@ const addRouters = () => {
     });
 
   router.addRoutes(routers);
+
+  if(menuTree.length===0){
+    menuTree = menus;
+  }
   store.state.menu.menus = createMenus(menuTree);
   store.state.menu.inited = true;
 };

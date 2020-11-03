@@ -2,14 +2,15 @@
   <!-- color="#fafbfd" -->
   <v-navigation-drawer
     app
-    dark
+    :dark="config.menuDark"
+    :src="config.menuBgSrc"
     :color="config.menuColor"
     permanent
     class="menu-navigation-drawer"
     :mini-variant="enableMini"
     :expand-on-hover="enableMini"
   >
-    <menu-group :menus="menus" :enable-mini="enableMini"/>
+    <menu-group :menus="menus" :enable-mini="enableMini" />
   </v-navigation-drawer>
 </template>
 

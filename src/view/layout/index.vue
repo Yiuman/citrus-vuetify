@@ -45,8 +45,15 @@
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn class="mr-1" small icon v-bind="attrs" v-on="on">
-            <v-avatar color="#b9cdef" size="32">
-              <span class="white--text headline">{{ currentUser }}</span>
+            <v-avatar
+              color="#b9cdef"
+              size="32"
+              :style="{ 'background-image': defaultAvatar }"
+            >
+              <img v-if="userAvatar" :src="userAvatar" alt="" />
+              <span v-else class="white--text text-h6">
+                {{ currentUser }}
+              </span>
             </v-avatar>
           </v-btn>
         </template>
@@ -81,6 +88,7 @@
 </template>
 
 <script>
+  import GeoPattern from "geopattern";
   import Navigation from "./components/Navigation";
   import VisitedBar from "./components/VisitedBar";
   import { SYSTEM_CONFIG as config } from "../../config";
@@ -126,6 +134,14 @@
       },
       breadCrumbs() {
         return createBreadCrumbs(this.$route);
+      },
+      userAvatar() {
+        const userInfo = this.$store.state.user.userOnlineInfo;
+        return userInfo.avatar;
+      },
+      defaultAvatar() {
+        const userInfo = this.$store.state.user.userOnlineInfo;
+        return GeoPattern.generate(String(userInfo.userId), {}).toDataUrl();
       },
     },
     methods: {
