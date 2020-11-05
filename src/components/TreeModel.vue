@@ -195,7 +195,6 @@
             const isOpen =
               this.openAll &&
               (!vm.lazy || Boolean(Object.keys(vm.queryParam).length));
-              console.warn(isOpen)
             vm.handleNodes(tree, isOpen);
 
             //是否显示根节点

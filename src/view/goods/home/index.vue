@@ -85,28 +85,37 @@
     data: () => ({
       lineChartData,
       indicators: DEFUALT_PANELS,
-      lineChartIndicators: [],
-      dimension: [],
+      lineChartIndicators: ["采购额", "销售额", "支出", "利润"],
+      dimension: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
       chartLoaded: false,
     }),
     mounted() {
-      getHomePanels().then((homePanels) => {
-        this.indicators = homePanels;
-      });
-
-      getWeekAnalysis().then((result) => {
-        this.lineChartIndicators = result.indicators;
-        this.dimension = result.dimension;
-        this.lineChartData = {
-          purchases: result.data[0],
-          sales: result.data[1],
-          expenses: result.data[2],
-          profits: result.data[3],
-        };
-        this.$nextTick(() => {
-          this.chartLoaded = true;
+      getHomePanels()
+        .then((homePanels) => {
+          this.indicators = homePanels;
+        })
+        .catch((err) => {
+          console.warn(err);
         });
-      });
+
+      getWeekAnalysis()
+        .then((result) => {
+          this.lineChartIndicators = result.indicators;
+          this.dimension = result.dimension;
+          this.lineChartData = {
+            purchases: result.data[0],
+            sales: result.data[1],
+            expenses: result.data[2],
+            profits: result.data[3],
+          };
+          this.$nextTick(() => {
+            this.chartLoaded = true;
+          });
+        })
+        .catch((err) => {
+          this.chartLoaded = true;
+          console.warn(err);
+        });
     },
   };
 </script>

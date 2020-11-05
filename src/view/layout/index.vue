@@ -6,6 +6,7 @@
     <v-app-bar
       app
       dense
+      :src="config.appBarBgSrc"
       :color="config.appBarColor"
       class="app-bar"
       elevation="0"
@@ -189,6 +190,10 @@
   .system-title {
     color: #000;
     font-weight: bold;
+  }
+
+  .app-bar >>> .v-breadcrumbs__item--disabled{
+    color: rgba(0, 0, 0, 0.87) !important;
   }
 
   .slide-right-enter-active,
