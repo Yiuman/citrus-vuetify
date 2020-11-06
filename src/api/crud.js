@@ -213,18 +213,14 @@ export const mixins = {
       this.crudService
         .save(item)
         .then(() => {
-          this.$toasted.show("操作成功", {
+          this.$toast.success("操作成功", {
             position: "top-center",
-            type: "success",
-            icon: "check-bold",
           });
           this.reload();
         })
         .catch((err) => {
-          this.$toasted.show(err.message, {
+          this.$toast.error(err.message, {
             position: "top-center",
-            type: "error",
-            icon: "alert-circle",
           });
           console.warn(err);
         });
@@ -244,18 +240,14 @@ export const mixins = {
       this.crudService
         .delete(item[this.itemKey])
         .then(() => {
-          this.$toasted.show("操作成功", {
+          this.$toast.success("操作成功", {
             position: "top-center",
-            type: "success",
-            icon: "check-bold",
           });
           this.reload();
         })
         .catch((err) => {
-          this.$toasted.show(err.message, {
+          this.$toast.error(err.message, {
             position: "top-center",
-            type: "error",
-            icon: "alert-circle",
           });
           console.warn(err);
         });
@@ -263,10 +255,8 @@ export const mixins = {
     batchDelete(action) {
       if (!this.selected || this.selected.length === 0) {
         // this.showTips("请勾选需要删除的数据项");
-        this.$toasted.show("请勾选需要删除的数据项", {
+        this.$toast.info("请勾选需要删除的数据项", {
           position: "top-center",
-          type: "info",
-          icon: "alert-circle",
         });
       } else {
         this.defaultAction(action);

@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Login from "../view/login/index";
+import Login from "../view/login/index2";
 import Layout from "../view/layout/index";
 import { createMenus, createDefaultVisitedBar, listToTree } from "../utils/app";
 import { SYSTEM_CONFIG } from "../config";
@@ -188,8 +188,7 @@ router.beforeEach((to, from, next) => {
           addRouters();
           next({ ...to, replace: true });
         })
-        .catch((err) => {
-          console.warn(err);
+        .catch(() => {
           router.replace("/login");
         });
     } else {
@@ -206,7 +205,6 @@ const addRouters = () => {
   const menus = store.state.user.userOnlineInfo.menus;
   let menuTree = [];
   listToTree(menus, menuTree, null);
- 
 
   const routers = menus
     .filter((menu) => menu.path)
@@ -237,7 +235,7 @@ const addRouters = () => {
 
   router.addRoutes(routers);
 
-  if(menuTree.length===0){
+  if (menuTree.length === 0) {
     menuTree = menus;
   }
   store.state.menu.menus = createMenus(menuTree);

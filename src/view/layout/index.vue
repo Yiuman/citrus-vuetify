@@ -161,10 +161,8 @@
           })
           .catch((err) => {
             this.refreshCaptcha();
-            this.$toasted.show(err.message, {
-              position: "top-center",
-              type: "error",
-              icon: "alert-circle",
+            this.$toast.error(err.message, {
+              position: "top-right",
             });
           });
       },

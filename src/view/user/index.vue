@@ -322,18 +322,13 @@
                 ...this.userInfo,
                 ...this.profileForm,
               });
-              console.warn(this.$toasted);
-              this.$toasted.show("保存成功", {
+              this.$toast.success("保存成功", {
                 position: "top-center",
-                type: "success",
-                icon: "check-bold",
               });
             })
             .catch((err) => {
-              this.$toasted.show(err.message, {
+              this.$toast.error(err.message, {
                 position: "top-center",
-                type: "error",
-                icon: "alert-circle",
               });
               console.warn(err);
             });
@@ -343,10 +338,8 @@
         if (this.$refs.passwordForm.validate()) {
           updatePassword(this.passwordForm).catch((err) => {
             console.warn(err);
-            this.$toasted.show(err.message, {
+            this.$toast.success(err.message, {
               position: "top-center",
-              type: "error",
-              icon: "alert-circle",
             });
           });
         }

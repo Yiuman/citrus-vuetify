@@ -323,18 +323,14 @@
             this.getService()
               .save(this.saleModel)
               .then(() => {
-                this.$toasted.show("操作成功", {
+                this.$toast.success("操作成功", {
                   position: "top-center",
-                  type: "success",
-                  icon: "check-bold",
                 });
                 resolve();
               })
               .catch((err) => {
-                this.$toasted.show(err.message, {
+                this.$toast.error(err.message, {
                   position: "top-center",
-                  type: "error",
-                  icon: "alert-circle",
                 });
                 console.warn(err);
               });
@@ -352,12 +348,10 @@
         });
 
         if (!validated) {
-          this.$toasted.show(
+          this.$toast.warning(
             `请完善第${productCheckIndex.join(",")}个商品信息`,
             {
               position: "top-center",
-              type: "error",
-              icon: "alert-circle",
             }
           );
         }

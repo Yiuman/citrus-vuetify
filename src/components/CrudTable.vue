@@ -495,6 +495,10 @@
     border: none !important;
   }
 
+  .crud-table >>> .v-data-table__wrapper{
+    overflow: hidden;
+  }
+
   .crud-table >>> .v-icon {
     font-size: 16px;
   }

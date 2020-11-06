@@ -229,18 +229,14 @@
           this.$refs["$crud$"].crudService
             .save(submitEntity)
             .then(() => {
-              this.$toasted.show("操作成功", {
+              this.$toast.success("操作成功", {
                 position: "top-center",
-                type: "success",
-                icon: "check-bold",
               });
               resolve();
             })
             .catch((err) => {
-              this.$toasted.show(err.message, {
+              this.$toast.error(err.message, {
                 position: "top-center",
-                type: "error",
-                icon: "alert-circle",
               });
             });
         });

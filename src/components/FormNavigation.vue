@@ -3,12 +3,13 @@
   <v-navigation-drawer
     v-model="dialogSwitch"
     absolute
-    temporary
+    :temporary="temporary"
     :style="{ top: `${scrollTop}px` }"
     :height="navigationHeight"
     :width="dialogView.width || width"
+    class="nav-form elevation-0"
   >
-    <v-form ref="form" v-show="dialogSwitch">
+    <v-form ref="form">
       <!-- 字段渲染 -->
       <v-container>
         <v-row>
@@ -62,6 +63,10 @@
     mixins: [mixins],
     props: {
       value: Boolean,
+      temporary: {
+        type: Boolean,
+        default: () => true,
+      },
       width: {
         type: String || Number,
         default: () => "500",
@@ -154,4 +159,8 @@
   };
 </script>
 
-<style></style>
+<style>
+  .nav-form {
+    z-index: 99;
+  }
+</style>
