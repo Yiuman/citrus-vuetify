@@ -435,31 +435,31 @@ main {
 }
 
 .word--1 {
-  font-family: "Josefin Sans", sans-serif;
+  font-family: "Josefin Sans", sans-serif !important;
   font-weight: 700;
   text-transform: uppercase;
   font-size: 9vw;
 }
 
 .word--2 {
-  font-family: "Arbutus Slab", serif;
+  font-family: "Arbutus Slab", serif !important;
 }
 
 .word--3 {
-  font-family: "Questrial", sans-serif;
+  font-family: "Questrial", sans-serif !important;
 }
 
 .word--4 {
-  font-family: "Poppins", sans-serif;
+  font-family: "Poppins", sans-serif !important;
   font-weight: 800;
 }
 
 .word--5 {
-  font-family: "Bungee Outline", cursive;
+  font-family: "Bungee Outline", cursive !important;
 }
 
 .word--6 {
-  font-family: "Hammersmith One", sans-serif;
+  font-family: "Hammersmith One", sans-serif !important;
 }
 
 .word--6 .char5,
@@ -468,12 +468,12 @@ main {
 }
 
 .word--7 {
-  font-family: "Volkhov", serif;
+  font-family: "Volkhov", serif !important;
   font-weight: 700;
 }
 
 .word--8 {
-  font-family: "Josefin Sans", sans-serif;
+  font-family: "Josefin Sans", sans-serif !important;
   font-weight: 700;
   text-transform: lowercase;
   letter-spacing: -0.05em;
@@ -481,7 +481,7 @@ main {
 }
 
 .word--9 {
-  font-family: "Montserrat Alternates", serif;
+  font-family: "Montserrat Alternates", serif !important;
   font-weight: 700;
   text-transform: uppercase;
   font-size: 8vw;

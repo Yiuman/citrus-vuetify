@@ -5,7 +5,7 @@
         <div class="slideshow">
           <div class="slide slide--current" style="width:70%">
             <div class="slide__bg " :class="`slide__bg--1`"></div>
-            <h2 id="word" style="color:#fff" class="word" :class="`word--1`">
+            <h2 id="word" style="color:#fff" class="word word--5">
               {{ text }}
             </h2>
           </div>
@@ -74,7 +74,7 @@
               <v-spacer />
               <!--                        <v-btn color="primary" outlined to="/singup">注册</v-btn>-->
               <!-- #4cabef -->
-              <v-btn width="100" dark tile color="#4cabef" @click="login"
+              <v-btn  width="100" dark tile color="#4cabef" @click="login"
                 >登录</v-btn
               >
             </v-row>
