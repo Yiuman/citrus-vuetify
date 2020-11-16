@@ -16,6 +16,7 @@
         :loading="loading"
         :server-items-length="total"
         :show-select="Boolean(itemKey) && hasSelect"
+        @dblclick:row="rowDbclick"
       >
         <!-- 表格头部 -->
         <template v-slot:top>
@@ -482,6 +483,10 @@
           this.loading = false;
         });
       },
+      rowDbclick(event, rowObject) {
+        const editAction = { action: "edit", scirpt: false };
+        this.doAction(editAction.action, rowObject.item, editAction);
+      },
     },
   };
 </script>
@@ -495,7 +500,7 @@
     border: none !important;
   }
 
-  .crud-table >>> .v-data-table__wrapper{
+  .crud-table >>> .v-data-table__wrapper {
     overflow: hidden;
   }
 
