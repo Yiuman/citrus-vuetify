@@ -229,8 +229,17 @@ export const mixins = {
       if (!item[this.itemKey]) {
         return;
       }
-      this.currentItem = JSON.parse(JSON.stringify(item));
-      this.defaultAction(action);
+
+      //判断是否重新获取项
+      if (this.dialogView.reGet) {
+        this.crudService.get(item[this.itemKey]).then((resultItem) => {
+          this.currentItem = resultItem;
+          this.defaultAction(action);
+        });
+      } else {
+        this.currentItem = JSON.parse(JSON.stringify(item));
+        this.defaultAction(action);
+      }
     },
     delete(action, item) {
       this.currentItem = JSON.parse(JSON.stringify(item));
