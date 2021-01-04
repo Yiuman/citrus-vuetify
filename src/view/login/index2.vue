@@ -206,13 +206,12 @@
         position: absolute;
         z-index: 2;
         top: -30px;
-        left: 10px;
+        left: 110px;
         width: 50px;
         height: 50px;
         background-image: url("../../assets/logo.png");
         background-size: 100% 100%;
         border-radius: 2px;
-        transform: rotate(45deg);
         -webkit-animation: box .8s infinite;
     }
 
@@ -221,7 +220,7 @@
         position: absolute;
         z-index: 1;
         top: 48px;
-        left: 12px;
+        left: 112px;
         width: 44px;
         height: 3px;
         background: #eaeaea;
@@ -232,13 +231,13 @@
     //底部阴影动效
     @-webkit-keyframes shadow {
         0%, 100% {
-            left: 14px;
+            left: 114px;
             width: 40px;
             background: #eaeaea;
         }
         50% {
             top: 46px;
-            left: 10px;
+            left: 110px;
             width: 50px;
             height: 7px;
             background: #eee;
