@@ -142,7 +142,7 @@
       },
       defaultAvatar() {
         const userInfo = this.$store.state.user.userOnlineInfo;
-        return GeoPattern.generate(String(userInfo.userId), {}).toDataUrl();
+        return GeoPattern.generate(String(userInfo?1:userInfo.userId), {}).toDataUrl();
       },
     },
     methods: {

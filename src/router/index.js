@@ -204,7 +204,7 @@ router.beforeEach((to, from, next) => {
 const addRouters = () => {
   const menus = store.state.user.userOnlineInfo.menus;
   let menuTree = [];
-  listToTree(menus, menuTree, null);
+  listToTree(menus, menuTree, undefined);
 
   const routers = menus
     .filter((menu) => menu.path)
