@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/Yiuman/citrus">
-   <img alt="citrus-logo" src="./logo-nbg.png" />
+   <img alt="citrus-logo" src="./doc/logo-nbg.png" />
   </a>
 </p>
 
