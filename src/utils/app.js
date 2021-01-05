@@ -65,9 +65,18 @@ export const createDefaultVisitedBar = (routes, filter, barArray = []) => {
  * @param parentId 父ID
  */
 export const listToTree = (list, tree, parentId) => {
+  //断言父节点
+  function assertParentId(item,parentId){
+    if(parentId==null || parentId==undefined){
+      return item.parentId ===null || item.parentId===undefined;
+    }else{
+      return item.parentId === parentId;
+    }
+  }
   list.forEach((item) => {
     // 判断是否为父级菜单
-    if (item.parentId === parentId) {
+   
+    if (assertParentId(item,parentId)) {
       const child = {
         ...item,
         key: item.key || item.name,
