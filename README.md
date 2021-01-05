@@ -1,4 +1,10 @@
-# citrus-vue
+<p align="center">
+  <a href="https://github.com/Yiuman/citrus">
+   <img alt="citrus-logo" src="./logo-nbg.png" />
+  </a>
+</p>
+
+<h1 align="center">Citrus-Vuetify</h1>
 
 ### 项目简介
 基于Vue+Vuetify的后台管理系统前端项目。提炼出了通用的业务组件模板，动态路由，可配合后台进行快速开发。
@@ -60,9 +66,9 @@ npm run serve
 
 ### 项目截图
 
-![home](./src/doc/home.png)
+![home](./doc/home.png)
 
-![home](./src/doc/login.jpg)
+![home](./doc/login.png)
 
 
 
