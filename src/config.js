@@ -8,14 +8,14 @@ export const API_BASE_PATH =
  * @type {{systemTile: string}}
  */
 export const SYSTEM_CONFIG = {
-  appBarBgSrc:{
-    
-  },
+  appBarBgSrc: {},
   appBarColor: "#fff",
   //面包屑导航
   breadcrumb: true,
   menuDark: false,
   menuBgSrc: require("./assets/wave.svg"),
+  menuLogoSrc: require("./assets/logo.png"),
+  menuTitle: "Citrus",
   menuColor: "#fff",
   menuTextColor: "#204e97",
   // systemTitle: "广大家具",

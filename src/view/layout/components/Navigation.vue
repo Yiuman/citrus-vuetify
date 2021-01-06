@@ -10,6 +10,16 @@
     :mini-variant="enableMini"
     :expand-on-hover="enableMini"
   >
+    <v-list>
+      <v-list-item class="px-2">
+        <v-list-item-avatar>
+          <v-img :src="config.menuLogoSrc"></v-img>
+        </v-list-item-avatar>
+        <v-list-item-title class="title text-h4">
+          {{ config.menuTitle }}
+        </v-list-item-title>
+      </v-list-item>
+    </v-list>
     <menu-group :menus="menus" :enable-mini="enableMini" />
   </v-navigation-drawer>
 </template>

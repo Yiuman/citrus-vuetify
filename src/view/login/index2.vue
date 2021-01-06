@@ -209,7 +209,7 @@
         left: 110px;
         width: 50px;
         height: 50px;
-        background-image: url("../../assets/logo.png");
+        background-image: url("../../assets/logo-nbg.png");
         background-size: 100% 100%;
         border-radius: 2px;
         -webkit-animation: box .8s infinite;
