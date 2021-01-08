@@ -484,8 +484,14 @@
         });
       },
       rowDbclick(event, rowObject) {
-        const editAction = { action: "edit", scirpt: false };
-        this.doAction(editAction.action, rowObject.item, editAction);
+        //如果有编辑的action，则双击的时候直接编辑
+        if (
+          this.actions &&
+          this.actions.filter((ac) => "edit" === ac.action).length > 0
+        ) {
+          const editAction = { action: "edit", scirpt: false };
+          this.doAction(editAction.action, rowObject.item, editAction);
+        }
       },
     },
   };

@@ -117,6 +117,13 @@
         },
       ],
     }),
+    mounted() {
+      this.$toast.info(`欢迎回来,${this.$store.state.user.name}`, {
+        icon: {
+          iconClass: "v-icon notranslate mdi mdi-emoticon-kiss-outline"
+        },
+      });
+    },
     computed: {
       toggleNavIcon() {
         return this.enableMini
@@ -142,7 +149,10 @@
       },
       defaultAvatar() {
         const userInfo = this.$store.state.user.userOnlineInfo;
-        return GeoPattern.generate(String(userInfo?1:userInfo.userId), {}).toDataUrl();
+        return GeoPattern.generate(
+          String(userInfo ? 1 : userInfo.userId),
+          {}
+        ).toDataUrl();
       },
     },
     methods: {
@@ -190,7 +200,7 @@
     font-weight: bold;
   }
 
-  .app-bar >>> .v-breadcrumbs__item--disabled{
+  .app-bar >>> .v-breadcrumbs__item--disabled {
     color: rgba(0, 0, 0, 0.87) !important;
   }
 
