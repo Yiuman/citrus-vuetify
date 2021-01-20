@@ -233,8 +233,8 @@
           vm.lazy = data.lazy;
           vm.open = [];
           const tree = data.tree;
-          if (data.dialogView) {
-            this.dialogView = data.dialogView;
+          if (data.editableView) {
+            this.dialogView = data.editableView;
           }
 
           if (tree) {

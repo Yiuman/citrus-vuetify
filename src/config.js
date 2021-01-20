@@ -30,3 +30,8 @@ export const SYSTEM_CONFIG = {
    */
   permitUrls: ["/login"],
 };
+
+export const DEFAULT_ACCOUNT = {
+  loginId: "admin",
+  password: "123456",
+};

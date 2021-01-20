@@ -15,7 +15,7 @@
         :items-per-page="page.size"
         :loading="loading"
         :server-items-length="total"
-        :show-select="Boolean(itemKey) && hasSelect"
+        :show-select="Boolean(itemKey) && checkable"
         @dblclick:row="rowDbclick"
       >
         <!-- 表格头部 -->
@@ -319,7 +319,7 @@
       //记录数组
       records: [],
       //是否可选
-      hasSelect: true,
+      checkable: true,
       //行内操作事件按钮
       loadMethod: "queryPage",
       showFilter: false,
@@ -415,11 +415,13 @@
         this.crudService.list(queryParams).then((data) => {
           this.total = data.total;
           this.itemKey = data.itemKey;
-          this.hasSelect = data.hasSelect;
+         
           this.records = handlerRecord(data);
           this.pageTotal = data.pages;
-          if (data.dialogView) {
-            this.dialogView = data.dialogView;
+          const pageView = data.view || {};
+           this.checkable = pageView.checkable;
+          if (pageView.editableView) {
+            this.dialogView = pageView.editableView;
           }
 
           if (data.pages !== null && data.pages <= 10) {
@@ -427,8 +429,8 @@
           }
           //若表头没定义则用数据列的
           if (!this.headerArray || this.headerArray.length === 0) {
-            if (data.headers) {
-              this.headerArray = data.headers;
+            if (pageView.headers) {
+              this.headerArray = pageView.headers;
             } else {
               const record = data.records[0];
               Object.keys(record).forEach((key) => {
@@ -438,22 +440,22 @@
           }
 
           //初始化控件
-          if ((!this.widgets || this.widgets.length === 0) && data.widgets) {
-            this.widgets = data.widgets;
+          if ((!this.widgets || this.widgets.length === 0) && pageView.widgets) {
+            this.widgets = pageView.widgets;
           }
 
           //初始化按钮
-          if ((!this.buttons || this.buttons.length === 0) && data.buttons) {
-            this.buttons = data.buttons;
+          if ((!this.buttons || this.buttons.length === 0) && pageView.buttons) {
+            this.buttons = pageView.buttons;
           }
 
           //初始化列事件
           if (
             (!this.actions || this.actions.length === 0) &&
-            data.actions &&
-            data.actions.length > 0
+            pageView.actions &&
+            pageView.actions.length > 0
           ) {
-            this.actions = data.actions;
+            this.actions = pageView.actions;
             this.headerArray.unshift({
               text: "",
               value: "actions",

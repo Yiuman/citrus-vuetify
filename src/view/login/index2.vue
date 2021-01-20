@@ -86,7 +86,7 @@
 </template>
 
 <script>
-  import { API_BASE_PATH } from "../../config";
+  import { API_BASE_PATH ,DEFAULT_ACCOUNT} from "../../config";
   import Word, { WorkEffect } from "@/utils/wordFx.js";
   const CAPTCHA_BASE_URL = API_BASE_PATH + "/rest/verify/captcha";
 
@@ -96,9 +96,9 @@
       captchaSrc: CAPTCHA_BASE_URL,
       text: "Citrus",
       model: {
-        loginId: "",
+        loginId: DEFAULT_ACCOUNT.loginId,
         mode: "password",
-        password: "",
+        password: DEFAULT_ACCOUNT.password,
         captcha: "",
       },
       birds: {
