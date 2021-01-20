@@ -415,11 +415,11 @@
         this.crudService.list(queryParams).then((data) => {
           this.total = data.total;
           this.itemKey = data.itemKey;
-         
+
           this.records = handlerRecord(data);
           this.pageTotal = data.pages;
           const pageView = data.view || {};
-           this.checkable = pageView.checkable;
+          this.checkable = pageView.checkable;
           if (pageView.editableView) {
             this.dialogView = pageView.editableView;
           }
@@ -440,12 +440,18 @@
           }
 
           //初始化控件
-          if ((!this.widgets || this.widgets.length === 0) && pageView.widgets) {
+          if (
+            (!this.widgets || this.widgets.length === 0) &&
+            pageView.widgets
+          ) {
             this.widgets = pageView.widgets;
           }
 
           //初始化按钮
-          if ((!this.buttons || this.buttons.length === 0) && pageView.buttons) {
+          if (
+            (!this.buttons || this.buttons.length === 0) &&
+            pageView.buttons
+          ) {
             this.buttons = pageView.buttons;
           }
 
