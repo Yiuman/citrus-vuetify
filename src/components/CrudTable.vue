@@ -573,7 +573,11 @@
           this.actions = actions;
         }
 
-        if (this.actions && this.actions.length > 0) {
+        if (
+          this.actions &&
+          this.actions.length > 0 &&
+          this.headerArray.map((item) => item.value).indexOf("actions") < 0
+        ) {
           this.headerArray.unshift({
             text: "",
             value: "actions",
@@ -587,8 +591,9 @@
       initTableExpandHeader() {
         if (
           this.showExpand &&
-          this.headerArray.filter((item) => item.value === "data-table-expand")
-            .length === 0
+          this.headerArray
+            .map((item) => item.value)
+            .indexOf("data-table-expand") < 0
         ) {
           this.headerArray.push({
             text: "",
