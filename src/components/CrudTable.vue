@@ -46,14 +46,60 @@
                 >条数据
               </div>
               <span class="separator"></span>
+
+              <!-- 页面设置 -->
               <div class="col-item">
-                <v-menu offset-y rounded="0">
+                <v-menu offset-y rounded="0" eager>
                   <template v-slot:activator="{ on }">
                     <v-icon small color="#8091a5" v-on="on"
                       >mdi-cog-outline</v-icon
                     >
                   </template>
                   <v-list dense>
+                    <v-list-item>
+                      <v-list-item-content>
+                        <v-menu
+                          left
+                          :close-on-content-click="false"
+                          eager
+                          nudge-left="20"
+                          nudge-top="20"
+                          offset-x
+                          rounded="0"
+                        >
+                          <template v-slot:activator="{ on: fieldOn, value }">
+                            <div v-on="{ ...fieldOn }" class="setting-content">
+                              <span :class="[value ? 'per-current' : '']"
+                                >设置显示的字段</span
+                              >
+                            </div>
+                          </template>
+                          <v-card rounded="0">
+                            <div
+                              class="pa-2"
+                              id="sortable-container"
+                              ref="sortable-container"
+                            >
+                              <div
+                                class="settable-headers  fluid"
+                                v-for="header in sortableHeaders"
+                                :key="header.text"
+                              >
+                                <v-icon>mdi-drag-vertical</v-icon>
+                                {{ header.text }}
+                                <input
+                                  class="settable-checkbox"
+                                  type="checkbox"
+                                  :value="header.value"
+                                  v-model="displayHeaderValues"
+                                />
+                              </div>
+                            </div>
+                          </v-card>
+                        </v-menu>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <!-- 设置每页显示的数量 -->
                     <v-list-item>
                       <v-list-item-content>
                         <v-list-item-subtitle class="setting-title">
@@ -255,6 +301,7 @@
   import ButtonRender from "@/components/ButtonRender";
   import FilterNavigation from "@/components/FilterNavigation";
   import FileUpload from "vue-upload-component";
+  import Sortable from "sortablejs";
 
   crudMixins.methods.transform = convertWidget;
 
@@ -323,6 +370,10 @@
       //行内操作事件按钮
       loadMethod: "queryPage",
       showFilter: false,
+      //可排序设置的表头，一般是第一次请求时赋值
+      sortableHeaders: [],
+      //显示的列头的表头value值
+      displayHeaderValues: [],
     }),
     watch: {
       namespace: "initCrud",
@@ -360,9 +411,41 @@
         },
         deep: true,
       },
+      sortableHeaders: function(newValue) {
+        this.headerArray = newValue.filter(
+          (header) => this.displayHeaderValues.indexOf(header.value) > -1
+        );
+        this.initActionHeader(this.actions);
+        this.initTableExpandHeader();
+      },
+      displayHeaderValues: function(newValue) {
+        this.headerArray = this.sortableHeaders.filter(
+          (header) => newValue.indexOf(header.value) > -1
+        );
+        this.initActionHeader(this.actions);
+        this.initTableExpandHeader();
+      },
     },
     created() {
       this.initCrud();
+    },
+    mounted() {
+      //初始化可设置表头的拖拽
+      const this_ = this;
+      console.warn("refef", this.$refs);
+      Sortable.create(this.$refs["sortable-container"], {
+        animation: 150,
+        ghostClass: "sortable-ghost",
+        dragClass: "sortable-drag",
+        onUpdate: function(event) {
+          var sortableHeaders = this_.sortableHeaders.splice(event.oldIndex, 1);
+          this_.sortableHeaders.splice(event.newIndex, 0, sortableHeaders[0]);
+          var newArray = this_.sortableHeaders.splice(0);
+          this_.$nextTick(function() {
+            this_.sortableHeaders = newArray;
+          });
+        },
+      });
     },
     methods: {
       initCrud() {
@@ -430,7 +513,17 @@
           //若表头没定义则用数据列的
           if (!this.headerArray || this.headerArray.length === 0) {
             if (pageView.headers) {
-              this.headerArray = pageView.headers;
+              const displayHeaders = pageView.headers.filter(
+                (item) => !item.hidden
+              );
+              this.headerArray = displayHeaders;
+
+              this.sortableHeaders = JSON.parse(
+                JSON.stringify(pageView.headers)
+              );
+              this.displayHeaderValues = displayHeaders
+                .filter((item) => !item.hidden)
+                .map((header) => header.value);
             } else {
               const record = data.records[0];
               Object.keys(record).forEach((key) => {
@@ -456,38 +549,8 @@
           }
 
           //初始化列事件
-          if (
-            (!this.actions || this.actions.length === 0) &&
-            pageView.actions &&
-            pageView.actions.length > 0
-          ) {
-            this.actions = pageView.actions;
-            this.headerArray.unshift({
-              text: "",
-              value: "actions",
-              class: "crud-actons-td",
-              align: "start",
-              sortable: false,
-              width: "1",
-            });
-          }
-
-          if (
-            this.showExpand &&
-            this.headerArray.filter(
-              (item) => item.value === "data-table-expand"
-            ).length === 0
-          ) {
-            this.headerArray.push({
-              text: "",
-              value: "data-table-expand",
-              class: "crud-actons-td",
-              align: "start",
-              sortable: false,
-              width: "1",
-            });
-          }
-
+          this.initActionHeader(pageView.actions);
+          this.initTableExpandHeader();
           this.loading = false;
         });
       },
@@ -499,6 +562,42 @@
         ) {
           const editAction = { action: "edit", scirpt: false };
           this.doAction(editAction.action, rowObject.item, editAction);
+        }
+      },
+      initActionHeader(actions) {
+        if (
+          (!this.actions || this.actions.length === 0) &&
+          actions &&
+          actions.length > 0
+        ) {
+          this.actions = actions;
+        }
+
+        if (this.actions && this.actions.length > 0) {
+          this.headerArray.unshift({
+            text: "",
+            value: "actions",
+            class: "crud-actons-td",
+            align: "start",
+            sortable: false,
+            width: "1",
+          });
+        }
+      },
+      initTableExpandHeader() {
+        if (
+          this.showExpand &&
+          this.headerArray.filter((item) => item.value === "data-table-expand")
+            .length === 0
+        ) {
+          this.headerArray.push({
+            text: "",
+            value: "data-table-expand",
+            class: "crud-actons-td",
+            align: "start",
+            sortable: false,
+            width: "1",
+          });
         }
       },
     },
@@ -637,5 +736,32 @@
     color: #80abfa;
     font-weight: bold;
     padding-bottom: 10px;
+  }
+
+  .settable-headers {
+    position: relative;
+    padding: 8px 5px 8px 5px;
+    margin: auto auto 2px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .settable-checkbox {
+    position: absolute;
+    right: 5px;
+    top: 13px;
+  }
+
+  .settable-headers:hover {
+    cursor: move;
+  }
+
+  .sortable-ghost {
+    background-color: #ffffff;
+  }
+
+  .sortable-drag {
+    background-color: #ffffff;
+    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.13);
   }
 </style>
