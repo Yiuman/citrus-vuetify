@@ -81,12 +81,14 @@
                               ref="sortable-container"
                             >
                               <div
-                                class="settable-headers  fluid"
+                                class="settable-headers "
                                 v-for="header in sortableHeaders"
                                 :key="header.text"
                               >
                                 <v-icon>mdi-drag-vertical</v-icon>
-                                {{ header.text }}
+                                <span class="settable-text">{{
+                                  header.text
+                                }}</span>
                                 <input
                                   class="settable-checkbox"
                                   type="checkbox"
@@ -751,10 +753,14 @@
     font-size: 14px;
   }
 
+  .settable-text {
+    padding-right: 20px;
+  }
+
   .settable-checkbox {
     position: absolute;
     right: 5px;
-    top: 13px;
+    top: 12px;
   }
 
   .settable-headers:hover {
