@@ -34,13 +34,6 @@
       selected-color="primary"
       @update:active="updateActive"
     >
-      <!-- <template v-slot:prepend="{ item }">
-        <v-icon
-          small
-          v-text="`mdi-${item.children ? 'home-variant' : 'folder-network'}`"
-        />
-      </template> -->
-
       <template v-slot:label="{ item }">
         <div
           class="hover-pointer font-size-14"
@@ -54,7 +47,7 @@
 </template>
 
 <script>
-  import { TreeService } from "../api/crud";
+  import { TreeService } from "@/api/crud";
 
   export default {
     name: "TreeModel",

@@ -197,7 +197,7 @@ body {
   --color-bg-slide-4: #b9b9b9;
   --color-bg-slide-5: #5900ce;
   --color-bg-slide-6: #1b1a1a;
-  --color-bg-slide-7: #bf2525;
+  --color-bg-slide-7: #f36060;
   --color-bg-slide-8: #d6d1d1;
   --color-bg-slide-9: #000000;
 }
@@ -348,8 +348,12 @@ main {
   left: 0;
 }
 
-.slide__bg--1 {
+.slide__bg--0 {
   background: var(--color-bg-slide-1);
+}
+
+.slide__bg--1 {
+  background: var(--color-bg-slide-4);
 }
 
 .slide__bg--2 {
@@ -373,7 +377,8 @@ main {
 }
 
 .slide__bg--7 {
-  background: var(--color-bg-slide-7);
+  background: var(--color-bg-slide-5);
+  /*background: var(--color-bg-slide-7);*/
 }
 
 .slide__bg--8 {

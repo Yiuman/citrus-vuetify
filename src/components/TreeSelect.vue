@@ -158,10 +158,6 @@
     cursor: pointer !important;
   }
 
-  .tree-select-menu{
-    background: #fff;
-  }
-
   .selector-tree-model {
     height: 300px !important;
     background: #fff !important;

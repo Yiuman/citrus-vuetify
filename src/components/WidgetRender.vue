@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import { convertWidget } from "../utils/widget";
+  import { convertWidget } from "@/utils/widget";
 
   export default {
     name: "WidgetRender",
