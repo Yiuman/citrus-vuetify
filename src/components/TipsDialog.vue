@@ -47,7 +47,4 @@
 </script>
 
 <style scoped>
-  .tips-text {
-    font-size: 16px;
-  }
 </style>

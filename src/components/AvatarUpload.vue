@@ -51,7 +51,7 @@
   </div>
 </template>
 
-<script>
+<script >
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 import FileUpload from "vue-upload-component";

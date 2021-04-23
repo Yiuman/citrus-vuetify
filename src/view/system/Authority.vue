@@ -98,7 +98,7 @@
   import CrudTable from "@/components/CrudTable";
   import TreeModel from "@/components/TreeModel";
   import SimpleFormNavigation from "@/components/SimpleFormNavigation";
-  import { getDataScopes, getOperationByKey } from "../../api/auth";
+  import { getDataScopes, getOperationByKey } from "@/api/auth";
   // import SimpleFormSlot from "@/components/SimpleFormSlot";
 
   const DEFAULT_ENTITY = {

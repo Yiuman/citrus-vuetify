@@ -57,7 +57,7 @@
       openDeep: Number,
       openAll: {
         type: Boolean,
-        defalut: () => false,
+        default: () => false,
       },
       displayRoot: Boolean,
       treeItem: Object,

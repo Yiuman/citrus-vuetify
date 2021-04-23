@@ -89,12 +89,14 @@
                                 <span class="settable-text">{{
                                   header.text
                                 }}</span>
-                                <input
-                                  class="settable-checkbox"
-                                  type="checkbox"
-                                  :value="header.value"
-                                  v-model="displayHeaderValues"
-                                />
+                                <label>
+                                  <input
+                                    class="settable-checkbox"
+                                    type="checkbox"
+                                    :value="header.value"
+                                    v-model="displayHeaderValues"
+                                  />
+                                </label>
                               </div>
                             </div>
                           </v-card>
@@ -647,7 +649,7 @@
   }
 
   .crud-table >>> .actions-menu {
-    border-radius: none !important;
+    border-radius: unset !important;
   }
 
   .col-item,

@@ -99,7 +99,7 @@
 <script>
   import CrudTable from "../../components/CrudTable";
   import TreeModel from "../../components/TreeModel";
-  import { getScopeTypes } from "../../api/auth";
+  import { getScopeTypes } from "@/api/auth";
   import SimpleFormNavigation from "@/components/SimpleFormNavigation";
 
   const DEFAULT_ENTITY = {

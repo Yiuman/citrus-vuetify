@@ -2,10 +2,9 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Login from "../view/login/index2";
 import Layout from "../view/layout/index";
-import { createMenus, createDefaultVisitedBar, listToTree } from "../utils/app";
-import { SYSTEM_CONFIG } from "../config";
+import { createMenus, createDefaultVisitedBar, listToTree } from "@/utils/app";
+import { SYSTEM_CONFIG } from "@/config";
 import store from "../store";
-// import menu from "../store/modules/menu";
 
 Vue.use(VueRouter);
 

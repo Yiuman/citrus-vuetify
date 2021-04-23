@@ -51,7 +51,7 @@
 </template>
 
 <script>
-  import { convertFieldWidget } from "../utils/widget";
+  import { convertFieldWidget } from "@/utils/widget";
 
   const mixins = {
     methods: {

@@ -119,7 +119,7 @@ export default (namespace) => {
  */
 const DEFAULT_COMMON_DATA = {
   apiBase: API_BASE_PATH,
-  authHeanders: {},
+  authHeaders: {},
   //导入文件
   importFiles: [],
   //用于定义选择的对象的键
@@ -171,7 +171,7 @@ export const mixins = {
     return JSON.parse(JSON.stringify(DEFAULT_COMMON_DATA));
   },
   mounted() {
-    this.authHeanders = this.$store.state.user.token
+    this.authHeaders = this.$store.state.user.token
       ? { Authorization: "Bearer " + this.$store.state.user.token }
       : {};
   },

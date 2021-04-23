@@ -1,4 +1,4 @@
-import { getCurrentUser, login, logout } from "../../api/user";
+import { getCurrentUser, login, logout } from "@/api/user";
 import storage from "../../utils/storage";
 
 const state = {
