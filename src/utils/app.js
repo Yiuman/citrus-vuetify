@@ -37,6 +37,7 @@ export const createMenus = (routes, filter) => {
  * 创建默认的顶部视图
  * @param routes 路由
  * @param filter 过滤器
+ * @param barArray
  */
 export const createDefaultVisitedBar = (routes, filter, barArray = []) => {
   if (filter) {
@@ -67,7 +68,7 @@ export const createDefaultVisitedBar = (routes, filter, barArray = []) => {
 export const listToTree = (list, tree, parentId) => {
   //断言父节点
   function assertParentId(item,parentId){
-    if(parentId==null || parentId==undefined){
+    if(parentId == null){
       return item.parentId ===null || item.parentId===undefined;
     }else{
       return item.parentId === parentId;
@@ -75,7 +76,7 @@ export const listToTree = (list, tree, parentId) => {
   }
   list.forEach((item) => {
     // 判断是否为父级菜单
-   
+
     if (assertParentId(item,parentId)) {
       const child = {
         ...item,
@@ -108,7 +109,7 @@ export const createBreadCrumbs = (currentRoute, list = [], index = 0) => {
       : currentRoute.resourceName || currentRoute.name;
     list.push({
       text,
-      disabled: index == 0 || currentRoute.path === null,
+      disabled: index === 0 || currentRoute.path === null,
       href: currentRoute.path,
       index,
     });

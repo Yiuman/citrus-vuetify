@@ -99,7 +99,6 @@
   import TreeModel from "@/components/TreeModel";
   import SimpleFormNavigation from "@/components/SimpleFormNavigation";
   import { getDataScopes, getOperationByKey } from "@/api/auth";
-  // import SimpleFormSlot from "@/components/SimpleFormSlot";
 
   const DEFAULT_ENTITY = {
     authorityId: null,
@@ -300,9 +299,7 @@
 
 <style scoped>
   .select-container {
-    /* height: 270px !important; */
     max-height: 450px;
     overflow: auto !important;
-    /* width: 100% !important; */
   }
 </style>

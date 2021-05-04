@@ -1,6 +1,6 @@
 import axios from 'axios'
 import store from "../store";
-import {API_BASE_PATH} from "../config";
+import {API_BASE_PATH} from "@/config";
 import qs from 'qs';
 
 axios.defaults.withCredentials = true;
