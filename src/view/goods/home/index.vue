@@ -1,6 +1,6 @@
 <template>
   <div class="height-100pc mx-3 goods-home">
-    <v-row justify="center">
+    <v-row justify="center" class="my-3">
       <template v-for="(item, itemIndex) in indicators">
         <v-col :key="itemIndex" cols="12" md="3">
           <v-hover v-slot="{ hover }">
@@ -9,19 +9,15 @@
               :elevation="hover ? 12 : 2"
               :class="{ 'on-hover': hover }"
             >
-              <v-row class="mx-3">
-                <v-col md="6" align="center">
+              <v-row class="mx-3 ">
+                <v-col md="6" class="align-center">
                   <v-icon :color="item.color" size="100">{{
                     item.icon
                   }}</v-icon>
                 </v-col>
-                <v-col md="6">
-                  <v-row justify="center" class="text-h5">{{
-                    item.title
-                  }}</v-row>
-                  <v-row justify="center" class="ml-n1 mt-5 text-h7">{{
-                    item.text
-                  }}</v-row>
+                <v-col md="6" class="align-center justify-center flex-column " >
+                  <div class="text-h5 text-center">{{ item.title}}</div>
+                  <div class="text-h7 text-center">{{  item.text}}</div>
                 </v-col>
               </v-row>
             </v-card>
@@ -31,7 +27,7 @@
     </v-row>
 
     <div>
-      <v-card class="pt-4 my-2" v-if="chartLoaded">
+      <v-card class="mt-9" v-if="chartLoaded">
         <v-row class="ml-3">
           近7天业务量
         </v-row>
