@@ -46,6 +46,7 @@
     "eslint-plugin-vue": "^6.2.2",
     "fibers": "^4.0.2",
     "material-design-icons-iconfont": "^5.0.1",
+    "postcss": "^8.3.0",
     "sass": "~1.32",
     "sass-loader": "^8.0.2",
     "vue-cli-plugin-vuetify": "~2.0.5",

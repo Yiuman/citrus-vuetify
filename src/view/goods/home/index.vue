@@ -52,7 +52,7 @@
     expenses: [110, 70, 150, 50, 46, 80, 111],
     profits: [99, 55, 110, 67, 88, 44, 76],
   };
-  const DEFUALT_PANELS = [
+  const DEFAULT_PANELS = [
     { icon: "mdi-dolly", color: "blue", title: "商品", text: "4(件)" },
     {
       icon: "mdi-cart-arrow-up",
@@ -80,7 +80,7 @@
     },
     data: () => ({
       lineChartData,
-      indicators: DEFUALT_PANELS,
+      indicators: DEFAULT_PANELS,
       lineChartIndicators: ["采购额", "销售额", "支出", "利润"],
       dimension: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
       chartLoaded: false,
