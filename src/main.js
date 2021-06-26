@@ -19,9 +19,11 @@ Vue.use(Toast, {
 
 Vue.config.productionTip = false;
 
-new Vue({
+const APP  = new Vue({
   router,
   store,
   vuetify,
   render: (h) => h(App),
 }).$mount("#app");
+
+export default APP;

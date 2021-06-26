@@ -18,7 +18,7 @@
         :show-select="Boolean(itemKey) && checkable"
         @dblclick:row="rowDbclick"
       >
-        <!-- 表格头部 -->
+        <!-- 表格 头部 -->
         <template v-slot:top>
           <!--按钮及控件-->
           <v-row no-gutters justify="space-between" align="center" class="mx-2">
