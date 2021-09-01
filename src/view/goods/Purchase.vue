@@ -287,7 +287,6 @@
                   type: "error",
                   icon: "alert-circle",
                 });
-                console.warn(err);
               });
           }
         });

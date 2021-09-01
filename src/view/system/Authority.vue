@@ -197,7 +197,6 @@
       selection(nodes) {
         if (nodes) {
           this.authority.selectResources = nodes.map((item) => item.id);
-          console.warn(nodes);
           nodes.forEach((node) => {
             if (!this.authority.resourceMap[node.id]) {
               this.authority.resourceMap[node.id] = {
@@ -278,7 +277,6 @@
               this.$toast.error(err.message, {
                 position: "top-center",
               });
-              console.warn(err);
             });
         });
       },

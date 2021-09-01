@@ -332,14 +332,12 @@ export default {
               this.$toast.error(err.message, {
                 position: "top-center",
               });
-              console.warn(err);
             });
       }
     },
     passwordUpate() {
       if (this.$refs.passwordForm.validate()) {
         updatePassword(this.passwordForm).catch((err) => {
-          console.warn(err);
           this.$toast.success(err.message, {
             position: "top-center",
           });

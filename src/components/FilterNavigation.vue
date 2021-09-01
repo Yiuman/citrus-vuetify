@@ -81,7 +81,6 @@
     },
     watch: {
       modelObject: function() {
-        console.warn(this.modelObject);
       },
       dialogSwitch: function(data) {
         if (data) {

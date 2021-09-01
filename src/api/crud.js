@@ -223,7 +223,6 @@ export const mixins = {
                     this.$toast.error(err.message, {
                         position: "top-center",
                     });
-                    console.warn(err);
                 });
         },
         edit(action, item) {
@@ -266,7 +265,6 @@ export const mixins = {
                     this.$toast.error(err.message, {
                         position: "top-center",
                     });
-                    console.warn(err);
                 });
         },
         batchDelete(action) {

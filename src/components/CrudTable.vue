@@ -436,7 +436,6 @@
     mounted() {
       //初始化可设置表头的拖拽
       const this_ = this;
-      console.warn("refef", this.$refs);
       Sortable.create(this.$refs["sortable-container"], {
         animation: 150,
         ghostClass: "sortable-ghost",

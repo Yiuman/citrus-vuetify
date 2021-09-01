@@ -166,7 +166,6 @@ export default {
     },
     inputFilter(newFile, oldFile, prevent) {
       if (newFile && !oldFile) {
-        console.warn(newFile);
         if (!/\.(gif|jpg|jpeg|png|webp)$/i.test(newFile.name)) {
           this.alert("Your choice is not a picture");
           return prevent();

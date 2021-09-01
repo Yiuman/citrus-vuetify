@@ -120,7 +120,6 @@
             this.$router.push("/");
           })
           .catch((err) => {
-            console.warn(err);
             this.refreshCaptcha();
             this.$toast.error(err.message, {
               position: "top-center",
