@@ -11,7 +11,7 @@
 
 后端地址：https://github.com/Yiuman/citrus  
 
-[LiveDemo](http://42.192.95.146/#/login)  账号:admin 密码:123456 
+[LiveDemo](http://42.192.95.146:8088/#/login)  账号:admin 密码:123456 
 
 > 如果此项目对你有帮助，请记得给我一个小星星:star:
 
